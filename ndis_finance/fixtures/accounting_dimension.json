@@ -1,0 +1,68 @@
+[
+ {
+  "dimension_defaults": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Accounting Dimension",
+  "document_type": "Customer",
+  "fieldname": "ndis_participant",
+  "label": "NDIS Participant",
+  "modified": "2026-05-06 01:00:53.024480",
+  "name": "NDIS Participant"
+ },
+ {
+  "dimension_defaults": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Accounting Dimension",
+  "document_type": "NDIS House",
+  "fieldname": "ndis_house",
+  "label": "NDIS House",
+  "modified": "2026-05-06 01:00:53.036985",
+  "name": "NDIS House"
+ },
+ {
+  "dimension_defaults": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Accounting Dimension",
+  "document_type": "NDIS Support Item",
+  "fieldname": "ndis_support_item",
+  "label": "NDIS Support Item",
+  "modified": "2026-05-06 01:00:53.046189",
+  "name": "NDIS Support Item"
+ },
+ {
+  "dimension_defaults": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Accounting Dimension",
+  "document_type": "NDIS Service Type",
+  "fieldname": "ndis_service_type",
+  "label": "NDIS Service Type",
+  "modified": "2026-05-06 01:00:53.054107",
+  "name": "NDIS Service Type"
+ },
+ {
+  "dimension_defaults": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Accounting Dimension",
+  "document_type": "NDIS Funding Source",
+  "fieldname": "ndis_funding_source",
+  "label": "NDIS Funding Source",
+  "modified": "2026-05-06 01:00:53.063596",
+  "name": "NDIS Funding Source"
+ },
+ {
+  "dimension_defaults": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Accounting Dimension",
+  "document_type": "NDIS Claim Batch",
+  "fieldname": "ndis_claim_batch",
+  "label": "NDIS Claim Batch",
+  "modified": "2026-05-06 01:00:53.072018",
+  "name": "NDIS Claim Batch"
+ }
+]
