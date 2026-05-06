@@ -985,7 +985,7 @@ def create_ndis_custom_fields():
                 "fieldname": "custom_ndis_recovery_status",
                 "label": "NDIS Recovery Status",
                 "fieldtype": "Select",
-                "options": "\nNot Due\nFollow Up Required\nIn Follow Up\nEscalated\nResolved\nDo Not Recover",
+                "options": "\nNot Due\nFollow Up Required\nIn Recovery\nIn Follow Up\nEscalated\nResolved\nDo Not Recover\nWritten Off",
                 "insert_after": "custom_ndis_billing_status",
                 "depends_on": "eval:doc.custom_is_ndis_invoice",
                 "module": MODULE,
