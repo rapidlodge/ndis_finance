@@ -81,6 +81,8 @@ fixtures = [
                     "NDIS Claim Line",
                     "NDIS Payment Reconciliation Batch",
                     "NDIS Payment Reconciliation Line",
+                    "NDIS Recovery Case",
+                    "NDIS Recovery Activity",
                 ],
             ]
         ],
