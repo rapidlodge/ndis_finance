@@ -14,7 +14,8 @@ doc_events = {
     "Sales Invoice": {
         "validate": "ndis_finance.overrides.sales_invoice.validate_sales_invoice",
         "on_submit": "ndis_finance.services.budget_control.update_usage_from_sales_invoice",
-        "on_cancel": "ndis_finance.services.budget_control.update_usage_from_sales_invoice",
+        "before_cancel": "ndis_finance.services.claim_batch_engine.before_sales_invoice_cancel",
+        "on_cancel": "ndis_finance.services.claim_batch_engine.on_sales_invoice_cancelled",
     }
 }
 
@@ -77,6 +78,7 @@ fixtures = [
                     "NDIS Claim Batch",
                     "NDIS Funding Leakage Register",
                     "NDIS Catalogue Import",
+                    "NDIS Claim Line",
                 ],
             ]
         ],
