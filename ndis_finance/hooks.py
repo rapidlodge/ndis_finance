@@ -79,6 +79,8 @@ fixtures = [
                     "NDIS Funding Leakage Register",
                     "NDIS Catalogue Import",
                     "NDIS Claim Line",
+                    "NDIS Payment Reconciliation Batch",
+                    "NDIS Payment Reconciliation Line",
                 ],
             ]
         ],
