@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 from frappe.utils import flt, getdate
 
+from ndis_finance.services.budget_control import validate_budget_and_service_booking
+
 
 def validate_sales_invoice(doc, method=None):
     """
@@ -25,6 +27,7 @@ def validate_sales_invoice(doc, method=None):
     validate_ndis_invoice_header(doc)
     validate_ndis_invoice_lines(doc)
     validate_ndis_price_limits(doc)
+    validate_budget_and_service_booking(doc)
     validate_participant_billing_hold(doc)
 
 

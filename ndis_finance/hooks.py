@@ -12,7 +12,9 @@ after_migrate = "ndis_finance.setup.install.after_migrate"
 # Safe extension points. No ERPNext core override.
 doc_events = {
     "Sales Invoice": {
-        "validate": "ndis_finance.overrides.sales_invoice.validate_sales_invoice"
+        "validate": "ndis_finance.overrides.sales_invoice.validate_sales_invoice",
+        "on_submit": "ndis_finance.services.budget_control.update_usage_from_sales_invoice",
+        "on_cancel": "ndis_finance.services.budget_control.update_usage_from_sales_invoice",
     }
 }
 
