@@ -74,6 +74,7 @@ fixtures = [
                     "NDIS Service Booking",
                     "NDIS Claim Batch",
                     "NDIS Funding Leakage Register",
+                    "NDIS Catalogue Import",
                 ],
             ]
         ],
