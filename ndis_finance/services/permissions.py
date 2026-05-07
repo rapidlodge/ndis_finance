@@ -33,6 +33,24 @@ ACTION_ROLE_MAP = {
         "NDIS Finance Manager",
         "NDIS Claims Officer",
     ],
+    "import_remittance": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+        "NDIS Claims Officer",
+    ],
+    "match_remittance": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+        "NDIS Claims Officer",
+    ],
+    "apply_remittance": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+        "NDIS Claims Officer",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",

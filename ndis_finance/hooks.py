@@ -146,6 +146,8 @@ fixtures = [
                     "NDIS Recovery Communication Template",
                     "NDIS Recovery Email Draft",
                     "NDIS Recovery Automation Log",
+                    "NDIS Remittance Import",
+                    "NDIS Remittance Import Line",
                 ],
             ]
         ],
@@ -163,6 +165,8 @@ doctype_js.update(
         "NDIS Recovery Case": "public/js/ndis_recovery_case.js",
         "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft.js",
         "NDIS Recovery Automation Log": "public/js/ndis_recovery_automation_log.js",
+        "NDIS Remittance Import": "public/js/ndis_remittance_import.js",
+        "NDIS Remittance Import Line": "public/js/ndis_remittance_import_line.js",
     }
 )
 
@@ -176,6 +180,8 @@ doctype_list_js.update(
         "NDIS Recovery Case": "public/js/ndis_recovery_case_list.js",
         "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft_list.js",
         "NDIS Recovery Automation Log": "public/js/ndis_recovery_automation_log_list.js",
+        "NDIS Remittance Import": "public/js/ndis_remittance_import_list.js",
+        "NDIS Remittance Import Line": "public/js/ndis_remittance_import_line_list.js",
     }
 )
 
