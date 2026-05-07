@@ -124,3 +124,26 @@ fixtures = [
         ],
     },
 ]
+
+# Phase 1I UI polish hooks.
+doctype_js = globals().get("doctype_js", {})
+doctype_js.update(
+    {
+        "NDIS Claim Batch": "public/js/ndis_claim_batch.js",
+        "NDIS Claim Line": "public/js/ndis_claim_line.js",
+        "NDIS Payment Reconciliation Batch": "public/js/ndis_payment_reconciliation_batch.js",
+        "NDIS Funding Leakage Register": "public/js/ndis_funding_leakage_register.js",
+        "NDIS Recovery Case": "public/js/ndis_recovery_case.js",
+    }
+)
+
+doctype_list_js = globals().get("doctype_list_js", {})
+doctype_list_js.update(
+    {
+        "NDIS Claim Batch": "public/js/ndis_claim_batch_list.js",
+        "NDIS Claim Line": "public/js/ndis_claim_line_list.js",
+        "NDIS Payment Reconciliation Batch": "public/js/ndis_payment_reconciliation_batch_list.js",
+        "NDIS Funding Leakage Register": "public/js/ndis_funding_leakage_register_list.js",
+        "NDIS Recovery Case": "public/js/ndis_recovery_case_list.js",
+    }
+)
