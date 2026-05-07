@@ -3,6 +3,7 @@ from frappe import _
 from frappe.utils import flt, now_datetime
 
 from ndis_finance.services.budget_control import update_usage_from_sales_invoice
+from ndis_finance.services.permissions import assert_action
 
 
 ACTIVE_CLAIM_STATUSES = [
@@ -196,6 +197,8 @@ def create_claim_batch(
     - Does not touch GL Entry.
     """
 
+    assert_action("create_claim_batch")
+
     dry_run = int(dry_run or 0)
 
     rows = get_claimable_invoice_rows(
@@ -332,6 +335,8 @@ def mark_claim_batch_submitted(claim_batch, external_batch_reference=None):
     This updates claim-control records only.
     """
 
+    assert_action("submit_claim_batch")
+
     if not frappe.db.exists("NDIS Claim Batch", claim_batch):
         frappe.throw(_("NDIS Claim Batch not found: {0}").format(claim_batch))
 
@@ -401,6 +406,8 @@ def record_claim_line_outcome(
     Basic manual outcome updater.
     Phase 1E will later automate this from NDIA/plan-manager remittance files.
     """
+
+    assert_action("record_claim_outcome")
 
     if outcome not in ["Paid", "Short Paid", "Rejected", "Reclaim Required", "Written Off"]:
         frappe.throw(

@@ -4,6 +4,7 @@ import traceback
 import frappe
 from frappe.utils import add_days, get_datetime, now_datetime, nowdate
 
+from ndis_finance.services.permissions import assert_action
 from ndis_finance.services.recovery_engine import create_recovery_cases_from_open_leakages
 
 
@@ -55,6 +56,8 @@ def run_daily_recovery_monitor(
     - Optionally creates missing Recovery Cases from open Funding Leakage only.
     """
 
+    assert_action("run_recovery_automation")
+
     run_id = make_run_id(run_type=run_type)
 
     log = frappe.new_doc("NDIS Recovery Automation Log")
@@ -75,10 +78,18 @@ def run_daily_recovery_monitor(
         create_missing_cases = int(create_missing_cases or 0)
 
         if create_missing_cases:
-            creation_result = create_recovery_cases_from_open_leakages(
-                limit=100,
-                assigned_to=assigned_to,
+            previous_flag = bool(
+                getattr(frappe.flags, "ndis_allow_recovery_case_creation", False)
             )
+            frappe.flags.ndis_allow_recovery_case_creation = True
+            try:
+                creation_result = create_recovery_cases_from_open_leakages(
+                    limit=100,
+                    assigned_to=assigned_to,
+                )
+            finally:
+                frappe.flags.ndis_allow_recovery_case_creation = previous_flag
+
             created_recovery_cases = int(creation_result.get("created") or 0)
             summary["created_recovery_cases_result"] = creation_result
 

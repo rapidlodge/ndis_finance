@@ -11,7 +11,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-05-07 14:33:47.779770",
+  "modified": "2026-05-07 17:22:37.611119",
   "module": "NDIS Finance",
   "name": "NDIS Automation Health Report",
   "prepared_report": 0,
@@ -35,7 +35,13 @@
     "role": "NDIS Finance Officer"
    },
    {
+    "role": "NDIS Claims Officer"
+   },
+   {
     "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
    }
   ],
   "timeout": 0
@@ -52,7 +58,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-05-07 14:33:47.873822",
+  "modified": "2026-05-07 17:22:37.644245",
   "module": "NDIS Finance",
   "name": "NDIS Automation Exception Report",
   "prepared_report": 0,
@@ -76,7 +82,13 @@
     "role": "NDIS Finance Officer"
    },
    {
+    "role": "NDIS Claims Officer"
+   },
+   {
     "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
    }
   ],
   "timeout": 0
@@ -93,7 +105,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-05-06 23:06:17.357196",
+  "modified": "2026-05-07 17:22:37.446926",
   "module": "NDIS Finance",
   "name": "NDIS CFO Exception Dashboard",
   "prepared_report": 0,
@@ -117,7 +129,13 @@
     "role": "NDIS Finance Officer"
    },
    {
+    "role": "NDIS Claims Officer"
+   },
+   {
     "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
    }
   ],
   "timeout": 0
@@ -134,7 +152,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-05-06 23:06:17.522424",
+  "modified": "2026-05-07 17:22:37.507891",
   "module": "NDIS Finance",
   "name": "NDIS Recovery Ageing Report",
   "prepared_report": 0,
@@ -158,7 +176,13 @@
     "role": "NDIS Finance Officer"
    },
    {
+    "role": "NDIS Claims Officer"
+   },
+   {
     "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
    }
   ],
   "timeout": 0
@@ -175,7 +199,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-05-06 23:06:17.551526",
+  "modified": "2026-05-07 17:22:37.541475",
   "module": "NDIS Finance",
   "name": "NDIS Claim Exception Report",
   "prepared_report": 0,
@@ -199,7 +223,13 @@
     "role": "NDIS Finance Officer"
    },
    {
+    "role": "NDIS Claims Officer"
+   },
+   {
     "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
    }
   ],
   "timeout": 0
@@ -216,7 +246,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-05-06 23:06:17.571551",
+  "modified": "2026-05-07 17:22:37.576371",
   "module": "NDIS Finance",
   "name": "NDIS Funding Leakage Report",
   "prepared_report": 0,
@@ -240,7 +270,13 @@
     "role": "NDIS Finance Officer"
    },
    {
+    "role": "NDIS Claims Officer"
+   },
+   {
     "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
    }
   ],
   "timeout": 0

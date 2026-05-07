@@ -91,6 +91,11 @@ fixtures = [
                     "NDIS Claims Officer",
                     "NDIS Recovery Officer",
                     "NDIS CFO",
+                    "NDIS Catalogue Manager",
+                    "NDIS Budget Manager",
+                    "NDIS Automation Manager",
+                    "NDIS Communication Approver",
+                    "NDIS Write Off Approver",
                 ],
             ]
         ],

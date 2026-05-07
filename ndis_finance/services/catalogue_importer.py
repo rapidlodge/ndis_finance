@@ -7,6 +7,8 @@ from frappe import _
 from frappe.utils import now_datetime
 from frappe.utils.file_manager import get_file_path
 
+from ndis_finance.services.permissions import assert_action
+
 
 TEXT_ALIASES = {
     "support_item_number": [
@@ -505,6 +507,8 @@ def import_catalogue(
     Example:
     bench --site dev.localhost execute ndis_finance.services.catalogue_importer.import_catalogue --kwargs "{'file_path':'/path/to/file.xlsx','catalogue_version':'2025-26 v1.1','effective_from':'2025-11-24'}"
     """
+
+    assert_action("manage_catalogue")
 
     dry_run = int(dry_run or 0)
     limit = int(limit or 0)

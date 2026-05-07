@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, flt, now_datetime, nowdate
 
+from ndis_finance.services.permissions import assert_action
+
 
 OPEN_CASE_STATUSES = ["Open", "In Follow Up", "Waiting For Response", "Escalated"]
 
@@ -72,6 +74,10 @@ def case_type_from_leakage(leakage_type):
     return "Other"
 
 
+def can_create_recovery_case_without_user_action_check():
+    return bool(getattr(frappe.flags, "ndis_allow_recovery_case_creation", False))
+
+
 @frappe.whitelist()
 def create_recovery_case_from_leakage(funding_leakage, assigned_to=None, due_days=7):
     """
@@ -80,6 +86,9 @@ def create_recovery_case_from_leakage(funding_leakage, assigned_to=None, due_day
     Idempotent:
     - If an open recovery case already exists for this leakage, it returns that case.
     """
+
+    if not can_create_recovery_case_without_user_action_check():
+        assert_action("create_recovery_case")
 
     if not frappe.db.exists("NDIS Funding Leakage Register", funding_leakage):
         frappe.throw(_("Funding Leakage record not found: {0}").format(funding_leakage))
@@ -140,7 +149,7 @@ def create_recovery_case_from_leakage(funding_leakage, assigned_to=None, due_day
     case.insert(ignore_permissions=True)
 
     link_recovery_case_to_sources(case)
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=case.name,
         activity_type="Note",
         outcome="Other",
@@ -216,6 +225,9 @@ def create_recovery_cases_from_open_leakages(limit=50, assigned_to=None):
     Bulk-create recovery cases from open leakage records.
     """
 
+    if not can_create_recovery_case_without_user_action_check():
+        assert_action("create_recovery_case")
+
     leakages = frappe.get_all(
         "NDIS Funding Leakage Register",
         filters={
@@ -244,8 +256,7 @@ def create_recovery_cases_from_open_leakages(limit=50, assigned_to=None):
     }
 
 
-@frappe.whitelist()
-def add_recovery_activity(
+def log_recovery_activity(
     recovery_case,
     activity_type="Note",
     outcome=None,
@@ -312,7 +323,32 @@ def add_recovery_activity(
 
 
 @frappe.whitelist()
+def add_recovery_activity(
+    recovery_case,
+    activity_type="Note",
+    outcome=None,
+    activity_note=None,
+    next_follow_up_date=None,
+    attachment=None,
+    commit=True,
+):
+    assert_action("add_recovery_activity")
+
+    return log_recovery_activity(
+        recovery_case=recovery_case,
+        activity_type=activity_type,
+        outcome=outcome,
+        activity_note=activity_note,
+        next_follow_up_date=next_follow_up_date,
+        attachment=attachment,
+        commit=commit,
+    )
+
+
+@frappe.whitelist()
 def escalate_recovery_case(recovery_case, reason=None, next_follow_up_date=None):
+    assert_action("escalate_recovery_case")
+
     note = reason or "Recovery case escalated for management review."
 
     return add_recovery_activity(
@@ -330,6 +366,8 @@ def resolve_recovery_case(recovery_case, recovered_amount=0, resolution_note=Non
     Resolve a recovery case after payment/recovery has been completed.
     """
 
+    assert_action("resolve_recovery_case")
+
     if not frappe.db.exists("NDIS Recovery Case", recovery_case):
         frappe.throw(_("Recovery Case not found: {0}").format(recovery_case))
 
@@ -342,7 +380,7 @@ def resolve_recovery_case(recovery_case, recovered_amount=0, resolution_note=Non
     case.outstanding_amount = max(flt(case.outstanding_amount) - flt(recovered_amount), 0)
     case.save(ignore_permissions=True)
 
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=case.name,
         activity_type="Resolved",
         outcome="Resolved",
@@ -373,6 +411,8 @@ def write_off_recovery_case(recovery_case, written_off_amount=None, resolution_n
     Accounting write-off must still be done through standard ERPNext accounting controls.
     """
 
+    assert_action("write_off_recovery_case")
+
     if not frappe.db.exists("NDIS Recovery Case", recovery_case):
         frappe.throw(_("Recovery Case not found: {0}").format(recovery_case))
 
@@ -386,7 +426,7 @@ def write_off_recovery_case(recovery_case, written_off_amount=None, resolution_n
     case.resolution_note = resolution_note or "Marked for write-off control review."
     case.save(ignore_permissions=True)
 
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=case.name,
         activity_type="Write Off Approved",
         outcome="Write Off Approved",
@@ -409,6 +449,8 @@ def write_off_recovery_case(recovery_case, written_off_amount=None, resolution_n
 
 @frappe.whitelist()
 def close_recovery_case(recovery_case, resolution_note=None):
+    assert_action("close_recovery_case")
+
     if not frappe.db.exists("NDIS Recovery Case", recovery_case):
         frappe.throw(_("Recovery Case not found: {0}").format(recovery_case))
 
@@ -419,7 +461,7 @@ def close_recovery_case(recovery_case, resolution_note=None):
     case.resolution_note = resolution_note or "Recovery case closed."
     case.save(ignore_permissions=True)
 
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=case.name,
         activity_type="Note",
         outcome="Closed",

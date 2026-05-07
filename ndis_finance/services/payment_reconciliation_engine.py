@@ -7,6 +7,7 @@ from ndis_finance.services.claim_batch_engine import (
     recalculate_claim_batch_totals,
     refresh_invoice_claim_status,
 )
+from ndis_finance.services.permissions import assert_action
 
 
 def make_reconciliation_id(payer_type=None):
@@ -51,6 +52,8 @@ def create_payment_reconciliation_batch(
     This is a control document only.
     It does not create GL Entries and does not replace ERPNext Payment Entry.
     """
+
+    assert_action("create_payment_reconciliation")
 
     payment_date = payment_date or nowdate()
 
@@ -156,6 +159,8 @@ def record_payment_for_claim_line(
     - paid amount > 0 but less than claim amount: Short Paid
     - paid amount == 0: Rejected
     """
+
+    assert_action("record_payment_outcome")
 
     if not frappe.db.exists("NDIS Payment Reconciliation Batch", reconciliation_batch):
         frappe.throw(

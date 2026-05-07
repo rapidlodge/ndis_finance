@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 from frappe.utils import flt, getdate, now_datetime, today
 
+from ndis_finance.services.permissions import assert_action
+
 
 def validate_budget_and_service_booking(doc):
     """
@@ -675,6 +677,8 @@ def find_matching_booking_for_row(doc, row):
 
 @frappe.whitelist()
 def recalculate_budget_usage(budget_name):
+    assert_action("manage_budget")
+
     budget = frappe.get_doc("NDIS Plan Budget", budget_name)
 
     used = calculate_used_for_budget(budget)
@@ -713,6 +717,8 @@ def recalculate_budget_usage(budget_name):
 
 @frappe.whitelist()
 def recalculate_booking_usage(booking_name):
+    assert_action("manage_budget")
+
     booking = frappe.get_doc("NDIS Service Booking", booking_name)
 
     used = calculate_used_for_booking(booking)
@@ -751,6 +757,8 @@ def recalculate_booking_usage(booking_name):
 
 @frappe.whitelist()
 def recalculate_all_active_budgets_and_bookings():
+    assert_action("manage_budget")
+
     budgets = frappe.get_all(
         "NDIS Plan Budget",
         filters={"status": ["in", ["Active", "Exhausted", "Expired", "Draft"]]},

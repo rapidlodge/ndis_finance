@@ -2,7 +2,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, flt, get_datetime, now_datetime, nowdate
 
-from ndis_finance.services.recovery_engine import add_recovery_activity
+from ndis_finance.services.permissions import assert_action
+from ndis_finance.services.recovery_engine import log_recovery_activity
 
 
 def make_draft_id(draft_type=None):
@@ -170,6 +171,8 @@ def create_recovery_email_draft(
     a recovery activity.
     """
 
+    assert_action("create_email_draft")
+
     if not frappe.db.exists("NDIS Recovery Case", recovery_case):
         frappe.throw(_("Recovery Case not found: {0}").format(recovery_case))
 
@@ -214,7 +217,7 @@ def create_recovery_email_draft(
     doc.internal_note = internal_note
     doc.insert(ignore_permissions=True)
 
-    activity = add_recovery_activity(
+    activity = log_recovery_activity(
         recovery_case=recovery_case,
         activity_type="Email",
         outcome="Other",
@@ -261,6 +264,8 @@ def update_case_communication_status(recovery_case, draft, status, next_due_date
 
 @frappe.whitelist()
 def approve_email_draft(email_draft):
+    assert_action("approve_email_draft")
+
     if not frappe.db.exists("NDIS Recovery Email Draft", email_draft):
         frappe.throw(_("Email Draft not found: {0}").format(email_draft))
 
@@ -274,7 +279,7 @@ def approve_email_draft(email_draft):
     doc.approved_by = frappe.session.user
     doc.save(ignore_permissions=True)
 
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=doc.recovery_case,
         activity_type="Email",
         outcome="Other",
@@ -310,6 +315,8 @@ def mark_email_draft_sent_manually(email_draft, note=None):
     This does not send email.
     """
 
+    assert_action("mark_email_sent_manually")
+
     if not frappe.db.exists("NDIS Recovery Email Draft", email_draft):
         frappe.throw(_("Email Draft not found: {0}").format(email_draft))
 
@@ -325,7 +332,7 @@ def mark_email_draft_sent_manually(email_draft, note=None):
         doc.internal_note = note
     doc.save(ignore_permissions=True)
 
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=doc.recovery_case,
         activity_type="Email",
         outcome="Awaiting Response",
@@ -352,6 +359,8 @@ def mark_email_draft_sent_manually(email_draft, note=None):
 
 @frappe.whitelist()
 def cancel_email_draft(email_draft, reason=None):
+    assert_action("cancel_email_draft")
+
     if not frappe.db.exists("NDIS Recovery Email Draft", email_draft):
         frappe.throw(_("Email Draft not found: {0}").format(email_draft))
 
@@ -365,7 +374,7 @@ def cancel_email_draft(email_draft, reason=None):
         doc.internal_note = reason
     doc.save(ignore_permissions=True)
 
-    add_recovery_activity(
+    log_recovery_activity(
         recovery_case=doc.recovery_case,
         activity_type="Note",
         outcome="Other",
