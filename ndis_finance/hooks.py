@@ -138,6 +138,7 @@ fixtures = [
                     "NDIS Recovery Activity",
                     "NDIS Recovery Communication Template",
                     "NDIS Recovery Email Draft",
+                    "NDIS Recovery Automation Log",
                 ],
             ]
         ],
@@ -168,3 +169,15 @@ doctype_list_js.update(
         "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft_list.js",
     }
 )
+
+# Phase 1K recovery automation scheduler.
+scheduler_events = globals().get("scheduler_events", {})
+daily_events = scheduler_events.get("daily", [])
+if not isinstance(daily_events, list):
+    daily_events = list(daily_events)
+
+phase1k_daily_job = "ndis_finance.services.recovery_scheduler.daily_recovery_monitor_job"
+if phase1k_daily_job not in daily_events:
+    daily_events.append(phase1k_daily_job)
+
+scheduler_events["daily"] = daily_events
