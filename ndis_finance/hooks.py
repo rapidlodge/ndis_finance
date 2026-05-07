@@ -148,6 +148,8 @@ fixtures = [
                     "NDIS Recovery Automation Log",
                     "NDIS Remittance Import",
                     "NDIS Remittance Import Line",
+                    "NDIS Claim Export",
+                    "NDIS Claim Export Line",
                 ],
             ]
         ],
@@ -167,6 +169,8 @@ doctype_js.update(
         "NDIS Recovery Automation Log": "public/js/ndis_recovery_automation_log.js",
         "NDIS Remittance Import": "public/js/ndis_remittance_import.js",
         "NDIS Remittance Import Line": "public/js/ndis_remittance_import_line.js",
+        "NDIS Claim Export": "public/js/ndis_claim_export.js",
+        "NDIS Claim Export Line": "public/js/ndis_claim_export_line.js",
     }
 )
 
@@ -182,6 +186,8 @@ doctype_list_js.update(
         "NDIS Recovery Automation Log": "public/js/ndis_recovery_automation_log_list.js",
         "NDIS Remittance Import": "public/js/ndis_remittance_import_list.js",
         "NDIS Remittance Import Line": "public/js/ndis_remittance_import_line_list.js",
+        "NDIS Claim Export": "public/js/ndis_claim_export_list.js",
+        "NDIS Claim Export Line": "public/js/ndis_claim_export_line_list.js",
     }
 )
 
