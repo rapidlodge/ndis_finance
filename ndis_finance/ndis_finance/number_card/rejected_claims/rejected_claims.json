@@ -1,0 +1,23 @@
+{
+ "creation": "2026-05-07 11:12:12.820220",
+ "currency": "AUD",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "NDIS Claim Line",
+ "filters_json": "[[\"NDIS Claim Line\", \"claim_status\", \"=\", \"Rejected\"]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Rejected Claims",
+ "modified": "2026-05-07 11:16:59.136032",
+ "modified_by": "Administrator",
+ "module": "NDIS Finance",
+ "name": "Rejected Claims",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_full_number": 1,
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Daily",
+ "type": "Document Type"
+}

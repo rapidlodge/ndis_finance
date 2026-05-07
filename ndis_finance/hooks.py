@@ -23,6 +23,27 @@ doc_events = {
 # Keep roles, custom fields and accounting dimensions portable.
 fixtures = [
     {
+        "dt": "Workspace",
+        "filters": [["label", "=", "NDIS Finance"]],
+    },
+    {
+        "dt": "Number Card",
+        "filters": [
+            [
+                "label",
+                "in",
+                [
+                    "Open Recovery Cases",
+                    "Overdue Follow Ups",
+                    "Open Leakage Records",
+                    "Open Leakage Amount",
+                    "Claim Exception Amount",
+                    "Rejected Claims",
+                ],
+            ]
+        ],
+    },
+    {
         "dt": "Report",
         "filters": [
             [
