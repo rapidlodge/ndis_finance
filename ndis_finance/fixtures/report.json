@@ -11,6 +11,88 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
+  "modified": "2026-05-07 14:33:47.779770",
+  "module": "NDIS Finance",
+  "name": "NDIS Automation Health Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Recovery Automation Log",
+  "reference_report": null,
+  "report_name": "NDIS Automation Health Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Recovery Officer"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-07 14:33:47.873822",
+  "module": "NDIS Finance",
+  "name": "NDIS Automation Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Recovery Automation Log",
+  "reference_report": null,
+  "report_name": "NDIS Automation Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Recovery Officer"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
   "modified": "2026-05-06 23:06:17.357196",
   "module": "NDIS Finance",
   "name": "NDIS CFO Exception Dashboard",

@@ -71,6 +71,8 @@ fixtures = [
                     "NDIS Recovery Ageing Report",
                     "NDIS Claim Exception Report",
                     "NDIS Funding Leakage Report",
+                    "NDIS Automation Health Report",
+                    "NDIS Automation Exception Report",
                 ],
             ]
         ],
@@ -155,6 +157,7 @@ doctype_js.update(
         "NDIS Funding Leakage Register": "public/js/ndis_funding_leakage_register.js",
         "NDIS Recovery Case": "public/js/ndis_recovery_case.js",
         "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft.js",
+        "NDIS Recovery Automation Log": "public/js/ndis_recovery_automation_log.js",
     }
 )
 
@@ -167,6 +170,7 @@ doctype_list_js.update(
         "NDIS Funding Leakage Register": "public/js/ndis_funding_leakage_register_list.js",
         "NDIS Recovery Case": "public/js/ndis_recovery_case_list.js",
         "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft_list.js",
+        "NDIS Recovery Automation Log": "public/js/ndis_recovery_automation_log_list.js",
     }
 )
 
