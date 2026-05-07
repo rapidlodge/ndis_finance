@@ -23,6 +23,23 @@ doc_events = {
 # Keep roles, custom fields and accounting dimensions portable.
 fixtures = [
     {
+        "dt": "NDIS Recovery Communication Template",
+        "filters": [
+            [
+                "template_name",
+                "in",
+                [
+                    "NDIS Plan Manager Follow Up",
+                    "NDIS Remittance Request",
+                    "NDIS Invoice Resend",
+                    "NDIS Rejected Claim Follow Up",
+                    "NDIS Short Payment Follow Up",
+                    "NDIS Write Off Internal Review",
+                ],
+            ]
+        ],
+    },
+    {
         "dt": "Workspace",
         "filters": [["label", "=", "NDIS Finance"]],
     },
@@ -119,6 +136,8 @@ fixtures = [
                     "NDIS Payment Reconciliation Line",
                     "NDIS Recovery Case",
                     "NDIS Recovery Activity",
+                    "NDIS Recovery Communication Template",
+                    "NDIS Recovery Email Draft",
                 ],
             ]
         ],
@@ -134,6 +153,7 @@ doctype_js.update(
         "NDIS Payment Reconciliation Batch": "public/js/ndis_payment_reconciliation_batch.js",
         "NDIS Funding Leakage Register": "public/js/ndis_funding_leakage_register.js",
         "NDIS Recovery Case": "public/js/ndis_recovery_case.js",
+        "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft.js",
     }
 )
 
@@ -145,5 +165,6 @@ doctype_list_js.update(
         "NDIS Payment Reconciliation Batch": "public/js/ndis_payment_reconciliation_batch_list.js",
         "NDIS Funding Leakage Register": "public/js/ndis_funding_leakage_register_list.js",
         "NDIS Recovery Case": "public/js/ndis_recovery_case_list.js",
+        "NDIS Recovery Email Draft": "public/js/ndis_recovery_email_draft_list.js",
     }
 )

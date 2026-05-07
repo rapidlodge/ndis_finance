@@ -10,6 +10,18 @@ frappe.ui.form.on("NDIS Recovery Case", {
             });
         }, __("Open"));
 
+        frm.add_custom_button(__("Open Email Drafts"), () => {
+            frappe.set_route("List", "NDIS Recovery Email Draft", {
+                recovery_case: frm.doc.name,
+            });
+        }, __("Open"));
+
+        if (frm.doc.last_email_draft) {
+            frm.add_custom_button(__("Open Last Email Draft"), () => {
+                frappe.set_route("Form", "NDIS Recovery Email Draft", frm.doc.last_email_draft);
+            }, __("Open"));
+        }
+
         if (frm.doc.sales_invoice) {
             frm.add_custom_button(__("Open Sales Invoice"), () => {
                 frappe.set_route("Form", "Sales Invoice", frm.doc.sales_invoice);
@@ -39,6 +51,30 @@ frappe.ui.form.on("NDIS Recovery Case", {
         }
 
         if (!["Resolved", "Written Off", "Closed"].includes(frm.doc.status)) {
+            frm.add_custom_button(__("Create Follow-Up Email Draft"), () => {
+                prompt_email_draft(frm, "Plan Manager Follow Up");
+            }, __("Email Drafts"));
+
+            frm.add_custom_button(__("Create Remittance Request Draft"), () => {
+                prompt_email_draft(frm, "Remittance Request");
+            }, __("Email Drafts"));
+
+            frm.add_custom_button(__("Create Invoice Resend Draft"), () => {
+                prompt_email_draft(frm, "Invoice Resend");
+            }, __("Email Drafts"));
+
+            frm.add_custom_button(__("Create Rejection Follow-Up Draft"), () => {
+                prompt_email_draft(frm, "NDIA Rejection Follow Up");
+            }, __("Email Drafts"));
+
+            frm.add_custom_button(__("Create Short Payment Draft"), () => {
+                prompt_email_draft(frm, "Short Payment Follow Up");
+            }, __("Email Drafts"));
+
+            frm.add_custom_button(__("Create Write-Off Review Draft"), () => {
+                prompt_email_draft(frm, "Write Off Internal Review");
+            }, __("Email Drafts"));
+
             frm.add_custom_button(__("Add Follow-Up Activity"), () => {
                 prompt_activity(frm);
             }, __("NDIS Actions"));
@@ -92,6 +128,70 @@ frappe.ui.form.on("NDIS Recovery Case", {
         }
     },
 });
+
+function prompt_email_draft(frm, draft_type) {
+    frappe.prompt(
+        [
+            {
+                fieldname: "recipient_email",
+                label: __("Recipient Email"),
+                fieldtype: "Data",
+                default: frm.doc.contact_email || "",
+            },
+            {
+                fieldname: "cc",
+                label: __("CC"),
+                fieldtype: "Small Text",
+            },
+            {
+                fieldname: "bcc",
+                label: __("BCC"),
+                fieldtype: "Small Text",
+            },
+            {
+                fieldname: "next_follow_up_date",
+                label: __("Next Follow Up Date"),
+                fieldtype: "Date",
+                default: frappe.datetime.add_days(frappe.datetime.now_date(), 3),
+            },
+            {
+                fieldname: "internal_note",
+                label: __("Internal Note"),
+                fieldtype: "Small Text",
+                default: "Draft created for review. No email sent automatically.",
+            },
+        ],
+        (values) => {
+            frappe.call({
+                method: "ndis_finance.services.recovery_communication.create_recovery_email_draft",
+                args: {
+                    recovery_case: frm.doc.name,
+                    draft_type,
+                    recipient_email: values.recipient_email,
+                    cc: values.cc,
+                    bcc: values.bcc,
+                    next_follow_up_date: values.next_follow_up_date,
+                    internal_note: values.internal_note,
+                },
+                freeze: true,
+                freeze_message: __("Creating email draft..."),
+                callback(r) {
+                    frm.reload_doc();
+
+                    if (r.message && r.message.email_draft) {
+                        frappe.show_alert({
+                            message: __("Email draft created. No email was sent automatically."),
+                            indicator: "green",
+                        });
+                        frappe.set_route("Form", "NDIS Recovery Email Draft", r.message.email_draft);
+                    }
+                },
+            });
+        },
+        __("Create {0}", [draft_type]),
+        __("Create Draft")
+    );
+}
 
 function prompt_activity(frm) {
     frappe.prompt(
