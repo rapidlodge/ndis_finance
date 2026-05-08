@@ -11,6 +11,194 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
+  "modified": "2026-05-08 13:03:55.897008",
+  "module": "NDIS Finance",
+  "name": "NDIS Funding Leakage Analytics Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Funding Leakage Register",
+  "reference_report": null,
+  "report_name": "NDIS Funding Leakage Analytics Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Claims Officer"
+   },
+   {
+    "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-08 13:03:56.344231",
+  "module": "NDIS Finance",
+  "name": "NDIS Claim Cycle Time Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Claim Line",
+  "reference_report": null,
+  "report_name": "NDIS Claim Cycle Time Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Claims Officer"
+   },
+   {
+    "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-08 13:03:56.378049",
+  "module": "NDIS Finance",
+  "name": "NDIS House Profitability Foundation Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Claim Line",
+  "reference_report": null,
+  "report_name": "NDIS House Profitability Foundation Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Claims Officer"
+   },
+   {
+    "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-08 13:03:56.411099",
+  "module": "NDIS Finance",
+  "name": "NDIS Participant Profitability Foundation Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Claim Line",
+  "reference_report": null,
+  "report_name": "NDIS Participant Profitability Foundation Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Claims Officer"
+   },
+   {
+    "role": "NDIS Recovery Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
   "modified": "2026-05-07 17:22:37.611119",
   "module": "NDIS Finance",
   "name": "NDIS Automation Health Report",

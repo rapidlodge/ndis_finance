@@ -88,6 +88,10 @@ fixtures = [
                     "NDIS Funding Leakage Report",
                     "NDIS Automation Health Report",
                     "NDIS Automation Exception Report",
+                    "NDIS Funding Leakage Analytics Report",
+                    "NDIS Claim Cycle Time Report",
+                    "NDIS House Profitability Foundation Report",
+                    "NDIS Participant Profitability Foundation Report",
                 ],
             ]
         ],
