@@ -1,0 +1,54 @@
+[
+ {
+  "active": 1,
+  "column_mapping_json": "[\n  {\n    \"column_label\": \"Claim Line\",\n    \"source_field\": \"claim_line\"\n  },\n  {\n    \"column_label\": \"Claim Batch\",\n    \"source_field\": \"claim_batch\"\n  },\n  {\n    \"column_label\": \"Sales Invoice\",\n    \"source_field\": \"sales_invoice\"\n  },\n  {\n    \"column_label\": \"Participant\",\n    \"source_field\": \"participant\"\n  },\n  {\n    \"column_label\": \"Participant Name\",\n    \"source_field\": \"participant_name\"\n  },\n  {\n    \"column_label\": \"Service Date\",\n    \"source_field\": \"service_date\"\n  },\n  {\n    \"column_label\": \"Support Item Number\",\n    \"source_field\": \"support_item_number\"\n  },\n  {\n    \"column_label\": \"Support Item Name\",\n    \"source_field\": \"support_item_name\"\n  },\n  {\n    \"column_label\": \"Quantity\",\n    \"source_field\": \"qty\"\n  },\n  {\n    \"column_label\": \"Rate\",\n    \"source_field\": \"rate\"\n  },\n  {\n    \"column_label\": \"Claim Amount\",\n    \"source_field\": \"claim_amount\"\n  },\n  {\n    \"column_label\": \"External Claim Reference\",\n    \"source_field\": \"external_claim_reference\"\n  }\n]",
+  "description": "Default safe claim export structure generated from NDIS Claim Lines.",
+  "docstatus": 0,
+  "doctype": "NDIS Claim Export Mapping Template",
+  "export_type": "NDIA Claim CSV",
+  "is_default": 1,
+  "modified": "2026-05-08 11:49:04.893397",
+  "name": "NDIS Default Claim Export",
+  "notes": null,
+  "template_name": "NDIS Default Claim Export"
+ },
+ {
+  "active": 1,
+  "column_mapping_json": "[\n  {\n    \"column_label\": \"Invoice Number\",\n    \"source_field\": \"sales_invoice\"\n  },\n  {\n    \"column_label\": \"Participant Name\",\n    \"source_field\": \"participant_name\"\n  },\n  {\n    \"column_label\": \"Participant ID\",\n    \"source_field\": \"participant\"\n  },\n  {\n    \"column_label\": \"Service Date\",\n    \"source_field\": \"service_date\"\n  },\n  {\n    \"column_label\": \"Support Item\",\n    \"source_field\": \"support_item_number\"\n  },\n  {\n    \"column_label\": \"Description\",\n    \"source_field\": \"support_item_name\"\n  },\n  {\n    \"column_label\": \"Qty\",\n    \"source_field\": \"qty\"\n  },\n  {\n    \"column_label\": \"Unit Price\",\n    \"source_field\": \"rate\"\n  },\n  {\n    \"column_label\": \"Amount\",\n    \"source_field\": \"claim_amount\"\n  },\n  {\n    \"column_label\": \"Funding Source\",\n    \"source_field\": \"funding_source\"\n  }\n]",
+  "description": "Plan manager friendly CSV with invoice, participant and claim details.",
+  "docstatus": 0,
+  "doctype": "NDIS Claim Export Mapping Template",
+  "export_type": "Plan Manager CSV",
+  "is_default": 1,
+  "modified": "2026-05-08 11:49:05.374512",
+  "name": "NDIS Plan Manager Claim Export",
+  "notes": null,
+  "template_name": "NDIS Plan Manager Claim Export"
+ },
+ {
+  "active": 1,
+  "column_mapping_json": "[\n  {\n    \"column_label\": \"Participant Name\",\n    \"source_field\": \"participant_name\"\n  },\n  {\n    \"column_label\": \"Invoice Number\",\n    \"source_field\": \"sales_invoice\"\n  },\n  {\n    \"column_label\": \"Service Date\",\n    \"source_field\": \"service_date\"\n  },\n  {\n    \"column_label\": \"Support Description\",\n    \"source_field\": \"support_item_name\"\n  },\n  {\n    \"column_label\": \"Support Item Number\",\n    \"source_field\": \"support_item_number\"\n  },\n  {\n    \"column_label\": \"Quantity\",\n    \"source_field\": \"qty\"\n  },\n  {\n    \"column_label\": \"Rate\",\n    \"source_field\": \"rate\"\n  },\n  {\n    \"column_label\": \"Total\",\n    \"source_field\": \"claim_amount\"\n  }\n]",
+  "description": "Self-managed participant friendly CSV export.",
+  "docstatus": 0,
+  "doctype": "NDIS Claim Export Mapping Template",
+  "export_type": "Self Managed CSV",
+  "is_default": 1,
+  "modified": "2026-05-08 11:49:05.382088",
+  "name": "NDIS Self Managed Claim Export",
+  "notes": null,
+  "template_name": "NDIS Self Managed Claim Export"
+ },
+ {
+  "active": 1,
+  "column_mapping_json": "[\n  {\n    \"column_label\": \"Claim Line\",\n    \"source_field\": \"claim_line\"\n  },\n  {\n    \"column_label\": \"Claim Batch\",\n    \"source_field\": \"claim_batch\"\n  },\n  {\n    \"column_label\": \"Claim Status\",\n    \"source_field\": \"claim_status\"\n  },\n  {\n    \"column_label\": \"Export Status\",\n    \"source_field\": \"export_status\"\n  },\n  {\n    \"column_label\": \"Sales Invoice\",\n    \"source_field\": \"sales_invoice\"\n  },\n  {\n    \"column_label\": \"Sales Invoice Item\",\n    \"source_field\": \"sales_invoice_item\"\n  },\n  {\n    \"column_label\": \"Participant\",\n    \"source_field\": \"participant\"\n  },\n  {\n    \"column_label\": \"Participant Name\",\n    \"source_field\": \"participant_name\"\n  },\n  {\n    \"column_label\": \"House\",\n    \"source_field\": \"house\"\n  },\n  {\n    \"column_label\": \"Funding Source\",\n    \"source_field\": \"funding_source\"\n  },\n  {\n    \"column_label\": \"Service Date\",\n    \"source_field\": \"service_date\"\n  },\n  {\n    \"column_label\": \"Support Item Number\",\n    \"source_field\": \"support_item_number\"\n  },\n  {\n    \"column_label\": \"Support Item Name\",\n    \"source_field\": \"support_item_name\"\n  },\n  {\n    \"column_label\": \"Qty\",\n    \"source_field\": \"qty\"\n  },\n  {\n    \"column_label\": \"Rate\",\n    \"source_field\": \"rate\"\n  },\n  {\n    \"column_label\": \"Claim Amount\",\n    \"source_field\": \"claim_amount\"\n  },\n  {\n    \"column_label\": \"External Claim Reference\",\n    \"source_field\": \"external_claim_reference\"\n  }\n]",
+  "description": "Internal audit/review CSV with extra control fields.",
+  "docstatus": 0,
+  "doctype": "NDIS Claim Export Mapping Template",
+  "export_type": "Internal Review CSV",
+  "is_default": 1,
+  "modified": "2026-05-08 11:49:05.389591",
+  "name": "NDIS Internal Review Claim Export",
+  "notes": null,
+  "template_name": "NDIS Internal Review Claim Export"
+ }
+]

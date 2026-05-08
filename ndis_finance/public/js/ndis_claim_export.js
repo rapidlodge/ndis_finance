@@ -16,6 +16,16 @@ frappe.ui.form.on("NDIS Claim Export", {
             }, __("Open"));
         }
 
+        if (frm.doc.export_mapping_template) {
+            frm.add_custom_button(__("Open Mapping Template"), () => {
+                frappe.set_route(
+                    "Form",
+                    "NDIS Claim Export Mapping Template",
+                    frm.doc.export_mapping_template
+                );
+            }, __("Open"));
+        }
+
         if (frm.doc.export_file) {
             frm.add_custom_button(__("Download Export File"), () => {
                 window.open(frm.doc.export_file);

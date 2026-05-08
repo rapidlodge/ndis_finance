@@ -40,6 +40,21 @@ fixtures = [
         ],
     },
     {
+        "dt": "NDIS Claim Export Mapping Template",
+        "filters": [
+            [
+                "template_name",
+                "in",
+                [
+                    "NDIS Default Claim Export",
+                    "NDIS Plan Manager Claim Export",
+                    "NDIS Self Managed Claim Export",
+                    "NDIS Internal Review Claim Export",
+                ],
+            ]
+        ],
+    },
+    {
         "dt": "Workspace",
         "filters": [["label", "=", "NDIS Finance"]],
     },
@@ -150,6 +165,7 @@ fixtures = [
                     "NDIS Remittance Import Line",
                     "NDIS Claim Export",
                     "NDIS Claim Export Line",
+                    "NDIS Claim Export Mapping Template",
                 ],
             ]
         ],
@@ -171,6 +187,7 @@ doctype_js.update(
         "NDIS Remittance Import Line": "public/js/ndis_remittance_import_line.js",
         "NDIS Claim Export": "public/js/ndis_claim_export.js",
         "NDIS Claim Export Line": "public/js/ndis_claim_export_line.js",
+        "NDIS Claim Export Mapping Template": "public/js/ndis_claim_export_mapping_template.js",
     }
 )
 
@@ -188,6 +205,7 @@ doctype_list_js.update(
         "NDIS Remittance Import Line": "public/js/ndis_remittance_import_line_list.js",
         "NDIS Claim Export": "public/js/ndis_claim_export_list.js",
         "NDIS Claim Export Line": "public/js/ndis_claim_export_line_list.js",
+        "NDIS Claim Export Mapping Template": "public/js/ndis_claim_export_mapping_template_list.js",
     }
 )
 

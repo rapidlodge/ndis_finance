@@ -57,6 +57,12 @@ frappe.ui.form.on("NDIS Claim Batch", {
                         reqd: 1,
                     },
                     {
+                        fieldname: "export_mapping_template",
+                        label: __("Export Mapping Template"),
+                        fieldtype: "Link",
+                        options: "NDIS Claim Export Mapping Template",
+                    },
+                    {
                         fieldname: "include_submitted",
                         label: __("Include Submitted Lines"),
                         fieldtype: "Check",
@@ -78,6 +84,7 @@ frappe.ui.form.on("NDIS Claim Batch", {
                                 args: {
                                     claim_batch: frm.doc.name,
                                     export_type: values.export_type,
+                                    export_mapping_template: values.export_mapping_template,
                                     include_submitted: values.include_submitted,
                                     include_exported: values.include_exported,
                                 },

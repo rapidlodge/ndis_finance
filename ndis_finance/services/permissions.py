@@ -62,6 +62,12 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    "manage_claim_export_template": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+        "NDIS Catalogue Manager",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",
