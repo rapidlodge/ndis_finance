@@ -176,6 +176,8 @@ fixtures = [
                     "NDIS Claim Export Mapping Template",
                     "NDIS Cost Pool",
                     "NDIS Cost Allocation Entry",
+                    "NDIS Payroll Cost Import",
+                    "NDIS Payroll Cost Import Line",
                 ],
             ]
         ],
@@ -200,6 +202,8 @@ doctype_js.update(
         "NDIS Claim Export Mapping Template": "public/js/ndis_claim_export_mapping_template.js",
         "NDIS Cost Pool": "public/js/ndis_cost_pool.js",
         "NDIS Cost Allocation Entry": "public/js/ndis_cost_allocation_entry.js",
+        "NDIS Payroll Cost Import": "public/js/ndis_payroll_cost_import.js",
+        "NDIS Payroll Cost Import Line": "public/js/ndis_payroll_cost_import_line.js",
     }
 )
 
@@ -220,6 +224,8 @@ doctype_list_js.update(
         "NDIS Claim Export Mapping Template": "public/js/ndis_claim_export_mapping_template_list.js",
         "NDIS Cost Pool": "public/js/ndis_cost_pool_list.js",
         "NDIS Cost Allocation Entry": "public/js/ndis_cost_allocation_entry_list.js",
+        "NDIS Payroll Cost Import": "public/js/ndis_payroll_cost_import_list.js",
+        "NDIS Payroll Cost Import Line": "public/js/ndis_payroll_cost_import_line_list.js",
     }
 )
 
