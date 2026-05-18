@@ -11,6 +11,170 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
+  "modified": "2026-05-18 20:22:11.688609",
+  "module": "NDIS Finance",
+  "name": "NDIS Payroll Cost Import Reconciliation Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Payroll Cost Import",
+  "reference_report": null,
+  "report_name": "NDIS Payroll Cost Import Reconciliation Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-18 20:22:11.909412",
+  "module": "NDIS Finance",
+  "name": "NDIS Payroll Cost by House Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Payroll Cost Import Line",
+  "reference_report": null,
+  "report_name": "NDIS Payroll Cost by House Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-18 20:22:11.954829",
+  "module": "NDIS Finance",
+  "name": "NDIS Payroll Cost by Participant Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Cost Allocation Entry",
+  "reference_report": null,
+  "report_name": "NDIS Payroll Cost by Participant Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-18 20:22:12.028925",
+  "module": "NDIS Finance",
+  "name": "NDIS Payroll Profitability Impact Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Cost Allocation Entry",
+  "reference_report": null,
+  "report_name": "NDIS Payroll Profitability Impact Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
   "modified": "2026-05-18 16:20:42.359471",
   "module": "NDIS Finance",
   "name": "NDIS True House Profitability Report",

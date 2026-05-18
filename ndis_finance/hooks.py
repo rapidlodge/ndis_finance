@@ -96,6 +96,10 @@ fixtures = [
                     "NDIS True Participant Profitability Report",
                     "NDIS Cost Type Analysis Report",
                     "NDIS Profitability Summary Report",
+                    "NDIS Payroll Cost Import Reconciliation Report",
+                    "NDIS Payroll Cost by House Report",
+                    "NDIS Payroll Cost by Participant Report",
+                    "NDIS Payroll Profitability Impact Report",
                 ],
             ]
         ],
