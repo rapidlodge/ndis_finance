@@ -92,6 +92,10 @@ fixtures = [
                     "NDIS Claim Cycle Time Report",
                     "NDIS House Profitability Foundation Report",
                     "NDIS Participant Profitability Foundation Report",
+                    "NDIS True House Profitability Report",
+                    "NDIS True Participant Profitability Report",
+                    "NDIS Cost Type Analysis Report",
+                    "NDIS Profitability Summary Report",
                 ],
             ]
         ],

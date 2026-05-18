@@ -11,6 +11,170 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
+  "modified": "2026-05-18 16:20:42.359471",
+  "module": "NDIS Finance",
+  "name": "NDIS True House Profitability Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Cost Allocation Entry",
+  "reference_report": null,
+  "report_name": "NDIS True House Profitability Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-18 16:20:42.588925",
+  "module": "NDIS Finance",
+  "name": "NDIS True Participant Profitability Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Cost Allocation Entry",
+  "reference_report": null,
+  "report_name": "NDIS True Participant Profitability Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-18 16:20:42.623308",
+  "module": "NDIS Finance",
+  "name": "NDIS Cost Type Analysis Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Cost Allocation Entry",
+  "reference_report": null,
+  "report_name": "NDIS Cost Type Analysis Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-18 16:20:42.655339",
+  "module": "NDIS Finance",
+  "name": "NDIS Profitability Summary Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Cost Allocation Entry",
+  "reference_report": null,
+  "report_name": "NDIS Profitability Summary Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
   "modified": "2026-05-08 13:03:55.897008",
   "module": "NDIS Finance",
   "name": "NDIS Funding Leakage Analytics Report",
