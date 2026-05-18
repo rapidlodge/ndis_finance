@@ -68,6 +68,21 @@ ACTION_ROLE_MAP = {
         "NDIS Finance Manager",
         "NDIS Catalogue Manager",
     ],
+    "manage_cost_pool": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "allocate_cost_pool": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "cancel_cost_pool": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",

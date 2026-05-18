@@ -4,6 +4,24 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 
 MODULE = "NDIS Finance"
+SETUP_PHASES = (
+    "ndis_finance.setup.phase1b.install",
+    "ndis_finance.setup.phase1c.install",
+    "ndis_finance.setup.phase1d.install",
+    "ndis_finance.setup.phase1e.install",
+    "ndis_finance.setup.phase1f.install",
+    "ndis_finance.setup.phase1g.install",
+    "ndis_finance.setup.phase1h.install",
+    "ndis_finance.setup.phase1j.install",
+    "ndis_finance.setup.phase1k.install",
+    "ndis_finance.setup.phase1l.install",
+    "ndis_finance.setup.phase1m.install",
+    "ndis_finance.setup.phase1n.install",
+    "ndis_finance.setup.phase1o.install",
+    "ndis_finance.setup.phase1p.install",
+    "ndis_finance.setup.phase1q.install",
+    "ndis_finance.setup.phase1r.install",
+)
 
 ROLES = [
     "NDIS Finance Manager",
@@ -99,7 +117,13 @@ def install():
     create_ndis_custom_fields()
     create_accounting_dimensions()
     frappe.db.commit()
+    run_setup_phases()
     return health_check()
+
+
+def run_setup_phases():
+    for phase in SETUP_PHASES:
+        frappe.get_attr(phase)()
 
 
 def validate_required_apps_and_doctypes():
