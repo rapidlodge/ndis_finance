@@ -111,6 +111,8 @@ fixtures = [
                     "NDIS Governance Pack Detail Report",
                     "NDIS Finance Production Readiness Report",
                     "NDIS Finance Readiness Exception Report",
+                    "NDIS Accounting Posting Policy Register Report",
+                    "NDIS Accounting Posting Preview Report",
                 ],
             ]
         ],
@@ -203,6 +205,9 @@ fixtures = [
                     "NDIS Executive Governance Pack Item",
                     "NDIS Finance Production Readiness Check",
                     "NDIS Finance Production Readiness Check Item",
+                    "NDIS Accounting Posting Policy",
+                    "NDIS Accounting Posting Preview",
+                    "NDIS Accounting Posting Preview Line",
                 ],
             ]
         ],
@@ -210,6 +215,10 @@ fixtures = [
     {
         "dt": "NDIS Executive Exception Rule",
         "filters": [["name", "like", "NDIS-EXEC-RULE-%"]],
+    },
+    {
+        "dt": "NDIS Accounting Posting Policy",
+        "filters": [["name", "like", "NDIS-ACC-POLICY-%"]],
     },
 ]
 
@@ -243,6 +252,9 @@ doctype_js.update(
         "NDIS Executive Governance Pack Item": "public/js/ndis_executive_governance_pack_item.js",
         "NDIS Finance Production Readiness Check": "public/js/ndis_finance_production_readiness_check.js",
         "NDIS Finance Production Readiness Check Item": "public/js/ndis_finance_production_readiness_check_item.js",
+        "NDIS Accounting Posting Policy": "public/js/ndis_accounting_posting_policy.js",
+        "NDIS Accounting Posting Preview": "public/js/ndis_accounting_posting_preview.js",
+        "NDIS Accounting Posting Preview Line": "public/js/ndis_accounting_posting_preview_line.js",
     }
 )
 
@@ -275,6 +287,9 @@ doctype_list_js.update(
         "NDIS Executive Governance Pack Item": "public/js/ndis_executive_governance_pack_item_list.js",
         "NDIS Finance Production Readiness Check": "public/js/ndis_finance_production_readiness_check_list.js",
         "NDIS Finance Production Readiness Check Item": "public/js/ndis_finance_production_readiness_check_item_list.js",
+        "NDIS Accounting Posting Policy": "public/js/ndis_accounting_posting_policy_list.js",
+        "NDIS Accounting Posting Preview": "public/js/ndis_accounting_posting_preview_list.js",
+        "NDIS Accounting Posting Preview Line": "public/js/ndis_accounting_posting_preview_line_list.js",
     }
 )
 

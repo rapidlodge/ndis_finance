@@ -1247,5 +1247,87 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-19 20:11:02.390596",
+  "module": "NDIS Finance",
+  "name": "NDIS Accounting Posting Policy Register Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Accounting Posting Policy",
+  "reference_report": null,
+  "report_name": "NDIS Accounting Posting Policy Register Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-19 20:11:02.617956",
+  "module": "NDIS Finance",
+  "name": "NDIS Accounting Posting Preview Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Accounting Posting Preview",
+  "reference_report": null,
+  "report_name": "NDIS Accounting Posting Preview Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
