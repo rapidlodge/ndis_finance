@@ -155,6 +155,20 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    "run_production_readiness_check": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "acknowledge_production_readiness": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_production_readiness_check": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",

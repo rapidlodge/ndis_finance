@@ -109,6 +109,8 @@ fixtures = [
                     "NDIS Executive Action Plan Overdue Report",
                     "NDIS Executive Governance Pack Report",
                     "NDIS Governance Pack Detail Report",
+                    "NDIS Finance Production Readiness Report",
+                    "NDIS Finance Readiness Exception Report",
                 ],
             ]
         ],
@@ -199,6 +201,8 @@ fixtures = [
                     "NDIS Executive Exception Action Step",
                     "NDIS Executive Governance Pack",
                     "NDIS Executive Governance Pack Item",
+                    "NDIS Finance Production Readiness Check",
+                    "NDIS Finance Production Readiness Check Item",
                 ],
             ]
         ],
@@ -237,6 +241,8 @@ doctype_js.update(
         "NDIS Executive Exception Action Step": "public/js/ndis_executive_exception_action_step.js",
         "NDIS Executive Governance Pack": "public/js/ndis_executive_governance_pack.js",
         "NDIS Executive Governance Pack Item": "public/js/ndis_executive_governance_pack_item.js",
+        "NDIS Finance Production Readiness Check": "public/js/ndis_finance_production_readiness_check.js",
+        "NDIS Finance Production Readiness Check Item": "public/js/ndis_finance_production_readiness_check_item.js",
     }
 )
 
@@ -267,6 +273,8 @@ doctype_list_js.update(
         "NDIS Executive Exception Action Step": "public/js/ndis_executive_exception_action_step_list.js",
         "NDIS Executive Governance Pack": "public/js/ndis_executive_governance_pack_list.js",
         "NDIS Executive Governance Pack Item": "public/js/ndis_executive_governance_pack_item_list.js",
+        "NDIS Finance Production Readiness Check": "public/js/ndis_finance_production_readiness_check_list.js",
+        "NDIS Finance Production Readiness Check Item": "public/js/ndis_finance_production_readiness_check_item_list.js",
     }
 )
 
