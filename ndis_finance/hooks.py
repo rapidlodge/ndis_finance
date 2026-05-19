@@ -107,6 +107,8 @@ fixtures = [
                     "NDIS Executive Exception Rule Status Report",
                     "NDIS Executive Action Plan Register Report",
                     "NDIS Executive Action Plan Overdue Report",
+                    "NDIS Executive Governance Pack Report",
+                    "NDIS Governance Pack Detail Report",
                 ],
             ]
         ],
@@ -195,6 +197,8 @@ fixtures = [
                     "NDIS Executive Exception Alert",
                     "NDIS Executive Exception Action Plan",
                     "NDIS Executive Exception Action Step",
+                    "NDIS Executive Governance Pack",
+                    "NDIS Executive Governance Pack Item",
                 ],
             ]
         ],
@@ -231,6 +235,8 @@ doctype_js.update(
         "NDIS Executive Exception Alert": "public/js/ndis_executive_exception_alert.js",
         "NDIS Executive Exception Action Plan": "public/js/ndis_executive_exception_action_plan.js",
         "NDIS Executive Exception Action Step": "public/js/ndis_executive_exception_action_step.js",
+        "NDIS Executive Governance Pack": "public/js/ndis_executive_governance_pack.js",
+        "NDIS Executive Governance Pack Item": "public/js/ndis_executive_governance_pack_item.js",
     }
 )
 
@@ -259,6 +265,8 @@ doctype_list_js.update(
         "NDIS Executive Exception Alert": "public/js/ndis_executive_exception_alert_list.js",
         "NDIS Executive Exception Action Plan": "public/js/ndis_executive_exception_action_plan_list.js",
         "NDIS Executive Exception Action Step": "public/js/ndis_executive_exception_action_step_list.js",
+        "NDIS Executive Governance Pack": "public/js/ndis_executive_governance_pack_list.js",
+        "NDIS Executive Governance Pack Item": "public/js/ndis_executive_governance_pack_item_list.js",
     }
 )
 
