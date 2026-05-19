@@ -120,6 +120,27 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    "manage_executive_action_plan": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "update_executive_action_plan": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+        "NDIS Finance Officer",
+    ],
+    "complete_executive_action_plan": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "cancel_executive_action_plan": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",

@@ -14,6 +14,50 @@ frappe.ui.form.on("NDIS Executive Exception Alert", {
             }, __("Open"));
         }
 
+        if (["Open", "In Review"].includes(frm.doc.status)) {
+            frm.add_custom_button(__("Create Action Plan"), () => {
+                frappe.prompt([
+                    {
+                        fieldname: "assigned_to",
+                        label: __("Assigned To"),
+                        fieldtype: "Link",
+                        options: "User"
+                    },
+                    {
+                        fieldname: "due_date",
+                        label: __("Due Date"),
+                        fieldtype: "Date"
+                    },
+                    {
+                        fieldname: "priority",
+                        label: __("Priority"),
+                        fieldtype: "Select",
+                        options: "\nLow\nMedium\nHigh\nCritical",
+                        default: frm.doc.severity || "Medium"
+                    }
+                ], (values) => {
+                    frappe.call({
+                        method: "ndis_finance.services.executive_action_plans.create_action_plan_from_alert",
+                        args: {
+                            alert: frm.doc.name,
+                            assigned_to: values.assigned_to,
+                            due_date: values.due_date,
+                            priority: values.priority
+                        },
+                        freeze: true,
+                        freeze_message: __("Creating action plan..."),
+                        callback(r) {
+                            if (r.message && r.message.action_plan) {
+                                frappe.set_route("Form", "NDIS Executive Exception Action Plan", r.message.action_plan);
+                            } else {
+                                frappe.msgprint((r.message && r.message.message) || __("Action plan was not created."));
+                            }
+                        }
+                    });
+                }, __("Create Action Plan"), __("Create"));
+            }, __("NDIS Actions"));
+        }
+
         if (frm.doc.status === "Open") {
             frm.add_custom_button(__("Mark In Review"), () => {
                 frappe.prompt([

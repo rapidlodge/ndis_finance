@@ -105,6 +105,8 @@ fixtures = [
                     "NDIS Executive Snapshot Detail Report",
                     "NDIS Executive Exception Register Report",
                     "NDIS Executive Exception Rule Status Report",
+                    "NDIS Executive Action Plan Register Report",
+                    "NDIS Executive Action Plan Overdue Report",
                 ],
             ]
         ],
@@ -191,6 +193,8 @@ fixtures = [
                     "NDIS Executive Dashboard Snapshot Metric",
                     "NDIS Executive Exception Rule",
                     "NDIS Executive Exception Alert",
+                    "NDIS Executive Exception Action Plan",
+                    "NDIS Executive Exception Action Step",
                 ],
             ]
         ],
@@ -225,6 +229,8 @@ doctype_js.update(
         "NDIS Executive Dashboard Snapshot Metric": "public/js/ndis_executive_dashboard_snapshot_metric.js",
         "NDIS Executive Exception Rule": "public/js/ndis_executive_exception_rule.js",
         "NDIS Executive Exception Alert": "public/js/ndis_executive_exception_alert.js",
+        "NDIS Executive Exception Action Plan": "public/js/ndis_executive_exception_action_plan.js",
+        "NDIS Executive Exception Action Step": "public/js/ndis_executive_exception_action_step.js",
     }
 )
 
@@ -251,6 +257,8 @@ doctype_list_js.update(
         "NDIS Executive Dashboard Snapshot Metric": "public/js/ndis_executive_dashboard_snapshot_metric_list.js",
         "NDIS Executive Exception Rule": "public/js/ndis_executive_exception_rule_list.js",
         "NDIS Executive Exception Alert": "public/js/ndis_executive_exception_alert_list.js",
+        "NDIS Executive Exception Action Plan": "public/js/ndis_executive_exception_action_plan_list.js",
+        "NDIS Executive Exception Action Step": "public/js/ndis_executive_exception_action_step_list.js",
     }
 )
 
@@ -271,5 +279,9 @@ if phase1w_daily_job not in daily_events:
 phase1x_daily_job = "ndis_finance.services.executive_exceptions.daily_executive_exception_evaluation_job"
 if phase1x_daily_job not in daily_events:
     daily_events.append(phase1x_daily_job)
+
+phase1y_daily_job = "ndis_finance.services.executive_action_plans.daily_action_plan_overdue_monitor_job"
+if phase1y_daily_job not in daily_events:
+    daily_events.append(phase1y_daily_job)
 
 scheduler_events["daily"] = daily_events

@@ -1001,5 +1001,87 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-19 16:22:57.754810",
+  "module": "NDIS Finance",
+  "name": "NDIS Executive Action Plan Register Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Executive Exception Action Plan",
+  "reference_report": null,
+  "report_name": "NDIS Executive Action Plan Register Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-19 16:22:57.971889",
+  "module": "NDIS Finance",
+  "name": "NDIS Executive Action Plan Overdue Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Executive Exception Action Plan",
+  "reference_report": null,
+  "report_name": "NDIS Executive Action Plan Overdue Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
