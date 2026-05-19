@@ -100,6 +100,7 @@ fixtures = [
                     "NDIS Payroll Cost by House Report",
                     "NDIS Payroll Cost by Participant Report",
                     "NDIS Payroll Profitability Impact Report",
+                    "NDIS Profitability Executive Dashboard",
                 ],
             ]
         ],
