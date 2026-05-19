@@ -103,6 +103,8 @@ fixtures = [
                     "NDIS Profitability Executive Dashboard",
                     "NDIS Executive KPI Trend Report",
                     "NDIS Executive Snapshot Detail Report",
+                    "NDIS Executive Exception Register Report",
+                    "NDIS Executive Exception Rule Status Report",
                 ],
             ]
         ],
@@ -187,9 +189,15 @@ fixtures = [
                     "NDIS Payroll Cost Import Line",
                     "NDIS Executive Dashboard Snapshot",
                     "NDIS Executive Dashboard Snapshot Metric",
+                    "NDIS Executive Exception Rule",
+                    "NDIS Executive Exception Alert",
                 ],
             ]
         ],
+    },
+    {
+        "dt": "NDIS Executive Exception Rule",
+        "filters": [["name", "like", "NDIS-EXEC-RULE-%"]],
     },
 ]
 
@@ -215,6 +223,8 @@ doctype_js.update(
         "NDIS Payroll Cost Import Line": "public/js/ndis_payroll_cost_import_line.js",
         "NDIS Executive Dashboard Snapshot": "public/js/ndis_executive_dashboard_snapshot.js",
         "NDIS Executive Dashboard Snapshot Metric": "public/js/ndis_executive_dashboard_snapshot_metric.js",
+        "NDIS Executive Exception Rule": "public/js/ndis_executive_exception_rule.js",
+        "NDIS Executive Exception Alert": "public/js/ndis_executive_exception_alert.js",
     }
 )
 
@@ -239,6 +249,8 @@ doctype_list_js.update(
         "NDIS Payroll Cost Import Line": "public/js/ndis_payroll_cost_import_line_list.js",
         "NDIS Executive Dashboard Snapshot": "public/js/ndis_executive_dashboard_snapshot_list.js",
         "NDIS Executive Dashboard Snapshot Metric": "public/js/ndis_executive_dashboard_snapshot_metric_list.js",
+        "NDIS Executive Exception Rule": "public/js/ndis_executive_exception_rule_list.js",
+        "NDIS Executive Exception Alert": "public/js/ndis_executive_exception_alert_list.js",
     }
 )
 
@@ -255,5 +267,9 @@ if phase1k_daily_job not in daily_events:
 phase1w_daily_job = "ndis_finance.services.executive_snapshots.daily_executive_dashboard_snapshot_job"
 if phase1w_daily_job not in daily_events:
     daily_events.append(phase1w_daily_job)
+
+phase1x_daily_job = "ndis_finance.services.executive_exceptions.daily_executive_exception_evaluation_job"
+if phase1x_daily_job not in daily_events:
+    daily_events.append(phase1x_daily_job)
 
 scheduler_events["daily"] = daily_events
