@@ -101,6 +101,8 @@ fixtures = [
                     "NDIS Payroll Cost by Participant Report",
                     "NDIS Payroll Profitability Impact Report",
                     "NDIS Profitability Executive Dashboard",
+                    "NDIS Executive KPI Trend Report",
+                    "NDIS Executive Snapshot Detail Report",
                 ],
             ]
         ],
@@ -183,6 +185,8 @@ fixtures = [
                     "NDIS Cost Allocation Entry",
                     "NDIS Payroll Cost Import",
                     "NDIS Payroll Cost Import Line",
+                    "NDIS Executive Dashboard Snapshot",
+                    "NDIS Executive Dashboard Snapshot Metric",
                 ],
             ]
         ],
@@ -209,6 +213,8 @@ doctype_js.update(
         "NDIS Cost Allocation Entry": "public/js/ndis_cost_allocation_entry.js",
         "NDIS Payroll Cost Import": "public/js/ndis_payroll_cost_import.js",
         "NDIS Payroll Cost Import Line": "public/js/ndis_payroll_cost_import_line.js",
+        "NDIS Executive Dashboard Snapshot": "public/js/ndis_executive_dashboard_snapshot.js",
+        "NDIS Executive Dashboard Snapshot Metric": "public/js/ndis_executive_dashboard_snapshot_metric.js",
     }
 )
 
@@ -231,6 +237,8 @@ doctype_list_js.update(
         "NDIS Cost Allocation Entry": "public/js/ndis_cost_allocation_entry_list.js",
         "NDIS Payroll Cost Import": "public/js/ndis_payroll_cost_import_list.js",
         "NDIS Payroll Cost Import Line": "public/js/ndis_payroll_cost_import_line_list.js",
+        "NDIS Executive Dashboard Snapshot": "public/js/ndis_executive_dashboard_snapshot_list.js",
+        "NDIS Executive Dashboard Snapshot Metric": "public/js/ndis_executive_dashboard_snapshot_metric_list.js",
     }
 )
 
@@ -243,5 +251,9 @@ if not isinstance(daily_events, list):
 phase1k_daily_job = "ndis_finance.services.recovery_scheduler.daily_recovery_monitor_job"
 if phase1k_daily_job not in daily_events:
     daily_events.append(phase1k_daily_job)
+
+phase1w_daily_job = "ndis_finance.services.executive_snapshots.daily_executive_dashboard_snapshot_job"
+if phase1w_daily_job not in daily_events:
+    daily_events.append(phase1w_daily_job)
 
 scheduler_events["daily"] = daily_events

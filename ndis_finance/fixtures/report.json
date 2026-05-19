@@ -11,6 +11,88 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
+  "modified": "2026-05-19 12:30:20.584755",
+  "module": "NDIS Finance",
+  "name": "NDIS Executive KPI Trend Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Executive Dashboard Snapshot",
+  "reference_report": null,
+  "report_name": "NDIS Executive KPI Trend Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-19 12:30:20.802089",
+  "module": "NDIS Finance",
+  "name": "NDIS Executive Snapshot Detail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Executive Dashboard Snapshot Metric",
+  "reference_report": null,
+  "report_name": "NDIS Executive Snapshot Detail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
   "modified": "2026-05-19 12:02:23.129850",
   "module": "NDIS Finance",
   "name": "NDIS Profitability Executive Dashboard",

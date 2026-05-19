@@ -93,6 +93,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    "create_executive_snapshot": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+        "NDIS Automation Manager",
+    ],
+    "cancel_executive_snapshot": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",
