@@ -16,7 +16,10 @@ doc_events = {
         "on_submit": "ndis_finance.services.budget_control.update_usage_from_sales_invoice",
         "before_cancel": "ndis_finance.services.claim_batch_engine.before_sales_invoice_cancel",
         "on_cancel": "ndis_finance.services.claim_batch_engine.on_sales_invoice_cancelled",
-    }
+    },
+    "Journal Entry": {
+        "before_submit": "ndis_finance.services.sandbox_accounting_posting.block_sandbox_journal_entry_submit",
+    },
 }
 
 # Fixture strategy:
@@ -115,6 +118,8 @@ fixtures = [
                     "NDIS Accounting Posting Preview Report",
                     "NDIS Accounting Posting Request Register Report",
                     "NDIS Accounting Posting Request Line Report",
+                    "NDIS Sandbox Accounting Posting Run Report",
+                    "NDIS Sandbox Accounting Posting Run Line Report",
                 ],
             ]
         ],
@@ -212,6 +217,8 @@ fixtures = [
                     "NDIS Accounting Posting Preview Line",
                     "NDIS Accounting Posting Request",
                     "NDIS Accounting Posting Request Line",
+                    "NDIS Sandbox Accounting Posting Run",
+                    "NDIS Sandbox Accounting Posting Run Line",
                 ],
             ]
         ],
@@ -261,6 +268,8 @@ doctype_js.update(
         "NDIS Accounting Posting Preview Line": "public/js/ndis_accounting_posting_preview_line.js",
         "NDIS Accounting Posting Request": "public/js/ndis_accounting_posting_request.js",
         "NDIS Accounting Posting Request Line": "public/js/ndis_accounting_posting_request_line.js",
+        "NDIS Sandbox Accounting Posting Run": "public/js/ndis_sandbox_accounting_posting_run.js",
+        "NDIS Sandbox Accounting Posting Run Line": "public/js/ndis_sandbox_accounting_posting_run_line.js",
     }
 )
 
@@ -298,6 +307,8 @@ doctype_list_js.update(
         "NDIS Accounting Posting Preview Line": "public/js/ndis_accounting_posting_preview_line_list.js",
         "NDIS Accounting Posting Request": "public/js/ndis_accounting_posting_request_list.js",
         "NDIS Accounting Posting Request Line": "public/js/ndis_accounting_posting_request_line_list.js",
+        "NDIS Sandbox Accounting Posting Run": "public/js/ndis_sandbox_accounting_posting_run_list.js",
+        "NDIS Sandbox Accounting Posting Run Line": "public/js/ndis_sandbox_accounting_posting_run_line_list.js",
     }
 )
 

@@ -120,6 +120,73 @@ frappe.ui.form.on("NDIS Accounting Posting Request", {
             }, __("NDIS Actions"));
         }
 
+        if (frm.doc.status === "Dry Run Passed") {
+            frm.add_custom_button(__("Create Sandbox Draft JE"), () => {
+                frappe.prompt([
+                    {
+                        fieldname: "acknowledgement",
+                        label: __("Acknowledgement"),
+                        fieldtype: "Data",
+                        reqd: 1,
+                        description: __("Required: I_CONFIRM_NDIS_FINANCE_SANDBOX_JE_DRAFT_ONLY")
+                    },
+                    {
+                        fieldname: "debit_account",
+                        label: __("Fallback Debit Account"),
+                        fieldtype: "Link",
+                        options: "Account"
+                    },
+                    {
+                        fieldname: "credit_account",
+                        label: __("Fallback Credit Account"),
+                        fieldtype: "Link",
+                        options: "Account"
+                    },
+                    {
+                        fieldname: "amount",
+                        label: __("Fallback Amount"),
+                        fieldtype: "Currency"
+                    },
+                    {
+                        fieldname: "cost_center",
+                        label: __("Cost Center"),
+                        fieldtype: "Link",
+                        options: "Cost Center"
+                    }
+                ], (values) => {
+                    frappe.confirm(
+                        __("This creates a SANDBOX DRAFT Journal Entry only. It will not submit, will not create GL, and is blocked from submission. Continue?"),
+                        () => {
+                            frappe.call({
+                                method: "ndis_finance.services.sandbox_accounting_posting.create_sandbox_journal_entry_draft",
+                                args: {
+                                    posting_request: frm.doc.name,
+                                    acknowledgement: values.acknowledgement,
+                                    debit_account: values.debit_account,
+                                    credit_account: values.credit_account,
+                                    amount: values.amount,
+                                    cost_center: values.cost_center
+                                },
+                                freeze: true,
+                                freeze_message: __("Creating sandbox draft Journal Entry..."),
+                                callback(r) {
+                                    if (r.message && r.message.sandbox_run) {
+                                        frappe.set_route("Form", "NDIS Sandbox Accounting Posting Run", r.message.sandbox_run);
+                                    } else {
+                                        frappe.msgprint({
+                                            title: __("Sandbox Result"),
+                                            message: `<pre>${JSON.stringify(r.message || {}, null, 2)}</pre>`,
+                                            indicator: "blue"
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    );
+                }, __("Create Sandbox Draft JE"), __("Create"));
+            }, __("NDIS Actions"));
+        }
+
         if (!["Cancelled", "Rejected"].includes(frm.doc.status)) {
             frm.add_custom_button(__("Cancel Request"), () => {
                 frappe.prompt([
