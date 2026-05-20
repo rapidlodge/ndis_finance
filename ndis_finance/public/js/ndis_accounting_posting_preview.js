@@ -33,6 +33,32 @@ frappe.ui.form.on("NDIS Accounting Posting Preview", {
         }
 
         if (frm.doc.status !== "Cancelled") {
+            frm.add_custom_button(__("Create Posting Request"), () => {
+                frappe.confirm(
+                    __("This creates an internal posting request for approval and dry-run only. It will not create any accounting entry. Continue?"),
+                    () => {
+                        frappe.call({
+                            method: "ndis_finance.services.accounting_posting_requests.create_accounting_posting_request_from_preview",
+                            args: {
+                                posting_preview: frm.doc.name,
+                                replace_existing: 0
+                            },
+                            freeze: true,
+                            freeze_message: __("Creating posting request..."),
+                            callback(r) {
+                                if (r.message && r.message.posting_request) {
+                                    frappe.set_route("Form", "NDIS Accounting Posting Request", r.message.posting_request);
+                                } else {
+                                    frappe.msgprint((r.message && r.message.message) || __("Posting request was not created."));
+                                }
+                            }
+                        });
+                    }
+                );
+            }, __("NDIS Actions"));
+        }
+
+        if (frm.doc.status !== "Cancelled") {
             frm.add_custom_button(__("Cancel Preview"), () => {
                 frappe.prompt([
                     {

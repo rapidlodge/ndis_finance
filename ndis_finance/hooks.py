@@ -113,6 +113,8 @@ fixtures = [
                     "NDIS Finance Readiness Exception Report",
                     "NDIS Accounting Posting Policy Register Report",
                     "NDIS Accounting Posting Preview Report",
+                    "NDIS Accounting Posting Request Register Report",
+                    "NDIS Accounting Posting Request Line Report",
                 ],
             ]
         ],
@@ -208,6 +210,8 @@ fixtures = [
                     "NDIS Accounting Posting Policy",
                     "NDIS Accounting Posting Preview",
                     "NDIS Accounting Posting Preview Line",
+                    "NDIS Accounting Posting Request",
+                    "NDIS Accounting Posting Request Line",
                 ],
             ]
         ],
@@ -255,6 +259,8 @@ doctype_js.update(
         "NDIS Accounting Posting Policy": "public/js/ndis_accounting_posting_policy.js",
         "NDIS Accounting Posting Preview": "public/js/ndis_accounting_posting_preview.js",
         "NDIS Accounting Posting Preview Line": "public/js/ndis_accounting_posting_preview_line.js",
+        "NDIS Accounting Posting Request": "public/js/ndis_accounting_posting_request.js",
+        "NDIS Accounting Posting Request Line": "public/js/ndis_accounting_posting_request_line.js",
     }
 )
 
@@ -290,6 +296,8 @@ doctype_list_js.update(
         "NDIS Accounting Posting Policy": "public/js/ndis_accounting_posting_policy_list.js",
         "NDIS Accounting Posting Preview": "public/js/ndis_accounting_posting_preview_list.js",
         "NDIS Accounting Posting Preview Line": "public/js/ndis_accounting_posting_preview_line_list.js",
+        "NDIS Accounting Posting Request": "public/js/ndis_accounting_posting_request_list.js",
+        "NDIS Accounting Posting Request Line": "public/js/ndis_accounting_posting_request_line_list.js",
     }
 )
 
