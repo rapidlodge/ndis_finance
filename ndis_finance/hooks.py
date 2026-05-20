@@ -122,6 +122,8 @@ fixtures = [
                     "NDIS Sandbox Accounting Posting Run Line Report",
                     "NDIS Sandbox Accounting Cleanup Report",
                     "NDIS Sandbox Journal Entry Hygiene Report",
+                    "NDIS Accounting Sandbox Completion Gate Report",
+                    "NDIS Accounting Sandbox Completion Exception Report",
                 ],
             ]
         ],
@@ -223,6 +225,8 @@ fixtures = [
                     "NDIS Sandbox Accounting Posting Run Line",
                     "NDIS Sandbox Accounting Cleanup Run",
                     "NDIS Sandbox Accounting Cleanup Line",
+                    "NDIS Accounting Sandbox Completion Gate",
+                    "NDIS Accounting Sandbox Completion Gate Item",
                 ],
             ]
         ],
@@ -276,6 +280,8 @@ doctype_js.update(
         "NDIS Sandbox Accounting Posting Run Line": "public/js/ndis_sandbox_accounting_posting_run_line.js",
         "NDIS Sandbox Accounting Cleanup Run": "public/js/ndis_sandbox_accounting_cleanup_run.js",
         "NDIS Sandbox Accounting Cleanup Line": "public/js/ndis_sandbox_accounting_cleanup_line.js",
+        "NDIS Accounting Sandbox Completion Gate": "public/js/ndis_accounting_sandbox_completion_gate.js",
+        "NDIS Accounting Sandbox Completion Gate Item": "public/js/ndis_accounting_sandbox_completion_gate_item.js",
     }
 )
 
@@ -317,6 +323,8 @@ doctype_list_js.update(
         "NDIS Sandbox Accounting Posting Run Line": "public/js/ndis_sandbox_accounting_posting_run_line_list.js",
         "NDIS Sandbox Accounting Cleanup Run": "public/js/ndis_sandbox_accounting_cleanup_run_list.js",
         "NDIS Sandbox Accounting Cleanup Line": "public/js/ndis_sandbox_accounting_cleanup_line_list.js",
+        "NDIS Accounting Sandbox Completion Gate": "public/js/ndis_accounting_sandbox_completion_gate_list.js",
+        "NDIS Accounting Sandbox Completion Gate Item": "public/js/ndis_accounting_sandbox_completion_gate_item_list.js",
     }
 )
 

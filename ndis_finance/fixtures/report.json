@@ -1575,5 +1575,87 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-20 18:17:23.793819",
+  "module": "NDIS Finance",
+  "name": "NDIS Accounting Sandbox Completion Gate Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Accounting Sandbox Completion Gate",
+  "reference_report": null,
+  "report_name": "NDIS Accounting Sandbox Completion Gate Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-20 18:17:24.068580",
+  "module": "NDIS Finance",
+  "name": "NDIS Accounting Sandbox Completion Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Accounting Sandbox Completion Gate Item",
+  "reference_report": null,
+  "report_name": "NDIS Accounting Sandbox Completion Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
