@@ -124,6 +124,9 @@ fixtures = [
                     "NDIS Sandbox Journal Entry Hygiene Report",
                     "NDIS Accounting Sandbox Completion Gate Report",
                     "NDIS Accounting Sandbox Completion Exception Report",
+                    "NDIS Accounting Design Matrix Report",
+                    "NDIS Accounting Design Review Report",
+                    "NDIS Accounting Design Exception Report",
                 ],
             ]
         ],
@@ -227,6 +230,9 @@ fixtures = [
                     "NDIS Sandbox Accounting Cleanup Line",
                     "NDIS Accounting Sandbox Completion Gate",
                     "NDIS Accounting Sandbox Completion Gate Item",
+                    "NDIS Accounting Design Matrix",
+                    "NDIS Accounting Design Review",
+                    "NDIS Accounting Design Review Item",
                 ],
             ]
         ],
@@ -238,6 +244,10 @@ fixtures = [
     {
         "dt": "NDIS Accounting Posting Policy",
         "filters": [["name", "like", "NDIS-ACC-POLICY-%"]],
+    },
+    {
+        "dt": "NDIS Accounting Design Matrix",
+        "filters": [["name", "like", "NDIS-ACC-DESIGN-%"]],
     },
 ]
 
@@ -282,6 +292,9 @@ doctype_js.update(
         "NDIS Sandbox Accounting Cleanup Line": "public/js/ndis_sandbox_accounting_cleanup_line.js",
         "NDIS Accounting Sandbox Completion Gate": "public/js/ndis_accounting_sandbox_completion_gate.js",
         "NDIS Accounting Sandbox Completion Gate Item": "public/js/ndis_accounting_sandbox_completion_gate_item.js",
+        "NDIS Accounting Design Matrix": "public/js/ndis_accounting_design_matrix.js",
+        "NDIS Accounting Design Review": "public/js/ndis_accounting_design_review.js",
+        "NDIS Accounting Design Review Item": "public/js/ndis_accounting_design_review_item.js",
     }
 )
 
@@ -325,6 +338,9 @@ doctype_list_js.update(
         "NDIS Sandbox Accounting Cleanup Line": "public/js/ndis_sandbox_accounting_cleanup_line_list.js",
         "NDIS Accounting Sandbox Completion Gate": "public/js/ndis_accounting_sandbox_completion_gate_list.js",
         "NDIS Accounting Sandbox Completion Gate Item": "public/js/ndis_accounting_sandbox_completion_gate_item_list.js",
+        "NDIS Accounting Design Matrix": "public/js/ndis_accounting_design_matrix_list.js",
+        "NDIS Accounting Design Review": "public/js/ndis_accounting_design_review_list.js",
+        "NDIS Accounting Design Review Item": "public/js/ndis_accounting_design_review_item_list.js",
     }
 )
 
