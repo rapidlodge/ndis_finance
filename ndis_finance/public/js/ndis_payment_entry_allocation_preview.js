@@ -42,6 +42,67 @@ frappe.ui.form.on("NDIS Payment Entry Allocation Preview", {
             });
         }, __("Open"));
 
+        if (["Previewed", "Needs Review"].includes(frm.doc.status)) {
+            frm.add_custom_button(__("Create Sandbox Draft Payment Entry"), () => {
+                frappe.prompt([
+                    {
+                        fieldname: "acknowledgement",
+                        label: __("Acknowledgement"),
+                        fieldtype: "Data",
+                        reqd: 1,
+                        description: __("Required: I_CONFIRM_NDIS_FINANCE_SANDBOX_PAYMENT_ENTRY_DRAFT_ONLY")
+                    },
+                    {
+                        fieldname: "bank_account",
+                        label: __("Fallback Bank Account / Paid To"),
+                        fieldtype: "Link",
+                        options: "Account"
+                    },
+                    {
+                        fieldname: "receivable_account",
+                        label: __("Fallback Receivable Account / Paid From"),
+                        fieldtype: "Link",
+                        options: "Account"
+                    },
+                    {
+                        fieldname: "fallback_customer",
+                        label: __("Fallback Customer"),
+                        fieldtype: "Link",
+                        options: "Customer"
+                    }
+                ], (values) => {
+                    frappe.confirm(
+                        __("This creates a sandbox draft Payment Entry only. It will not submit, will not create GL, and is blocked from submission. Continue?"),
+                        () => {
+                            frappe.call({
+                                method: "ndis_finance.services.sandbox_payment_entry_posting.create_sandbox_payment_entry_draft",
+                                args: {
+                                    allocation_preview: frm.doc.name,
+                                    acknowledgement: values.acknowledgement,
+                                    bank_account: values.bank_account,
+                                    receivable_account: values.receivable_account,
+                                    fallback_customer: values.fallback_customer
+                                },
+                                freeze: true,
+                                freeze_message: __("Creating sandbox draft Payment Entry..."),
+                                callback(r) {
+                                    if (r.message && r.message.sandbox_run) {
+                                        frappe.set_route("Form", "NDIS Sandbox Payment Entry Run", r.message.sandbox_run);
+                                    } else {
+                                        frappe.msgprint({
+                                            title: __("Sandbox Payment Entry Result"),
+                                            message: `<pre>${JSON.stringify(r.message || {}, null, 2)}</pre>`,
+                                            indicator: "blue"
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    );
+                }, __("Create Sandbox Draft Payment Entry"), __("Create"));
+            }, __("NDIS Actions"));
+        }
+
         if (frm.doc.status !== "Cancelled") {
             frm.add_custom_button(__("Cancel Preview"), () => {
                 frappe.prompt([

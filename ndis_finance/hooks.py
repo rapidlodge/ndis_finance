@@ -20,6 +20,9 @@ doc_events = {
     "Journal Entry": {
         "before_submit": "ndis_finance.services.sandbox_accounting_posting.block_sandbox_journal_entry_submit",
     },
+    "Payment Entry": {
+        "before_submit": "ndis_finance.services.sandbox_payment_entry_posting.block_sandbox_payment_entry_submit",
+    },
 }
 
 # Fixture strategy:
@@ -130,6 +133,8 @@ fixtures = [
                     "NDIS Payment Entry Mapping Rule Report",
                     "NDIS Payment Entry Allocation Preview Report",
                     "NDIS Payment Entry Allocation Exception Report",
+                    "NDIS Sandbox Payment Entry Run Report",
+                    "NDIS Sandbox Payment Entry Run Line Report",
                 ],
             ]
         ],
@@ -239,6 +244,8 @@ fixtures = [
                     "NDIS Payment Entry Mapping Rule",
                     "NDIS Payment Entry Allocation Preview",
                     "NDIS Payment Entry Allocation Preview Line",
+                    "NDIS Sandbox Payment Entry Run",
+                    "NDIS Sandbox Payment Entry Run Line",
                 ],
             ]
         ],
@@ -258,6 +265,22 @@ fixtures = [
     {
         "dt": "NDIS Payment Entry Mapping Rule",
         "filters": [["name", "like", "NDIS-PE-MAP-%"]],
+    },
+    {
+        "dt": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Payment Entry-custom_ndis_sandbox_pe_section",
+                    "Payment Entry-custom_ndis_sandbox_payment_entry_run",
+                    "Payment Entry-custom_ndis_payment_entry_allocation_preview",
+                    "Payment Entry-custom_ndis_sandbox_payment_entry_draft_only",
+                    "Payment Entry-custom_ndis_sandbox_payment_entry_acknowledgement",
+                ],
+            ]
+        ],
     },
 ]
 
@@ -308,6 +331,8 @@ doctype_js.update(
         "NDIS Payment Entry Mapping Rule": "public/js/ndis_payment_entry_mapping_rule.js",
         "NDIS Payment Entry Allocation Preview": "public/js/ndis_payment_entry_allocation_preview.js",
         "NDIS Payment Entry Allocation Preview Line": "public/js/ndis_payment_entry_allocation_preview_line.js",
+        "NDIS Sandbox Payment Entry Run": "public/js/ndis_sandbox_payment_entry_run.js",
+        "NDIS Sandbox Payment Entry Run Line": "public/js/ndis_sandbox_payment_entry_run_line.js",
     }
 )
 
@@ -357,6 +382,8 @@ doctype_list_js.update(
         "NDIS Payment Entry Mapping Rule": "public/js/ndis_payment_entry_mapping_rule_list.js",
         "NDIS Payment Entry Allocation Preview": "public/js/ndis_payment_entry_allocation_preview_list.js",
         "NDIS Payment Entry Allocation Preview Line": "public/js/ndis_payment_entry_allocation_preview_line_list.js",
+        "NDIS Sandbox Payment Entry Run": "public/js/ndis_sandbox_payment_entry_run_list.js",
+        "NDIS Sandbox Payment Entry Run Line": "public/js/ndis_sandbox_payment_entry_run_line_list.js",
     }
 )
 

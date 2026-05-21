@@ -269,6 +269,15 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    "create_sandbox_payment_entry_draft": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_sandbox_payment_entry_run": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
     "create_recovery_case": [
         "System Manager",
         "NDIS CFO",
