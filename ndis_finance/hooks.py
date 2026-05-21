@@ -127,6 +127,9 @@ fixtures = [
                     "NDIS Accounting Design Matrix Report",
                     "NDIS Accounting Design Review Report",
                     "NDIS Accounting Design Exception Report",
+                    "NDIS Payment Entry Mapping Rule Report",
+                    "NDIS Payment Entry Allocation Preview Report",
+                    "NDIS Payment Entry Allocation Exception Report",
                 ],
             ]
         ],
@@ -233,6 +236,9 @@ fixtures = [
                     "NDIS Accounting Design Matrix",
                     "NDIS Accounting Design Review",
                     "NDIS Accounting Design Review Item",
+                    "NDIS Payment Entry Mapping Rule",
+                    "NDIS Payment Entry Allocation Preview",
+                    "NDIS Payment Entry Allocation Preview Line",
                 ],
             ]
         ],
@@ -248,6 +254,10 @@ fixtures = [
     {
         "dt": "NDIS Accounting Design Matrix",
         "filters": [["name", "like", "NDIS-ACC-DESIGN-%"]],
+    },
+    {
+        "dt": "NDIS Payment Entry Mapping Rule",
+        "filters": [["name", "like", "NDIS-PE-MAP-%"]],
     },
 ]
 
@@ -295,6 +305,9 @@ doctype_js.update(
         "NDIS Accounting Design Matrix": "public/js/ndis_accounting_design_matrix.js",
         "NDIS Accounting Design Review": "public/js/ndis_accounting_design_review.js",
         "NDIS Accounting Design Review Item": "public/js/ndis_accounting_design_review_item.js",
+        "NDIS Payment Entry Mapping Rule": "public/js/ndis_payment_entry_mapping_rule.js",
+        "NDIS Payment Entry Allocation Preview": "public/js/ndis_payment_entry_allocation_preview.js",
+        "NDIS Payment Entry Allocation Preview Line": "public/js/ndis_payment_entry_allocation_preview_line.js",
     }
 )
 
@@ -341,6 +354,9 @@ doctype_list_js.update(
         "NDIS Accounting Design Matrix": "public/js/ndis_accounting_design_matrix_list.js",
         "NDIS Accounting Design Review": "public/js/ndis_accounting_design_review_list.js",
         "NDIS Accounting Design Review Item": "public/js/ndis_accounting_design_review_item_list.js",
+        "NDIS Payment Entry Mapping Rule": "public/js/ndis_payment_entry_mapping_rule_list.js",
+        "NDIS Payment Entry Allocation Preview": "public/js/ndis_payment_entry_allocation_preview_list.js",
+        "NDIS Payment Entry Allocation Preview Line": "public/js/ndis_payment_entry_allocation_preview_line_list.js",
     }
 )
 
