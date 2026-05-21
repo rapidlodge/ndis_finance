@@ -269,6 +269,18 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Sandbox Payment Entry cleanup controls
+    "run_sandbox_payment_entry_cleanup": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_sandbox_payment_entry_cleanup": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
+    # Sandbox-only Payment Entry adapter controls
     "create_sandbox_payment_entry_draft": [
         "System Manager",
         "NDIS CFO",

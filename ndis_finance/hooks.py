@@ -135,6 +135,8 @@ fixtures = [
                     "NDIS Payment Entry Allocation Exception Report",
                     "NDIS Sandbox Payment Entry Run Report",
                     "NDIS Sandbox Payment Entry Run Line Report",
+                    "NDIS Sandbox Payment Entry Cleanup Report",
+                    "NDIS Sandbox Payment Entry Hygiene Report",
                 ],
             ]
         ],
@@ -246,6 +248,8 @@ fixtures = [
                     "NDIS Payment Entry Allocation Preview Line",
                     "NDIS Sandbox Payment Entry Run",
                     "NDIS Sandbox Payment Entry Run Line",
+                    "NDIS Sandbox Payment Entry Cleanup Run",
+                    "NDIS Sandbox Payment Entry Cleanup Line",
                 ],
             ]
         ],
@@ -333,6 +337,8 @@ doctype_js.update(
         "NDIS Payment Entry Allocation Preview Line": "public/js/ndis_payment_entry_allocation_preview_line.js",
         "NDIS Sandbox Payment Entry Run": "public/js/ndis_sandbox_payment_entry_run.js",
         "NDIS Sandbox Payment Entry Run Line": "public/js/ndis_sandbox_payment_entry_run_line.js",
+        "NDIS Sandbox Payment Entry Cleanup Run": "public/js/ndis_sandbox_payment_entry_cleanup_run.js",
+        "NDIS Sandbox Payment Entry Cleanup Line": "public/js/ndis_sandbox_payment_entry_cleanup_line.js",
     }
 )
 
@@ -384,6 +390,8 @@ doctype_list_js.update(
         "NDIS Payment Entry Allocation Preview Line": "public/js/ndis_payment_entry_allocation_preview_line_list.js",
         "NDIS Sandbox Payment Entry Run": "public/js/ndis_sandbox_payment_entry_run_list.js",
         "NDIS Sandbox Payment Entry Run Line": "public/js/ndis_sandbox_payment_entry_run_line_list.js",
+        "NDIS Sandbox Payment Entry Cleanup Run": "public/js/ndis_sandbox_payment_entry_cleanup_run_list.js",
+        "NDIS Sandbox Payment Entry Cleanup Line": "public/js/ndis_sandbox_payment_entry_cleanup_line_list.js",
     }
 )
 
