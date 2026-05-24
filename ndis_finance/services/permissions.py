@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Sandbox Sales Invoice test-data harness controls
+    "create_sandbox_invoice_test_data": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_sandbox_invoice_test_run": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Payment Entry sandbox completion gate controls
     "run_payment_entry_sandbox_completion_gate": [
         "System Manager",

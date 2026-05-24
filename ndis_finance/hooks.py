@@ -13,6 +13,7 @@ after_migrate = "ndis_finance.setup.install.after_migrate"
 doc_events = {
     "Sales Invoice": {
         "validate": "ndis_finance.overrides.sales_invoice.validate_sales_invoice",
+        "before_submit": "ndis_finance.services.sandbox_invoice_test_harness.block_unacknowledged_sandbox_sales_invoice_submit",
         "on_submit": "ndis_finance.services.budget_control.update_usage_from_sales_invoice",
         "before_cancel": "ndis_finance.services.claim_batch_engine.before_sales_invoice_cancel",
         "on_cancel": "ndis_finance.services.claim_batch_engine.on_sales_invoice_cancelled",
@@ -139,6 +140,8 @@ fixtures = [
                     "NDIS Sandbox Payment Entry Hygiene Report",
                     "NDIS Payment Entry Sandbox Completion Gate Report",
                     "NDIS Payment Entry Sandbox Completion Exception Report",
+                    "NDIS Sandbox Invoice Test Run Report",
+                    "NDIS Sandbox Invoice Test Line Report",
                 ],
             ]
         ],
@@ -254,6 +257,8 @@ fixtures = [
                     "NDIS Sandbox Payment Entry Cleanup Line",
                     "NDIS Payment Entry Sandbox Completion Gate",
                     "NDIS Payment Entry Sandbox Completion Gate Item",
+                    "NDIS Sandbox Invoice Test Run",
+                    "NDIS Sandbox Invoice Test Line",
                 ],
             ]
         ],
@@ -286,6 +291,14 @@ fixtures = [
                     "Payment Entry-custom_ndis_payment_entry_allocation_preview",
                     "Payment Entry-custom_ndis_sandbox_payment_entry_draft_only",
                     "Payment Entry-custom_ndis_sandbox_payment_entry_acknowledgement",
+                    "Customer-custom_ndis_sandbox_customer",
+                    "Customer-custom_ndis_sandbox_invoice_test_run",
+                    "Item-custom_ndis_sandbox_item",
+                    "Item-custom_ndis_sandbox_invoice_test_run",
+                    "Sales Invoice-custom_ndis_sandbox_invoice_section",
+                    "Sales Invoice-custom_ndis_sandbox_test_invoice",
+                    "Sales Invoice-custom_ndis_sandbox_invoice_test_run",
+                    "Sales Invoice-custom_ndis_sandbox_invoice_acknowledgement",
                 ],
             ]
         ],
@@ -345,6 +358,8 @@ doctype_js.update(
         "NDIS Sandbox Payment Entry Cleanup Line": "public/js/ndis_sandbox_payment_entry_cleanup_line.js",
         "NDIS Payment Entry Sandbox Completion Gate": "public/js/ndis_payment_entry_sandbox_completion_gate.js",
         "NDIS Payment Entry Sandbox Completion Gate Item": "public/js/ndis_payment_entry_sandbox_completion_gate_item.js",
+        "NDIS Sandbox Invoice Test Run": "public/js/ndis_sandbox_invoice_test_run.js",
+        "NDIS Sandbox Invoice Test Line": "public/js/ndis_sandbox_invoice_test_line.js",
     }
 )
 
@@ -400,6 +415,8 @@ doctype_list_js.update(
         "NDIS Sandbox Payment Entry Cleanup Line": "public/js/ndis_sandbox_payment_entry_cleanup_line_list.js",
         "NDIS Payment Entry Sandbox Completion Gate": "public/js/ndis_payment_entry_sandbox_completion_gate_list.js",
         "NDIS Payment Entry Sandbox Completion Gate Item": "public/js/ndis_payment_entry_sandbox_completion_gate_item_list.js",
+        "NDIS Sandbox Invoice Test Run": "public/js/ndis_sandbox_invoice_test_run_list.js",
+        "NDIS Sandbox Invoice Test Line": "public/js/ndis_sandbox_invoice_test_line_list.js",
     }
 )
 
