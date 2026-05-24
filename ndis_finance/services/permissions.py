@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 4D final Payment Entry sandbox readiness freeze controls
+    "run_pe_sandbox_readiness_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_sandbox_readiness_freeze": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 4C sandbox accounting cleanup pack controls
     "run_sandbox_accounting_cleanup_pack": [
         "System Manager",

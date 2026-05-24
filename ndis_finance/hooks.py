@@ -147,6 +147,8 @@ fixtures = [
                     "NDIS Sandbox Accounting Cleanup Pack Report",
                     "NDIS Sandbox Accounting Cleanup Line Report",
                     "NDIS Sandbox Accounting Hygiene Report",
+                    "NDIS PE Sandbox Readiness Freeze Report",
+                    "NDIS PE Sandbox Readiness Freeze Item Report",
                 ],
             ]
         ],
@@ -268,6 +270,8 @@ fixtures = [
                     "NDIS Invoice Backed PE Smoke Line",
                     "NDIS Sandbox Accounting Cleanup Pack",
                     "NDIS Sandbox Accounting Cleanup Pack Line",
+                    "NDIS PE Sandbox Readiness Freeze",
+                    "NDIS PE Sandbox Readiness Freeze Item",
                 ],
             ]
         ],
@@ -373,6 +377,8 @@ doctype_js.update(
         "NDIS Invoice Backed PE Smoke Line": "public/js/ndis_invoice_backed_pe_smoke_line.js",
         "NDIS Sandbox Accounting Cleanup Pack": "public/js/ndis_sandbox_accounting_cleanup_pack.js",
         "NDIS Sandbox Accounting Cleanup Pack Line": "public/js/ndis_sandbox_accounting_cleanup_pack_line.js",
+        "NDIS PE Sandbox Readiness Freeze": "public/js/ndis_pe_sandbox_readiness_freeze.js",
+        "NDIS PE Sandbox Readiness Freeze Item": "public/js/ndis_pe_sandbox_readiness_freeze_item.js",
     }
 )
 
@@ -434,6 +440,8 @@ doctype_list_js.update(
         "NDIS Invoice Backed PE Smoke Line": "public/js/ndis_invoice_backed_pe_smoke_line_list.js",
         "NDIS Sandbox Accounting Cleanup Pack": "public/js/ndis_sandbox_accounting_cleanup_pack_list.js",
         "NDIS Sandbox Accounting Cleanup Pack Line": "public/js/ndis_sandbox_accounting_cleanup_pack_line_list.js",
+        "NDIS PE Sandbox Readiness Freeze": "public/js/ndis_pe_sandbox_readiness_freeze_list.js",
+        "NDIS PE Sandbox Readiness Freeze Item": "public/js/ndis_pe_sandbox_readiness_freeze_item_list.js",
     }
 )
 
