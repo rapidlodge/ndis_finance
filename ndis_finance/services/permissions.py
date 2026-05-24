@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 4C sandbox accounting cleanup pack controls
+    "run_sandbox_accounting_cleanup_pack": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_sandbox_accounting_cleanup_pack": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Invoice-backed sandbox Payment Entry smoke controls
     "run_invoice_backed_pe_smoke": [
         "System Manager",
