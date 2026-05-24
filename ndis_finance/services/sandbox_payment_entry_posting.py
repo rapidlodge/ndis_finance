@@ -293,7 +293,7 @@ def create_draft_payment_entry(preview_doc, mapping_doc, run_name, company, paid
     set_if_field(pe, "custom_ndis_sandbox_payment_entry_acknowledgement", acknowledgement)
     for row in prepared_lines:
         pe.append("references", {"reference_doctype": "Sales Invoice", "reference_name": row.sales_invoice, "allocated_amount": flt(row.allocation_amount)})
-    pe.insert(ignore_permissions=True)
+    pe.insert(ignore_permissions=True, ignore_mandatory=True)
     return pe.name
 
 

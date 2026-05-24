@@ -142,6 +142,8 @@ fixtures = [
                     "NDIS Payment Entry Sandbox Completion Exception Report",
                     "NDIS Sandbox Invoice Test Run Report",
                     "NDIS Sandbox Invoice Test Line Report",
+                    "NDIS Invoice Backed PE Smoke Run Report",
+                    "NDIS Invoice Backed PE Smoke Line Report",
                 ],
             ]
         ],
@@ -259,6 +261,8 @@ fixtures = [
                     "NDIS Payment Entry Sandbox Completion Gate Item",
                     "NDIS Sandbox Invoice Test Run",
                     "NDIS Sandbox Invoice Test Line",
+                    "NDIS Invoice Backed PE Smoke Run",
+                    "NDIS Invoice Backed PE Smoke Line",
                 ],
             ]
         ],
@@ -360,6 +364,8 @@ doctype_js.update(
         "NDIS Payment Entry Sandbox Completion Gate Item": "public/js/ndis_payment_entry_sandbox_completion_gate_item.js",
         "NDIS Sandbox Invoice Test Run": "public/js/ndis_sandbox_invoice_test_run.js",
         "NDIS Sandbox Invoice Test Line": "public/js/ndis_sandbox_invoice_test_line.js",
+        "NDIS Invoice Backed PE Smoke Run": "public/js/ndis_invoice_backed_pe_smoke_run.js",
+        "NDIS Invoice Backed PE Smoke Line": "public/js/ndis_invoice_backed_pe_smoke_line.js",
     }
 )
 
@@ -417,6 +423,8 @@ doctype_list_js.update(
         "NDIS Payment Entry Sandbox Completion Gate Item": "public/js/ndis_payment_entry_sandbox_completion_gate_item_list.js",
         "NDIS Sandbox Invoice Test Run": "public/js/ndis_sandbox_invoice_test_run_list.js",
         "NDIS Sandbox Invoice Test Line": "public/js/ndis_sandbox_invoice_test_line_list.js",
+        "NDIS Invoice Backed PE Smoke Run": "public/js/ndis_invoice_backed_pe_smoke_run_list.js",
+        "NDIS Invoice Backed PE Smoke Line": "public/js/ndis_invoice_backed_pe_smoke_line_list.js",
     }
 )
 

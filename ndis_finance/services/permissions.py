@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Invoice-backed sandbox Payment Entry smoke controls
+    "run_invoice_backed_pe_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_invoice_backed_pe_smoke": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Sandbox Sales Invoice test-data harness controls
     "create_sandbox_invoice_test_data": [
         "System Manager",
