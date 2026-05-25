@@ -269,6 +269,21 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5A production Payment Entry posting design controls
+    "manage_pe_production_posting_policy": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "run_pe_production_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_production_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 4D final Payment Entry sandbox readiness freeze controls
     "run_pe_sandbox_readiness_freeze": [
         "System Manager",

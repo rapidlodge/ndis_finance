@@ -149,6 +149,9 @@ fixtures = [
                     "NDIS Sandbox Accounting Hygiene Report",
                     "NDIS PE Sandbox Readiness Freeze Report",
                     "NDIS PE Sandbox Readiness Freeze Item Report",
+                    "NDIS PE Production Policy Register",
+                    "NDIS PE Production Design Gate Report",
+                    "NDIS PE Production Design Exception Report",
                 ],
             ]
         ],
@@ -272,9 +275,16 @@ fixtures = [
                     "NDIS Sandbox Accounting Cleanup Pack Line",
                     "NDIS PE Sandbox Readiness Freeze",
                     "NDIS PE Sandbox Readiness Freeze Item",
+                    "NDIS PE Production Posting Policy",
+                    "NDIS PE Production Design Gate",
+                    "NDIS PE Production Design Gate Item",
                 ],
             ]
         ],
+    },
+    {
+        "dt": "NDIS PE Production Posting Policy",
+        "filters": [["policy_id", "like", "NDIS-PE-POLICY-%"]],
     },
     {
         "dt": "NDIS Executive Exception Rule",
@@ -379,6 +389,9 @@ doctype_js.update(
         "NDIS Sandbox Accounting Cleanup Pack Line": "public/js/ndis_sandbox_accounting_cleanup_pack_line.js",
         "NDIS PE Sandbox Readiness Freeze": "public/js/ndis_pe_sandbox_readiness_freeze.js",
         "NDIS PE Sandbox Readiness Freeze Item": "public/js/ndis_pe_sandbox_readiness_freeze_item.js",
+        "NDIS PE Production Posting Policy": "public/js/ndis_pe_production_posting_policy.js",
+        "NDIS PE Production Design Gate": "public/js/ndis_pe_production_design_gate.js",
+        "NDIS PE Production Design Gate Item": "public/js/ndis_pe_production_design_gate_item.js",
     }
 )
 
@@ -442,6 +455,9 @@ doctype_list_js.update(
         "NDIS Sandbox Accounting Cleanup Pack Line": "public/js/ndis_sandbox_accounting_cleanup_pack_line_list.js",
         "NDIS PE Sandbox Readiness Freeze": "public/js/ndis_pe_sandbox_readiness_freeze_list.js",
         "NDIS PE Sandbox Readiness Freeze Item": "public/js/ndis_pe_sandbox_readiness_freeze_item_list.js",
+        "NDIS PE Production Posting Policy": "public/js/ndis_pe_production_posting_policy_list.js",
+        "NDIS PE Production Design Gate": "public/js/ndis_pe_production_design_gate_list.js",
+        "NDIS PE Production Design Gate Item": "public/js/ndis_pe_production_design_gate_item_list.js",
     }
 )
 
