@@ -152,6 +152,9 @@ fixtures = [
                     "NDIS PE Production Policy Register",
                     "NDIS PE Production Design Gate Report",
                     "NDIS PE Production Design Exception Report",
+                    "NDIS PE Production Account Mapping Gate Report",
+                    "NDIS PE Production Account Mapping Exception Report",
+                    "NDIS PE Production Mapping Control Report",
                 ],
             ]
         ],
@@ -278,6 +281,8 @@ fixtures = [
                     "NDIS PE Production Posting Policy",
                     "NDIS PE Production Design Gate",
                     "NDIS PE Production Design Gate Item",
+                    "NDIS PE Production Account Mapping Gate",
+                    "NDIS PE Production Account Mapping Gate Item",
                 ],
             ]
         ],
@@ -392,6 +397,8 @@ doctype_js.update(
         "NDIS PE Production Posting Policy": "public/js/ndis_pe_production_posting_policy.js",
         "NDIS PE Production Design Gate": "public/js/ndis_pe_production_design_gate.js",
         "NDIS PE Production Design Gate Item": "public/js/ndis_pe_production_design_gate_item.js",
+        "NDIS PE Production Account Mapping Gate": "public/js/ndis_pe_production_account_mapping_gate.js",
+        "NDIS PE Production Account Mapping Gate Item": "public/js/ndis_pe_production_account_mapping_gate_item.js",
     }
 )
 
@@ -458,6 +465,8 @@ doctype_list_js.update(
         "NDIS PE Production Posting Policy": "public/js/ndis_pe_production_posting_policy_list.js",
         "NDIS PE Production Design Gate": "public/js/ndis_pe_production_design_gate_list.js",
         "NDIS PE Production Design Gate Item": "public/js/ndis_pe_production_design_gate_item_list.js",
+        "NDIS PE Production Account Mapping Gate": "public/js/ndis_pe_production_account_mapping_gate_list.js",
+        "NDIS PE Production Account Mapping Gate Item": "public/js/ndis_pe_production_account_mapping_gate_item_list.js",
     }
 )
 

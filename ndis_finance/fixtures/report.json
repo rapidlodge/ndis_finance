@@ -2641,5 +2641,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-25 18:04:15.381362",
+  "module": "NDIS Finance",
+  "name": "NDIS PE Production Account Mapping Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS PE Production Account Mapping Gate Item",
+  "reference_report": null,
+  "report_name": "NDIS PE Production Account Mapping Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-25 18:04:15.317282",
+  "module": "NDIS Finance",
+  "name": "NDIS PE Production Account Mapping Gate Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS PE Production Account Mapping Gate",
+  "reference_report": null,
+  "report_name": "NDIS PE Production Account Mapping Gate Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-25 18:04:15.402518",
+  "module": "NDIS Finance",
+  "name": "NDIS PE Production Mapping Control Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS PE Production Posting Policy",
+  "reference_report": null,
+  "report_name": "NDIS PE Production Mapping Control Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
