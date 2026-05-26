@@ -161,6 +161,9 @@ fixtures = [
                     "NDIS PE Production Adapter Run Report",
                     "NDIS PE Production Adapter Run Line Report",
                     "NDIS PE Production Adapter Exception Report",
+                    "NDIS PE Production Activation Gate Report",
+                    "NDIS PE Production Activation Exception Report",
+                    "NDIS PE Production Activation Policy Readiness Report",
                 ],
             ]
         ],
@@ -293,6 +296,8 @@ fixtures = [
                     "NDIS PE Production Posting Preview Line",
                     "NDIS PE Production Adapter Run",
                     "NDIS PE Production Adapter Run Line",
+                    "NDIS PE Production Activation Gate",
+                    "NDIS PE Production Activation Gate Item",
                 ],
             ]
         ],
@@ -413,6 +418,8 @@ doctype_js.update(
         "NDIS PE Production Posting Preview Line": "public/js/ndis_pe_production_posting_preview_line.js",
         "NDIS PE Production Adapter Run": "public/js/ndis_pe_production_adapter_run.js",
         "NDIS PE Production Adapter Run Line": "public/js/ndis_pe_production_adapter_run_line.js",
+        "NDIS PE Production Activation Gate": "public/js/ndis_pe_production_activation_gate.js",
+        "NDIS PE Production Activation Gate Item": "public/js/ndis_pe_production_activation_gate_item.js",
     }
 )
 
@@ -485,6 +492,8 @@ doctype_list_js.update(
         "NDIS PE Production Posting Preview Line": "public/js/ndis_pe_production_posting_preview_line_list.js",
         "NDIS PE Production Adapter Run": "public/js/ndis_pe_production_adapter_run_list.js",
         "NDIS PE Production Adapter Run Line": "public/js/ndis_pe_production_adapter_run_line_list.js",
+        "NDIS PE Production Activation Gate": "public/js/ndis_pe_production_activation_gate_list.js",
+        "NDIS PE Production Activation Gate Item": "public/js/ndis_pe_production_activation_gate_item_list.js",
     }
 )
 
