@@ -22,7 +22,10 @@ doc_events = {
         "before_submit": "ndis_finance.services.sandbox_accounting_posting.block_sandbox_journal_entry_submit",
     },
     "Payment Entry": {
-        "before_submit": "ndis_finance.services.sandbox_payment_entry_posting.block_sandbox_payment_entry_submit",
+        "before_submit": [
+            "ndis_finance.services.sandbox_payment_entry_posting.block_sandbox_payment_entry_submit",
+            "ndis_finance.services.pe_single_record_draft_smoke.block_single_record_draft_smoke_submit",
+        ],
     },
 }
 
@@ -164,6 +167,9 @@ fixtures = [
                     "NDIS PE Production Activation Gate Report",
                     "NDIS PE Production Activation Exception Report",
                     "NDIS PE Production Activation Policy Readiness Report",
+                    "NDIS PE Single Record Draft Smoke Run Report",
+                    "NDIS PE Single Record Draft Smoke Exception Report",
+                    "NDIS PE Draft Smoke Payment Entry Hygiene Report",
                 ],
             ]
         ],
@@ -298,6 +304,8 @@ fixtures = [
                     "NDIS PE Production Adapter Run Line",
                     "NDIS PE Production Activation Gate",
                     "NDIS PE Production Activation Gate Item",
+                    "NDIS PE Single Record Draft Smoke Run",
+                    "NDIS PE Single Record Draft Smoke Run Item",
                 ],
             ]
         ],
@@ -342,6 +350,12 @@ fixtures = [
                     "Sales Invoice-custom_ndis_sandbox_test_invoice",
                     "Sales Invoice-custom_ndis_sandbox_invoice_test_run",
                     "Sales Invoice-custom_ndis_sandbox_invoice_acknowledgement",
+                    "Payment Entry-custom_ndis_pe_draft_smoke_section",
+                    "Payment Entry-custom_ndis_pe_single_record_draft_smoke",
+                    "Payment Entry-custom_ndis_pe_draft_smoke_run",
+                    "Payment Entry-custom_ndis_pe_activation_gate",
+                    "Payment Entry-custom_ndis_pe_source_preview_line",
+                    "Payment Entry-custom_ndis_pe_draft_smoke_note",
                 ],
             ]
         ],
@@ -420,6 +434,8 @@ doctype_js.update(
         "NDIS PE Production Adapter Run Line": "public/js/ndis_pe_production_adapter_run_line.js",
         "NDIS PE Production Activation Gate": "public/js/ndis_pe_production_activation_gate.js",
         "NDIS PE Production Activation Gate Item": "public/js/ndis_pe_production_activation_gate_item.js",
+        "NDIS PE Single Record Draft Smoke Run": "public/js/ndis_pe_single_record_draft_smoke_run.js",
+        "NDIS PE Single Record Draft Smoke Run Item": "public/js/ndis_pe_single_record_draft_smoke_run_item.js",
     }
 )
 
@@ -494,6 +510,8 @@ doctype_list_js.update(
         "NDIS PE Production Adapter Run Line": "public/js/ndis_pe_production_adapter_run_line_list.js",
         "NDIS PE Production Activation Gate": "public/js/ndis_pe_production_activation_gate_list.js",
         "NDIS PE Production Activation Gate Item": "public/js/ndis_pe_production_activation_gate_item_list.js",
+        "NDIS PE Single Record Draft Smoke Run": "public/js/ndis_pe_single_record_draft_smoke_run_list.js",
+        "NDIS PE Single Record Draft Smoke Run Item": "public/js/ndis_pe_single_record_draft_smoke_run_item_list.js",
     }
 )
 

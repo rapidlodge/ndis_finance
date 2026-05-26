@@ -269,6 +269,25 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5F single-record draft Payment Entry smoke controls
+    "run_pe_single_record_draft_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cleanup_pe_single_record_draft_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_single_record_draft_smoke": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "verify_pe_single_record_draft_submit_block": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+
     # Phase 5E production Payment Entry activation gate controls
     "run_pe_production_activation_gate": [
         "System Manager",

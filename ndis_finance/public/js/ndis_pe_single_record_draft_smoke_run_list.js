@@ -1,0 +1,10 @@
+frappe.listview_settings["NDIS PE Single Record Draft Smoke Run"] = {
+    get_indicator(doc) {
+        if (["Draft Created", "Submit Block Verified", "Cleaned"].includes(doc.status)) return [__(doc.status), "green", `status,=,${doc.status}`];
+        if (doc.status === "Source Pending") return [__("Source Pending"), "orange", "status,=,Source Pending"];
+        if (doc.status === "Needs Review") return [__("Needs Review"), "orange", "status,=,Needs Review"];
+        if (doc.status === "Blocked") return [__("Blocked"), "red", "status,=,Blocked"];
+        if (doc.status === "Cancelled") return [__("Cancelled"), "gray", "status,=,Cancelled"];
+        return [__(doc.status || "Draft"), "blue", `status,=,${doc.status || "Draft"}`];
+    }
+};
