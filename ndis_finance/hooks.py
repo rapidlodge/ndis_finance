@@ -173,6 +173,9 @@ fixtures = [
                     "NDIS PE Submitted Smoke Gate Report",
                     "NDIS PE Submitted Smoke Exception Report",
                     "NDIS PE Submitted Smoke Source Readiness Report",
+                    "NDIS PE Smoke Invoice Source Run Report",
+                    "NDIS PE Smoke Invoice Source Exception Report",
+                    "NDIS PE Smoke Invoice Source Hygiene Report",
                 ],
             ]
         ],
@@ -311,6 +314,8 @@ fixtures = [
                     "NDIS PE Single Record Draft Smoke Run Item",
                     "NDIS PE Submitted Smoke Gate",
                     "NDIS PE Submitted Smoke Gate Item",
+                    "NDIS PE Smoke Invoice Source Run",
+                    "NDIS PE Smoke Invoice Source Run Item",
                 ],
             ]
         ],
@@ -361,6 +366,12 @@ fixtures = [
                     "Payment Entry-custom_ndis_pe_activation_gate",
                     "Payment Entry-custom_ndis_pe_source_preview_line",
                     "Payment Entry-custom_ndis_pe_draft_smoke_note",
+                    "Sales Invoice-custom_ndis_pe_smoke_source_section",
+                    "Sales Invoice-custom_ndis_pe_smoke_source_invoice",
+                    "Sales Invoice-custom_ndis_pe_smoke_source_run",
+                    "Sales Invoice-custom_ndis_pe_smoke_source_phase",
+                    "Sales Invoice-custom_ndis_pe_smoke_source_note",
+                    "Sales Invoice-custom_ndis_pe_smoke_source_cancelled",
                 ],
             ]
         ],
@@ -443,6 +454,8 @@ doctype_js.update(
         "NDIS PE Single Record Draft Smoke Run Item": "public/js/ndis_pe_single_record_draft_smoke_run_item.js",
         "NDIS PE Submitted Smoke Gate": "public/js/ndis_pe_submitted_smoke_gate.js",
         "NDIS PE Submitted Smoke Gate Item": "public/js/ndis_pe_submitted_smoke_gate_item.js",
+        "NDIS PE Smoke Invoice Source Run": "public/js/ndis_pe_smoke_invoice_source_run.js",
+        "NDIS PE Smoke Invoice Source Run Item": "public/js/ndis_pe_smoke_invoice_source_run_item.js",
     }
 )
 
@@ -521,6 +534,8 @@ doctype_list_js.update(
         "NDIS PE Single Record Draft Smoke Run Item": "public/js/ndis_pe_single_record_draft_smoke_run_item_list.js",
         "NDIS PE Submitted Smoke Gate": "public/js/ndis_pe_submitted_smoke_gate_list.js",
         "NDIS PE Submitted Smoke Gate Item": "public/js/ndis_pe_submitted_smoke_gate_item_list.js",
+        "NDIS PE Smoke Invoice Source Run": "public/js/ndis_pe_smoke_invoice_source_run_list.js",
+        "NDIS PE Smoke Invoice Source Run Item": "public/js/ndis_pe_smoke_invoice_source_run_item_list.js",
     }
 )
 

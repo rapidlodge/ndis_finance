@@ -389,6 +389,10 @@ def create_draft_payment_entry(smoke_run_doc, sales_invoice_doc, amount):
     pe = get_payment_entry("Sales Invoice", sales_invoice_doc.name)
     pe.paid_to = smoke_run_doc.allowed_bank_account
     pe.paid_from = smoke_run_doc.allowed_receivable_account
+    pe.bank_account = ensure_smoke_bank_account(
+        smoke_run_doc.company,
+        smoke_run_doc.allowed_bank_account,
+    )
     pe.paid_amount = amount
     pe.received_amount = amount
     pe.reference_no = smoke_run_doc.smoke_run_id
@@ -407,6 +411,32 @@ def create_draft_payment_entry(smoke_run_doc, sales_invoice_doc, amount):
 
     pe.insert(ignore_permissions=True)
     return pe
+
+
+def ensure_smoke_bank_account(company, account):
+    if not account:
+        return None
+
+    existing = frappe.db.get_value("Bank Account", {"account": account}, "name")
+    if existing:
+        return existing
+
+    bank_name = "NDIS PE Smoke Test Bank"
+    if not frappe.db.exists("Bank", bank_name):
+        bank = frappe.new_doc("Bank")
+        bank.bank_name = bank_name
+        bank.insert(ignore_permissions=True)
+
+    account_doc = frappe.get_doc("Account", account)
+    bank_account = frappe.new_doc("Bank Account")
+    bank_account.account_name = "NDIS PE Smoke Test Bank Account"
+    bank_account.bank = bank_name
+    bank_account.account = account
+    bank_account.company = company or account_doc.company
+    bank_account.is_company_account = 1
+    bank_account.insert(ignore_permissions=True)
+
+    return bank_account.name
 
 
 def block_single_record_draft_smoke_submit(doc, method=None):
