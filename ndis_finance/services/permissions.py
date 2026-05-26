@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5C production Payment Entry posting preview controls
+    "run_pe_production_posting_preview": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_production_posting_preview": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 5B production Payment Entry account mapping hardening controls
     "run_pe_production_account_mapping_hardening": [
         "System Manager",

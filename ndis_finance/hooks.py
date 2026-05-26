@@ -155,6 +155,9 @@ fixtures = [
                     "NDIS PE Production Account Mapping Gate Report",
                     "NDIS PE Production Account Mapping Exception Report",
                     "NDIS PE Production Mapping Control Report",
+                    "NDIS PE Production Posting Preview Report",
+                    "NDIS PE Production Posting Preview Line Report",
+                    "NDIS PE Production Posting Preview Exception Report",
                 ],
             ]
         ],
@@ -283,6 +286,8 @@ fixtures = [
                     "NDIS PE Production Design Gate Item",
                     "NDIS PE Production Account Mapping Gate",
                     "NDIS PE Production Account Mapping Gate Item",
+                    "NDIS PE Production Posting Preview",
+                    "NDIS PE Production Posting Preview Line",
                 ],
             ]
         ],
@@ -399,6 +404,8 @@ doctype_js.update(
         "NDIS PE Production Design Gate Item": "public/js/ndis_pe_production_design_gate_item.js",
         "NDIS PE Production Account Mapping Gate": "public/js/ndis_pe_production_account_mapping_gate.js",
         "NDIS PE Production Account Mapping Gate Item": "public/js/ndis_pe_production_account_mapping_gate_item.js",
+        "NDIS PE Production Posting Preview": "public/js/ndis_pe_production_posting_preview.js",
+        "NDIS PE Production Posting Preview Line": "public/js/ndis_pe_production_posting_preview_line.js",
     }
 )
 
@@ -467,6 +474,8 @@ doctype_list_js.update(
         "NDIS PE Production Design Gate Item": "public/js/ndis_pe_production_design_gate_item_list.js",
         "NDIS PE Production Account Mapping Gate": "public/js/ndis_pe_production_account_mapping_gate_list.js",
         "NDIS PE Production Account Mapping Gate Item": "public/js/ndis_pe_production_account_mapping_gate_item_list.js",
+        "NDIS PE Production Posting Preview": "public/js/ndis_pe_production_posting_preview_list.js",
+        "NDIS PE Production Posting Preview Line": "public/js/ndis_pe_production_posting_preview_line_list.js",
     }
 )
 
