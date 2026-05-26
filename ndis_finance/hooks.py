@@ -158,6 +158,9 @@ fixtures = [
                     "NDIS PE Production Posting Preview Report",
                     "NDIS PE Production Posting Preview Line Report",
                     "NDIS PE Production Posting Preview Exception Report",
+                    "NDIS PE Production Adapter Run Report",
+                    "NDIS PE Production Adapter Run Line Report",
+                    "NDIS PE Production Adapter Exception Report",
                 ],
             ]
         ],
@@ -288,6 +291,8 @@ fixtures = [
                     "NDIS PE Production Account Mapping Gate Item",
                     "NDIS PE Production Posting Preview",
                     "NDIS PE Production Posting Preview Line",
+                    "NDIS PE Production Adapter Run",
+                    "NDIS PE Production Adapter Run Line",
                 ],
             ]
         ],
@@ -406,6 +411,8 @@ doctype_js.update(
         "NDIS PE Production Account Mapping Gate Item": "public/js/ndis_pe_production_account_mapping_gate_item.js",
         "NDIS PE Production Posting Preview": "public/js/ndis_pe_production_posting_preview.js",
         "NDIS PE Production Posting Preview Line": "public/js/ndis_pe_production_posting_preview_line.js",
+        "NDIS PE Production Adapter Run": "public/js/ndis_pe_production_adapter_run.js",
+        "NDIS PE Production Adapter Run Line": "public/js/ndis_pe_production_adapter_run_line.js",
     }
 )
 
@@ -476,6 +483,8 @@ doctype_list_js.update(
         "NDIS PE Production Account Mapping Gate Item": "public/js/ndis_pe_production_account_mapping_gate_item_list.js",
         "NDIS PE Production Posting Preview": "public/js/ndis_pe_production_posting_preview_list.js",
         "NDIS PE Production Posting Preview Line": "public/js/ndis_pe_production_posting_preview_line_list.js",
+        "NDIS PE Production Adapter Run": "public/js/ndis_pe_production_adapter_run_list.js",
+        "NDIS PE Production Adapter Run Line": "public/js/ndis_pe_production_adapter_run_line_list.js",
     }
 )
 

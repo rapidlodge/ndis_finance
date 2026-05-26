@@ -269,6 +269,21 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5D production Payment Entry live adapter hard-block controls
+    "run_pe_production_adapter_hard_block": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_production_adapter_run": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "attempt_live_payment_entry_creation": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+
     # Phase 5C production Payment Entry posting preview controls
     "run_pe_production_posting_preview": [
         "System Manager",
