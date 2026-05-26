@@ -170,6 +170,9 @@ fixtures = [
                     "NDIS PE Single Record Draft Smoke Run Report",
                     "NDIS PE Single Record Draft Smoke Exception Report",
                     "NDIS PE Draft Smoke Payment Entry Hygiene Report",
+                    "NDIS PE Submitted Smoke Gate Report",
+                    "NDIS PE Submitted Smoke Exception Report",
+                    "NDIS PE Submitted Smoke Source Readiness Report",
                 ],
             ]
         ],
@@ -306,6 +309,8 @@ fixtures = [
                     "NDIS PE Production Activation Gate Item",
                     "NDIS PE Single Record Draft Smoke Run",
                     "NDIS PE Single Record Draft Smoke Run Item",
+                    "NDIS PE Submitted Smoke Gate",
+                    "NDIS PE Submitted Smoke Gate Item",
                 ],
             ]
         ],
@@ -436,6 +441,8 @@ doctype_js.update(
         "NDIS PE Production Activation Gate Item": "public/js/ndis_pe_production_activation_gate_item.js",
         "NDIS PE Single Record Draft Smoke Run": "public/js/ndis_pe_single_record_draft_smoke_run.js",
         "NDIS PE Single Record Draft Smoke Run Item": "public/js/ndis_pe_single_record_draft_smoke_run_item.js",
+        "NDIS PE Submitted Smoke Gate": "public/js/ndis_pe_submitted_smoke_gate.js",
+        "NDIS PE Submitted Smoke Gate Item": "public/js/ndis_pe_submitted_smoke_gate_item.js",
     }
 )
 
@@ -512,6 +519,8 @@ doctype_list_js.update(
         "NDIS PE Production Activation Gate Item": "public/js/ndis_pe_production_activation_gate_item_list.js",
         "NDIS PE Single Record Draft Smoke Run": "public/js/ndis_pe_single_record_draft_smoke_run_list.js",
         "NDIS PE Single Record Draft Smoke Run Item": "public/js/ndis_pe_single_record_draft_smoke_run_item_list.js",
+        "NDIS PE Submitted Smoke Gate": "public/js/ndis_pe_submitted_smoke_gate_list.js",
+        "NDIS PE Submitted Smoke Gate Item": "public/js/ndis_pe_submitted_smoke_gate_item_list.js",
     }
 )
 

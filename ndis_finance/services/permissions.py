@@ -269,6 +269,21 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5G submitted Payment Entry smoke gate controls
+    "run_pe_submitted_smoke_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_submitted_smoke_gate": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "attempt_submitted_payment_entry_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+
     # Phase 5F single-record draft Payment Entry smoke controls
     "run_pe_single_record_draft_smoke": [
         "System Manager",
