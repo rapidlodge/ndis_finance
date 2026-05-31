@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5K Payment Entry live-smoke completion freeze controls
+    "run_pe_live_smoke_completion_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_live_smoke_completion_freeze": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 5J controlled rollback verification controls
     "run_pe_smoke_rollback_verification": [
         "System Manager",

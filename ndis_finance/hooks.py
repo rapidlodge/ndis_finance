@@ -182,6 +182,9 @@ fixtures = [
                     "NDIS PE Smoke Rollback Run Report",
                     "NDIS PE Smoke Rollback Exception Report",
                     "NDIS PE Smoke Rollback GL Report",
+                    "NDIS PE Live Smoke Completion Freeze Report",
+                    "NDIS PE Live Smoke Completion Exception Report",
+                    "NDIS PE Live Smoke Completion GL Evidence Report",
                 ],
             ]
         ],
@@ -326,6 +329,8 @@ fixtures = [
                     "NDIS PE One Submitted Smoke Run Item",
                     "NDIS PE Smoke Rollback Run",
                     "NDIS PE Smoke Rollback Run Item",
+                    "NDIS PE Live Smoke Completion Freeze",
+                    "NDIS PE Live Smoke Completion Freeze Item",
                 ],
             ]
         ],
@@ -476,6 +481,8 @@ doctype_js.update(
         "NDIS PE One Submitted Smoke Run Item": "public/js/ndis_pe_one_submitted_smoke_run_item.js",
         "NDIS PE Smoke Rollback Run": "public/js/ndis_pe_smoke_rollback_run.js",
         "NDIS PE Smoke Rollback Run Item": "public/js/ndis_pe_smoke_rollback_run_item.js",
+        "NDIS PE Live Smoke Completion Freeze": "public/js/ndis_pe_live_smoke_completion_freeze.js",
+        "NDIS PE Live Smoke Completion Freeze Item": "public/js/ndis_pe_live_smoke_completion_freeze_item.js",
     }
 )
 
@@ -560,6 +567,8 @@ doctype_list_js.update(
         "NDIS PE One Submitted Smoke Run Item": "public/js/ndis_pe_one_submitted_smoke_run_item_list.js",
         "NDIS PE Smoke Rollback Run": "public/js/ndis_pe_smoke_rollback_run_list.js",
         "NDIS PE Smoke Rollback Run Item": "public/js/ndis_pe_smoke_rollback_run_item_list.js",
+        "NDIS PE Live Smoke Completion Freeze": "public/js/ndis_pe_live_smoke_completion_freeze_list.js",
+        "NDIS PE Live Smoke Completion Freeze Item": "public/js/ndis_pe_live_smoke_completion_freeze_item_list.js",
     }
 )
 
