@@ -191,6 +191,9 @@ fixtures = [
                     "NDIS Real Remittance PE Preview Report",
                     "NDIS Real Remittance PE Preview Line Report",
                     "NDIS Real Remittance PE Preview Exception Report",
+                    "NDIS Real Remittance PE Adapter Run Report",
+                    "NDIS Real Remittance PE Adapter Line Report",
+                    "NDIS Real Remittance PE Adapter Exception Report",
                 ],
             ]
         ],
@@ -341,6 +344,8 @@ fixtures = [
                     "NDIS Real Remittance PE Design Gate Item",
                     "NDIS Real Remittance PE Preview",
                     "NDIS Real Remittance PE Preview Line",
+                    "NDIS Real Remittance PE Adapter Run",
+                    "NDIS Real Remittance PE Adapter Run Line",
                 ],
             ]
         ],
@@ -497,6 +502,8 @@ doctype_js.update(
         "NDIS Real Remittance PE Design Gate Item": "public/js/ndis_real_remittance_pe_design_gate_item.js",
         "NDIS Real Remittance PE Preview": "public/js/ndis_real_remittance_pe_preview.js",
         "NDIS Real Remittance PE Preview Line": "public/js/ndis_real_remittance_pe_preview_line.js",
+        "NDIS Real Remittance PE Adapter Run": "public/js/ndis_real_remittance_pe_adapter_run.js",
+        "NDIS Real Remittance PE Adapter Run Line": "public/js/ndis_real_remittance_pe_adapter_run_line.js",
     }
 )
 
@@ -587,6 +594,8 @@ doctype_list_js.update(
         "NDIS Real Remittance PE Design Gate Item": "public/js/ndis_real_remittance_pe_design_gate_item_list.js",
         "NDIS Real Remittance PE Preview": "public/js/ndis_real_remittance_pe_preview_list.js",
         "NDIS Real Remittance PE Preview Line": "public/js/ndis_real_remittance_pe_preview_line_list.js",
+        "NDIS Real Remittance PE Adapter Run": "public/js/ndis_real_remittance_pe_adapter_run_list.js",
+        "NDIS Real Remittance PE Adapter Run Line": "public/js/ndis_real_remittance_pe_adapter_run_line_list.js",
     }
 )
 
