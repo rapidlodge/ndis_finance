@@ -269,6 +269,21 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5I one submitted Payment Entry controlled smoke controls
+    "run_pe_one_submitted_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_one_submitted_smoke_payment": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_one_submitted_smoke_run": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 5H controlled Sales Invoice source harness controls
     "run_pe_smoke_invoice_source_harness": [
         "System Manager",
