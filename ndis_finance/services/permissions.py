@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 6A limited real remittance-to-PE design gate controls
+    "run_real_remittance_pe_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_real_remittance_pe_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 5K Payment Entry live-smoke completion freeze controls
     "run_pe_live_smoke_completion_freeze": [
         "System Manager",

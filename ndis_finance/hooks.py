@@ -185,6 +185,9 @@ fixtures = [
                     "NDIS PE Live Smoke Completion Freeze Report",
                     "NDIS PE Live Smoke Completion Exception Report",
                     "NDIS PE Live Smoke Completion GL Evidence Report",
+                    "NDIS Real Remittance PE Design Gate Report",
+                    "NDIS Real Remittance PE Design Exception Report",
+                    "NDIS Real Remittance PE Source Readiness Report",
                 ],
             ]
         ],
@@ -331,6 +334,8 @@ fixtures = [
                     "NDIS PE Smoke Rollback Run Item",
                     "NDIS PE Live Smoke Completion Freeze",
                     "NDIS PE Live Smoke Completion Freeze Item",
+                    "NDIS Real Remittance PE Design Gate",
+                    "NDIS Real Remittance PE Design Gate Item",
                 ],
             ]
         ],
@@ -483,6 +488,8 @@ doctype_js.update(
         "NDIS PE Smoke Rollback Run Item": "public/js/ndis_pe_smoke_rollback_run_item.js",
         "NDIS PE Live Smoke Completion Freeze": "public/js/ndis_pe_live_smoke_completion_freeze.js",
         "NDIS PE Live Smoke Completion Freeze Item": "public/js/ndis_pe_live_smoke_completion_freeze_item.js",
+        "NDIS Real Remittance PE Design Gate": "public/js/ndis_real_remittance_pe_design_gate.js",
+        "NDIS Real Remittance PE Design Gate Item": "public/js/ndis_real_remittance_pe_design_gate_item.js",
     }
 )
 
@@ -569,6 +576,8 @@ doctype_list_js.update(
         "NDIS PE Smoke Rollback Run Item": "public/js/ndis_pe_smoke_rollback_run_item_list.js",
         "NDIS PE Live Smoke Completion Freeze": "public/js/ndis_pe_live_smoke_completion_freeze_list.js",
         "NDIS PE Live Smoke Completion Freeze Item": "public/js/ndis_pe_live_smoke_completion_freeze_item_list.js",
+        "NDIS Real Remittance PE Design Gate": "public/js/ndis_real_remittance_pe_design_gate_list.js",
+        "NDIS Real Remittance PE Design Gate Item": "public/js/ndis_real_remittance_pe_design_gate_item_list.js",
     }
 )
 

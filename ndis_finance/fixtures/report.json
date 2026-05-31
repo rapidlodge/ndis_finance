@@ -3871,5 +3871,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-31 17:29:50.125082",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance PE Source Readiness Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Remittance Import",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance PE Source Readiness Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-31 17:29:50.053149",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance PE Design Gate Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance PE Design Gate",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance PE Design Gate Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-05-31 17:29:50.105686",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance PE Design Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance PE Design Gate Item",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance PE Design Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
