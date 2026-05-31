@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 5J controlled rollback verification controls
+    "run_pe_smoke_rollback_verification": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_pe_smoke_rollback_run": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 5I one submitted Payment Entry controlled smoke controls
     "run_pe_one_submitted_smoke": [
         "System Manager",

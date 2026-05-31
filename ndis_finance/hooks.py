@@ -179,6 +179,9 @@ fixtures = [
                     "NDIS PE One Submitted Smoke Run Report",
                     "NDIS PE One Submitted Smoke Exception Report",
                     "NDIS PE One Submitted Smoke GL Report",
+                    "NDIS PE Smoke Rollback Run Report",
+                    "NDIS PE Smoke Rollback Exception Report",
+                    "NDIS PE Smoke Rollback GL Report",
                 ],
             ]
         ],
@@ -321,6 +324,8 @@ fixtures = [
                     "NDIS PE Smoke Invoice Source Run Item",
                     "NDIS PE One Submitted Smoke Run",
                     "NDIS PE One Submitted Smoke Run Item",
+                    "NDIS PE Smoke Rollback Run",
+                    "NDIS PE Smoke Rollback Run Item",
                 ],
             ]
         ],
@@ -469,6 +474,8 @@ doctype_js.update(
         "NDIS PE Smoke Invoice Source Run Item": "public/js/ndis_pe_smoke_invoice_source_run_item.js",
         "NDIS PE One Submitted Smoke Run": "public/js/ndis_pe_one_submitted_smoke_run.js",
         "NDIS PE One Submitted Smoke Run Item": "public/js/ndis_pe_one_submitted_smoke_run_item.js",
+        "NDIS PE Smoke Rollback Run": "public/js/ndis_pe_smoke_rollback_run.js",
+        "NDIS PE Smoke Rollback Run Item": "public/js/ndis_pe_smoke_rollback_run_item.js",
     }
 )
 
@@ -551,6 +558,8 @@ doctype_list_js.update(
         "NDIS PE Smoke Invoice Source Run Item": "public/js/ndis_pe_smoke_invoice_source_run_item_list.js",
         "NDIS PE One Submitted Smoke Run": "public/js/ndis_pe_one_submitted_smoke_run_list.js",
         "NDIS PE One Submitted Smoke Run Item": "public/js/ndis_pe_one_submitted_smoke_run_item_list.js",
+        "NDIS PE Smoke Rollback Run": "public/js/ndis_pe_smoke_rollback_run_list.js",
+        "NDIS PE Smoke Rollback Run Item": "public/js/ndis_pe_smoke_rollback_run_item_list.js",
     }
 )
 
