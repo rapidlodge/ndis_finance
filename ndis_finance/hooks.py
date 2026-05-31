@@ -188,6 +188,9 @@ fixtures = [
                     "NDIS Real Remittance PE Design Gate Report",
                     "NDIS Real Remittance PE Design Exception Report",
                     "NDIS Real Remittance PE Source Readiness Report",
+                    "NDIS Real Remittance PE Preview Report",
+                    "NDIS Real Remittance PE Preview Line Report",
+                    "NDIS Real Remittance PE Preview Exception Report",
                 ],
             ]
         ],
@@ -336,6 +339,8 @@ fixtures = [
                     "NDIS PE Live Smoke Completion Freeze Item",
                     "NDIS Real Remittance PE Design Gate",
                     "NDIS Real Remittance PE Design Gate Item",
+                    "NDIS Real Remittance PE Preview",
+                    "NDIS Real Remittance PE Preview Line",
                 ],
             ]
         ],
@@ -490,6 +495,8 @@ doctype_js.update(
         "NDIS PE Live Smoke Completion Freeze Item": "public/js/ndis_pe_live_smoke_completion_freeze_item.js",
         "NDIS Real Remittance PE Design Gate": "public/js/ndis_real_remittance_pe_design_gate.js",
         "NDIS Real Remittance PE Design Gate Item": "public/js/ndis_real_remittance_pe_design_gate_item.js",
+        "NDIS Real Remittance PE Preview": "public/js/ndis_real_remittance_pe_preview.js",
+        "NDIS Real Remittance PE Preview Line": "public/js/ndis_real_remittance_pe_preview_line.js",
     }
 )
 
@@ -578,6 +585,8 @@ doctype_list_js.update(
         "NDIS PE Live Smoke Completion Freeze Item": "public/js/ndis_pe_live_smoke_completion_freeze_item_list.js",
         "NDIS Real Remittance PE Design Gate": "public/js/ndis_real_remittance_pe_design_gate_list.js",
         "NDIS Real Remittance PE Design Gate Item": "public/js/ndis_real_remittance_pe_design_gate_item_list.js",
+        "NDIS Real Remittance PE Preview": "public/js/ndis_real_remittance_pe_preview_list.js",
+        "NDIS Real Remittance PE Preview Line": "public/js/ndis_real_remittance_pe_preview_line_list.js",
     }
 )
 

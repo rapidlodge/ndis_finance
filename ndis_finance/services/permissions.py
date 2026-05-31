@@ -269,6 +269,18 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 6B limited real remittance-to-PE preview controls
+    "run_real_remittance_pe_preview": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "cancel_real_remittance_pe_preview": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 6A limited real remittance-to-PE design gate controls
     "run_real_remittance_pe_design_gate": [
         "System Manager",
