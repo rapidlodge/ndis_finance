@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 6G controlled real remittance Payment Entry rollback controls
+    "run_real_remittance_pe_smoke_rollback": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_real_remittance_pe_smoke_rollback_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 6F one controlled real remittance Payment Entry smoke controls
     "run_one_real_remittance_pe_smoke": [
         "System Manager",

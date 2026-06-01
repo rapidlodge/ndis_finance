@@ -203,6 +203,9 @@ fixtures = [
                     "NDIS Real Remittance PE Smoke Report",
                     "NDIS Real Remittance PE Smoke Line Report",
                     "NDIS Real Remittance PE Smoke Guardrail Report",
+                    "NDIS Real Remittance PE Rollback Report",
+                    "NDIS Real Remittance PE Rollback Line Report",
+                    "NDIS Real Remittance PE Rollback Guardrail Report",
                 ],
             ]
         ],
@@ -361,6 +364,8 @@ fixtures = [
                     "NDIS Real Remittance PE Source Harness Line",
                     "NDIS Real Remittance PE Smoke Run",
                     "NDIS Real Remittance PE Smoke Line",
+                    "NDIS Real Remittance PE Rollback Run",
+                    "NDIS Real Remittance PE Rollback Line",
                 ],
             ]
         ],
@@ -537,6 +542,8 @@ doctype_js.update(
         "NDIS Real Remittance PE Source Harness Line": "public/js/ndis_real_remittance_pe_source_harness_line.js",
         "NDIS Real Remittance PE Smoke Run": "public/js/ndis_real_remittance_pe_smoke_run.js",
         "NDIS Real Remittance PE Smoke Line": "public/js/ndis_real_remittance_pe_smoke_line.js",
+        "NDIS Real Remittance PE Rollback Run": "public/js/ndis_real_remittance_pe_rollback_run.js",
+        "NDIS Real Remittance PE Rollback Line": "public/js/ndis_real_remittance_pe_rollback_line.js",
     }
 )
 
@@ -635,6 +642,8 @@ doctype_list_js.update(
         "NDIS Real Remittance PE Source Harness Line": "public/js/ndis_real_remittance_pe_source_harness_line_list.js",
         "NDIS Real Remittance PE Smoke Run": "public/js/ndis_real_remittance_pe_smoke_run_list.js",
         "NDIS Real Remittance PE Smoke Line": "public/js/ndis_real_remittance_pe_smoke_line_list.js",
+        "NDIS Real Remittance PE Rollback Run": "public/js/ndis_real_remittance_pe_rollback_run_list.js",
+        "NDIS Real Remittance PE Rollback Line": "public/js/ndis_real_remittance_pe_rollback_line_list.js",
     }
 )
 
