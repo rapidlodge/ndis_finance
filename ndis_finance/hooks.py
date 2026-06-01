@@ -194,6 +194,9 @@ fixtures = [
                     "NDIS Real Remittance PE Adapter Run Report",
                     "NDIS Real Remittance PE Adapter Line Report",
                     "NDIS Real Remittance PE Adapter Exception Report",
+                    "NDIS Real Remittance PE Activation Gate Report",
+                    "NDIS Real Remittance PE Activation Exception Report",
+                    "NDIS Real Remittance PE Activation Readiness Report",
                 ],
             ]
         ],
@@ -346,6 +349,8 @@ fixtures = [
                     "NDIS Real Remittance PE Preview Line",
                     "NDIS Real Remittance PE Adapter Run",
                     "NDIS Real Remittance PE Adapter Run Line",
+                    "NDIS Real Remittance PE Activation Gate",
+                    "NDIS Real Remittance PE Activation Gate Item",
                 ],
             ]
         ],
@@ -504,6 +509,8 @@ doctype_js.update(
         "NDIS Real Remittance PE Preview Line": "public/js/ndis_real_remittance_pe_preview_line.js",
         "NDIS Real Remittance PE Adapter Run": "public/js/ndis_real_remittance_pe_adapter_run.js",
         "NDIS Real Remittance PE Adapter Run Line": "public/js/ndis_real_remittance_pe_adapter_run_line.js",
+        "NDIS Real Remittance PE Activation Gate": "public/js/ndis_real_remittance_pe_activation_gate.js",
+        "NDIS Real Remittance PE Activation Gate Item": "public/js/ndis_real_remittance_pe_activation_gate_item.js",
     }
 )
 
@@ -596,6 +603,8 @@ doctype_list_js.update(
         "NDIS Real Remittance PE Preview Line": "public/js/ndis_real_remittance_pe_preview_line_list.js",
         "NDIS Real Remittance PE Adapter Run": "public/js/ndis_real_remittance_pe_adapter_run_list.js",
         "NDIS Real Remittance PE Adapter Run Line": "public/js/ndis_real_remittance_pe_adapter_run_line_list.js",
+        "NDIS Real Remittance PE Activation Gate": "public/js/ndis_real_remittance_pe_activation_gate_list.js",
+        "NDIS Real Remittance PE Activation Gate Item": "public/js/ndis_real_remittance_pe_activation_gate_item_list.js",
     }
 )
 
