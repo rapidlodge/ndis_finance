@@ -209,6 +209,9 @@ fixtures = [
                     "NDIS Real Remittance PE Evidence Freeze Report",
                     "NDIS Real Remittance PE Evidence Freeze Item Report",
                     "NDIS Real Remittance PE Evidence Freeze Guardrail Report",
+                    "NDIS Real Remittance Batch Policy Register Report",
+                    "NDIS Real Remittance Batch Design Gate Report",
+                    "NDIS Real Remittance Batch Design Exception Report",
                 ],
             ]
         ],
@@ -371,6 +374,9 @@ fixtures = [
                     "NDIS Real Remittance PE Rollback Line",
                     "NDIS Real Remittance PE Evidence Freeze",
                     "NDIS Real Remittance PE Evidence Freeze Item",
+                    "NDIS Real Remittance Batch Posting Policy",
+                    "NDIS Real Remittance Batch Design Gate",
+                    "NDIS Real Remittance Batch Design Gate Item",
                 ],
             ]
         ],
@@ -378,6 +384,10 @@ fixtures = [
     {
         "dt": "NDIS PE Production Posting Policy",
         "filters": [["policy_id", "like", "NDIS-PE-POLICY-%"]],
+    },
+    {
+        "dt": "NDIS Real Remittance Batch Posting Policy",
+        "filters": [["policy_key", "like", "BATCH_%"]],
     },
     {
         "dt": "NDIS Executive Exception Rule",
@@ -551,6 +561,9 @@ doctype_js.update(
         "NDIS Real Remittance PE Rollback Line": "public/js/ndis_real_remittance_pe_rollback_line.js",
         "NDIS Real Remittance PE Evidence Freeze": "public/js/ndis_real_remittance_pe_evidence_freeze.js",
         "NDIS Real Remittance PE Evidence Freeze Item": "public/js/ndis_real_remittance_pe_evidence_freeze_item.js",
+        "NDIS Real Remittance Batch Posting Policy": "public/js/ndis_real_remittance_batch_posting_policy.js",
+        "NDIS Real Remittance Batch Design Gate": "public/js/ndis_real_remittance_batch_design_gate.js",
+        "NDIS Real Remittance Batch Design Gate Item": "public/js/ndis_real_remittance_batch_design_gate_item.js",
     }
 )
 
@@ -653,6 +666,9 @@ doctype_list_js.update(
         "NDIS Real Remittance PE Rollback Line": "public/js/ndis_real_remittance_pe_rollback_line_list.js",
         "NDIS Real Remittance PE Evidence Freeze": "public/js/ndis_real_remittance_pe_evidence_freeze_list.js",
         "NDIS Real Remittance PE Evidence Freeze Item": "public/js/ndis_real_remittance_pe_evidence_freeze_item_list.js",
+        "NDIS Real Remittance Batch Posting Policy": "public/js/ndis_real_remittance_batch_posting_policy_list.js",
+        "NDIS Real Remittance Batch Design Gate": "public/js/ndis_real_remittance_batch_design_gate_list.js",
+        "NDIS Real Remittance Batch Design Gate Item": "public/js/ndis_real_remittance_batch_design_gate_item_list.js",
     }
 )
 

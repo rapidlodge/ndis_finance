@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 7A real remittance batch posting design gate controls
+    "run_real_remittance_batch_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_real_remittance_batch_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 6H real remittance PE smoke + rollback evidence freeze controls
     "run_real_remittance_pe_evidence_freeze": [
         "System Manager",
