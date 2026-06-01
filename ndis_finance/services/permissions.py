@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 6H real remittance PE smoke + rollback evidence freeze controls
+    "run_real_remittance_pe_evidence_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_real_remittance_pe_evidence_freeze": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 6G controlled real remittance Payment Entry rollback controls
     "run_real_remittance_pe_smoke_rollback": [
         "System Manager",

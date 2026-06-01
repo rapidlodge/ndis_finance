@@ -206,6 +206,9 @@ fixtures = [
                     "NDIS Real Remittance PE Rollback Report",
                     "NDIS Real Remittance PE Rollback Line Report",
                     "NDIS Real Remittance PE Rollback Guardrail Report",
+                    "NDIS Real Remittance PE Evidence Freeze Report",
+                    "NDIS Real Remittance PE Evidence Freeze Item Report",
+                    "NDIS Real Remittance PE Evidence Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -366,6 +369,8 @@ fixtures = [
                     "NDIS Real Remittance PE Smoke Line",
                     "NDIS Real Remittance PE Rollback Run",
                     "NDIS Real Remittance PE Rollback Line",
+                    "NDIS Real Remittance PE Evidence Freeze",
+                    "NDIS Real Remittance PE Evidence Freeze Item",
                 ],
             ]
         ],
@@ -544,6 +549,8 @@ doctype_js.update(
         "NDIS Real Remittance PE Smoke Line": "public/js/ndis_real_remittance_pe_smoke_line.js",
         "NDIS Real Remittance PE Rollback Run": "public/js/ndis_real_remittance_pe_rollback_run.js",
         "NDIS Real Remittance PE Rollback Line": "public/js/ndis_real_remittance_pe_rollback_line.js",
+        "NDIS Real Remittance PE Evidence Freeze": "public/js/ndis_real_remittance_pe_evidence_freeze.js",
+        "NDIS Real Remittance PE Evidence Freeze Item": "public/js/ndis_real_remittance_pe_evidence_freeze_item.js",
     }
 )
 
@@ -644,6 +651,8 @@ doctype_list_js.update(
         "NDIS Real Remittance PE Smoke Line": "public/js/ndis_real_remittance_pe_smoke_line_list.js",
         "NDIS Real Remittance PE Rollback Run": "public/js/ndis_real_remittance_pe_rollback_run_list.js",
         "NDIS Real Remittance PE Rollback Line": "public/js/ndis_real_remittance_pe_rollback_line_list.js",
+        "NDIS Real Remittance PE Evidence Freeze": "public/js/ndis_real_remittance_pe_evidence_freeze_list.js",
+        "NDIS Real Remittance PE Evidence Freeze Item": "public/js/ndis_real_remittance_pe_evidence_freeze_item_list.js",
     }
 )
 
