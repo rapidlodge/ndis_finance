@@ -197,6 +197,9 @@ fixtures = [
                     "NDIS Real Remittance PE Activation Gate Report",
                     "NDIS Real Remittance PE Activation Exception Report",
                     "NDIS Real Remittance PE Activation Readiness Report",
+                    "NDIS Real Remittance PE Source Harness Report",
+                    "NDIS Real Remittance PE Source Harness Line Report",
+                    "NDIS Real Remittance PE Source Harness Readiness Report",
                 ],
             ]
         ],
@@ -351,6 +354,8 @@ fixtures = [
                     "NDIS Real Remittance PE Adapter Run Line",
                     "NDIS Real Remittance PE Activation Gate",
                     "NDIS Real Remittance PE Activation Gate Item",
+                    "NDIS Real Remittance PE Source Harness Run",
+                    "NDIS Real Remittance PE Source Harness Line",
                 ],
             ]
         ],
@@ -413,6 +418,14 @@ fixtures = [
                     "Payment Entry-custom_ndis_pe_one_submitted_source_invoice",
                     "Payment Entry-custom_ndis_pe_one_submitted_phase",
                     "Payment Entry-custom_ndis_pe_one_submitted_note",
+                    "Sales Invoice-custom_ndis_real_remittance_pe_harness_invoice",
+                    "Sales Invoice-custom_ndis_real_remittance_pe_harness_run",
+                    "NDIS Claim Line-custom_ndis_real_remittance_pe_harness_source",
+                    "NDIS Claim Line-custom_ndis_real_remittance_pe_harness_run",
+                    "NDIS Remittance Import-custom_ndis_real_remittance_pe_harness_source",
+                    "NDIS Remittance Import-custom_ndis_real_remittance_pe_harness_run",
+                    "NDIS Remittance Import Line-custom_ndis_real_remittance_pe_harness_source",
+                    "NDIS Remittance Import Line-custom_ndis_real_remittance_pe_harness_run",
                 ],
             ]
         ],
@@ -511,6 +524,8 @@ doctype_js.update(
         "NDIS Real Remittance PE Adapter Run Line": "public/js/ndis_real_remittance_pe_adapter_run_line.js",
         "NDIS Real Remittance PE Activation Gate": "public/js/ndis_real_remittance_pe_activation_gate.js",
         "NDIS Real Remittance PE Activation Gate Item": "public/js/ndis_real_remittance_pe_activation_gate_item.js",
+        "NDIS Real Remittance PE Source Harness Run": "public/js/ndis_real_remittance_pe_source_harness_run.js",
+        "NDIS Real Remittance PE Source Harness Line": "public/js/ndis_real_remittance_pe_source_harness_line.js",
     }
 )
 
@@ -605,6 +620,8 @@ doctype_list_js.update(
         "NDIS Real Remittance PE Adapter Run Line": "public/js/ndis_real_remittance_pe_adapter_run_line_list.js",
         "NDIS Real Remittance PE Activation Gate": "public/js/ndis_real_remittance_pe_activation_gate_list.js",
         "NDIS Real Remittance PE Activation Gate Item": "public/js/ndis_real_remittance_pe_activation_gate_item_list.js",
+        "NDIS Real Remittance PE Source Harness Run": "public/js/ndis_real_remittance_pe_source_harness_run_list.js",
+        "NDIS Real Remittance PE Source Harness Line": "public/js/ndis_real_remittance_pe_source_harness_line_list.js",
     }
 )
 

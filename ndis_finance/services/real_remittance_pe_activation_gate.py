@@ -43,12 +43,27 @@ def config_state():
     }
 
 
+def sales_invoice_today_guardrail_count():
+    if frappe.db.has_column("Sales Invoice", "custom_ndis_real_remittance_pe_harness_invoice"):
+        return frappe.db.sql(
+            """
+            SELECT COUNT(*)
+            FROM `tabSales Invoice`
+            WHERE creation >= %(today)s
+            AND IFNULL(custom_ndis_real_remittance_pe_harness_invoice, 0) = 0
+            """,
+            {"today": today()},
+        )[0][0]
+
+    return count_dt("Sales Invoice", {"creation": [">=", today()]})
+
+
 def guardrails():
     return {
         "payment_entry_count": count_dt("Payment Entry"),
         "payment_entry_gl_count": count_dt("GL Entry", {"voucher_type": "Payment Entry"}),
         "submitted_journal_entry_count_today": count_dt("Journal Entry", {"creation": [">=", today()], "docstatus": 1}),
-        "sales_invoice_count_today": count_dt("Sales Invoice", {"creation": [">=", today()]}),
+        "sales_invoice_count_today": sales_invoice_today_guardrail_count(),
         "purchase_invoice_count_today": count_dt("Purchase Invoice", {"creation": [">=", today()]}),
         "live_enabled_policy_count": count_dt("NDIS PE Production Posting Policy", {"production_posting_enabled": 1}),
     }

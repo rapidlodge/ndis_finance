@@ -269,6 +269,18 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 6E controlled eligible remittance source harness controls
+    "run_real_remittance_pe_source_harness": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "cancel_real_remittance_pe_source_harness_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 6D real remittance-to-PE activation gate controls
     "run_real_remittance_pe_activation_gate": [
         "System Manager",
