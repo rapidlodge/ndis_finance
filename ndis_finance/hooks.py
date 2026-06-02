@@ -218,6 +218,9 @@ fixtures = [
                     "NDIS Real Remittance Batch Adapter Report",
                     "NDIS Real Remittance Batch Adapter Line Report",
                     "NDIS Real Remittance Batch Adapter Guardrail Report",
+                    "NDIS Real Remittance Batch Activation Gate Report",
+                    "NDIS Real Remittance Batch Activation Gate Item Report",
+                    "NDIS Real Remittance Batch Activation Guardrail Report",
                 ],
             ]
         ],
@@ -387,6 +390,8 @@ fixtures = [
                     "NDIS Real Remittance Batch Preview Line",
                     "NDIS Real Remittance Batch Adapter Run",
                     "NDIS Real Remittance Batch Adapter Run Line",
+                    "NDIS Real Remittance Batch Activation Gate",
+                    "NDIS Real Remittance Batch Activation Gate Item",
                 ],
             ]
         ],
@@ -578,6 +583,8 @@ doctype_js.update(
         "NDIS Real Remittance Batch Preview Line": "public/js/ndis_real_remittance_batch_preview_line.js",
         "NDIS Real Remittance Batch Adapter Run": "public/js/ndis_real_remittance_batch_adapter_run.js",
         "NDIS Real Remittance Batch Adapter Run Line": "public/js/ndis_real_remittance_batch_adapter_run_line.js",
+        "NDIS Real Remittance Batch Activation Gate": "public/js/ndis_real_remittance_batch_activation_gate.js",
+        "NDIS Real Remittance Batch Activation Gate Item": "public/js/ndis_real_remittance_batch_activation_gate_item.js",
     }
 )
 
@@ -687,6 +694,8 @@ doctype_list_js.update(
         "NDIS Real Remittance Batch Preview Line": "public/js/ndis_real_remittance_batch_preview_line_list.js",
         "NDIS Real Remittance Batch Adapter Run": "public/js/ndis_real_remittance_batch_adapter_run_list.js",
         "NDIS Real Remittance Batch Adapter Run Line": "public/js/ndis_real_remittance_batch_adapter_run_line_list.js",
+        "NDIS Real Remittance Batch Activation Gate": "public/js/ndis_real_remittance_batch_activation_gate_list.js",
+        "NDIS Real Remittance Batch Activation Gate Item": "public/js/ndis_real_remittance_batch_activation_gate_item_list.js",
     }
 )
 

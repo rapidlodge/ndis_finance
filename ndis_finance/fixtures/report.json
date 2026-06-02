@@ -5224,5 +5224,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-02 12:48:06.035375",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch Activation Gate Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch Activation Gate",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch Activation Gate Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-02 12:48:06.128676",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch Activation Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch Activation Gate",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch Activation Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-02 12:48:06.091805",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch Activation Gate Item Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch Activation Gate Item",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch Activation Gate Item Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
