@@ -4978,5 +4978,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-02 11:57:15.350751",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch Preview Line Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch Preview Line",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch Preview Line Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-02 11:57:15.302388",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch Preview Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch Preview",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch Preview Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-02 11:57:15.370678",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch Preview Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch Preview Line",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch Preview Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
