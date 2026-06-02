@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 7F controlled real remittance batch Payment Entry smoke controls
+    "run_real_remittance_batch_pe_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_real_remittance_batch_pe_smoke": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 7E controlled batch smoke source harness controls
     "run_real_remittance_batch_source_harness": [
         "System Manager",

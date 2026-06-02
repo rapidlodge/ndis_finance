@@ -224,6 +224,9 @@ fixtures = [
                     "NDIS Real Remittance Batch Source Harness Report",
                     "NDIS Real Remittance Batch Source Harness Line Report",
                     "NDIS Real Remittance Batch Source Harness Guardrail Report",
+                    "NDIS Real Remittance Batch PE Smoke Report",
+                    "NDIS Real Remittance Batch PE Smoke Line Report",
+                    "NDIS Real Remittance Batch PE Smoke Guardrail Report",
                 ],
             ]
         ],
@@ -397,6 +400,8 @@ fixtures = [
                     "NDIS Real Remittance Batch Activation Gate Item",
                     "NDIS Real Remittance Batch Source Harness Run",
                     "NDIS Real Remittance Batch Source Harness Line",
+                    "NDIS Real Remittance Batch PE Smoke Run",
+                    "NDIS Real Remittance Batch PE Smoke Line",
                 ],
             ]
         ],
@@ -489,6 +494,10 @@ fixtures = [
                     "NDIS Claim Line-custom_ndis_real_remittance_batch_source_run",
                     "NDIS Claim Line-custom_ndis_batch_source_sales_invoice",
                     "NDIS Claim Line-custom_ndis_batch_source_amount",
+                    "Payment Entry-custom_ndis_real_remittance_batch_pe_smoke",
+                    "Payment Entry-custom_ndis_real_remittance_batch_pe_smoke_run",
+                    "Payment Entry-custom_ndis_real_remittance_batch_source_run",
+                    "Payment Entry-custom_ndis_real_remittance_batch_pe_amount",
                 ],
             ]
         ],
@@ -606,6 +615,8 @@ doctype_js.update(
         "NDIS Real Remittance Batch Activation Gate Item": "public/js/ndis_real_remittance_batch_activation_gate_item.js",
         "NDIS Real Remittance Batch Source Harness Run": "public/js/ndis_real_remittance_batch_source_harness_run.js",
         "NDIS Real Remittance Batch Source Harness Line": "public/js/ndis_real_remittance_batch_source_harness_line.js",
+        "NDIS Real Remittance Batch PE Smoke Run": "public/js/ndis_real_remittance_batch_pe_smoke_run.js",
+        "NDIS Real Remittance Batch PE Smoke Line": "public/js/ndis_real_remittance_batch_pe_smoke_line.js",
     }
 )
 
@@ -719,6 +730,8 @@ doctype_list_js.update(
         "NDIS Real Remittance Batch Activation Gate Item": "public/js/ndis_real_remittance_batch_activation_gate_item_list.js",
         "NDIS Real Remittance Batch Source Harness Run": "public/js/ndis_real_remittance_batch_source_harness_run_list.js",
         "NDIS Real Remittance Batch Source Harness Line": "public/js/ndis_real_remittance_batch_source_harness_line_list.js",
+        "NDIS Real Remittance Batch PE Smoke Run": "public/js/ndis_real_remittance_batch_pe_smoke_run_list.js",
+        "NDIS Real Remittance Batch PE Smoke Line": "public/js/ndis_real_remittance_batch_pe_smoke_line_list.js",
     }
 )
 
