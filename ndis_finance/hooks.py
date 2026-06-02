@@ -221,6 +221,9 @@ fixtures = [
                     "NDIS Real Remittance Batch Activation Gate Report",
                     "NDIS Real Remittance Batch Activation Gate Item Report",
                     "NDIS Real Remittance Batch Activation Guardrail Report",
+                    "NDIS Real Remittance Batch Source Harness Report",
+                    "NDIS Real Remittance Batch Source Harness Line Report",
+                    "NDIS Real Remittance Batch Source Harness Guardrail Report",
                 ],
             ]
         ],
@@ -392,6 +395,8 @@ fixtures = [
                     "NDIS Real Remittance Batch Adapter Run Line",
                     "NDIS Real Remittance Batch Activation Gate",
                     "NDIS Real Remittance Batch Activation Gate Item",
+                    "NDIS Real Remittance Batch Source Harness Run",
+                    "NDIS Real Remittance Batch Source Harness Line",
                 ],
             ]
         ],
@@ -470,6 +475,20 @@ fixtures = [
                     "Payment Entry-custom_ndis_real_remittance_pe_smoke_run",
                     "Payment Entry-custom_ndis_real_remittance_pe_harness_run",
                     "Payment Entry-custom_ndis_real_remittance_pe_source_invoice",
+                    "Sales Invoice-custom_ndis_real_remittance_batch_source_invoice",
+                    "Sales Invoice-custom_ndis_real_remittance_batch_source_run",
+                    "Sales Invoice-custom_ndis_real_remittance_batch_source_line_no",
+                    "Sales Invoice-custom_ndis_real_remittance_batch_source_amount",
+                    "NDIS Remittance Import Line-custom_ndis_real_remittance_batch_source",
+                    "NDIS Remittance Import Line-custom_ndis_real_remittance_batch_source_run",
+                    "NDIS Remittance Import Line-custom_ndis_batch_source_sales_invoice",
+                    "NDIS Remittance Import Line-custom_ndis_batch_source_claim_line",
+                    "NDIS Remittance Import Line-custom_ndis_batch_source_outcome",
+                    "NDIS Remittance Import Line-custom_ndis_batch_source_amount",
+                    "NDIS Claim Line-custom_ndis_real_remittance_batch_source",
+                    "NDIS Claim Line-custom_ndis_real_remittance_batch_source_run",
+                    "NDIS Claim Line-custom_ndis_batch_source_sales_invoice",
+                    "NDIS Claim Line-custom_ndis_batch_source_amount",
                 ],
             ]
         ],
@@ -585,6 +604,8 @@ doctype_js.update(
         "NDIS Real Remittance Batch Adapter Run Line": "public/js/ndis_real_remittance_batch_adapter_run_line.js",
         "NDIS Real Remittance Batch Activation Gate": "public/js/ndis_real_remittance_batch_activation_gate.js",
         "NDIS Real Remittance Batch Activation Gate Item": "public/js/ndis_real_remittance_batch_activation_gate_item.js",
+        "NDIS Real Remittance Batch Source Harness Run": "public/js/ndis_real_remittance_batch_source_harness_run.js",
+        "NDIS Real Remittance Batch Source Harness Line": "public/js/ndis_real_remittance_batch_source_harness_line.js",
     }
 )
 
@@ -696,6 +717,8 @@ doctype_list_js.update(
         "NDIS Real Remittance Batch Adapter Run Line": "public/js/ndis_real_remittance_batch_adapter_run_line_list.js",
         "NDIS Real Remittance Batch Activation Gate": "public/js/ndis_real_remittance_batch_activation_gate_list.js",
         "NDIS Real Remittance Batch Activation Gate Item": "public/js/ndis_real_remittance_batch_activation_gate_item_list.js",
+        "NDIS Real Remittance Batch Source Harness Run": "public/js/ndis_real_remittance_batch_source_harness_run_list.js",
+        "NDIS Real Remittance Batch Source Harness Line": "public/js/ndis_real_remittance_batch_source_harness_line_list.js",
     }
 )
 
