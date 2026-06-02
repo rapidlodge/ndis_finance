@@ -215,6 +215,9 @@ fixtures = [
                     "NDIS Real Remittance Batch Preview Report",
                     "NDIS Real Remittance Batch Preview Line Report",
                     "NDIS Real Remittance Batch Preview Exception Report",
+                    "NDIS Real Remittance Batch Adapter Report",
+                    "NDIS Real Remittance Batch Adapter Line Report",
+                    "NDIS Real Remittance Batch Adapter Guardrail Report",
                 ],
             ]
         ],
@@ -382,6 +385,8 @@ fixtures = [
                     "NDIS Real Remittance Batch Design Gate Item",
                     "NDIS Real Remittance Batch Preview",
                     "NDIS Real Remittance Batch Preview Line",
+                    "NDIS Real Remittance Batch Adapter Run",
+                    "NDIS Real Remittance Batch Adapter Run Line",
                 ],
             ]
         ],
@@ -571,6 +576,8 @@ doctype_js.update(
         "NDIS Real Remittance Batch Design Gate Item": "public/js/ndis_real_remittance_batch_design_gate_item.js",
         "NDIS Real Remittance Batch Preview": "public/js/ndis_real_remittance_batch_preview.js",
         "NDIS Real Remittance Batch Preview Line": "public/js/ndis_real_remittance_batch_preview_line.js",
+        "NDIS Real Remittance Batch Adapter Run": "public/js/ndis_real_remittance_batch_adapter_run.js",
+        "NDIS Real Remittance Batch Adapter Run Line": "public/js/ndis_real_remittance_batch_adapter_run_line.js",
     }
 )
 
@@ -678,6 +685,8 @@ doctype_list_js.update(
         "NDIS Real Remittance Batch Design Gate Item": "public/js/ndis_real_remittance_batch_design_gate_item_list.js",
         "NDIS Real Remittance Batch Preview": "public/js/ndis_real_remittance_batch_preview_list.js",
         "NDIS Real Remittance Batch Preview Line": "public/js/ndis_real_remittance_batch_preview_line_list.js",
+        "NDIS Real Remittance Batch Adapter Run": "public/js/ndis_real_remittance_batch_adapter_run_list.js",
+        "NDIS Real Remittance Batch Adapter Run Line": "public/js/ndis_real_remittance_batch_adapter_run_line_list.js",
     }
 )
 

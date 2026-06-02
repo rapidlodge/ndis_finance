@@ -269,6 +269,18 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 7C real remittance batch hard-block adapter controls
+    "run_real_remittance_batch_adapter": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "cancel_real_remittance_batch_adapter": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 7B real remittance batch posting preview controls
     "run_real_remittance_batch_preview": [
         "System Manager",
