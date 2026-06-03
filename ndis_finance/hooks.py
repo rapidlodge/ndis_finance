@@ -236,6 +236,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Policy Report",
                     "NDIS Controlled Production Batch Design Gate Report",
                     "NDIS Controlled Production Batch Design Exception Report",
+                    "NDIS Controlled Production Batch Preview Report",
+                    "NDIS Controlled Production Batch Preview Line Report",
+                    "NDIS Controlled Production Batch Preview Exception Report",
                 ],
             ]
         ],
@@ -418,6 +421,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Posting Policy",
                     "NDIS Controlled Production Batch Design Gate",
                     "NDIS Controlled Production Batch Design Gate Item",
+                    "NDIS Controlled Production Batch Preview",
+                    "NDIS Controlled Production Batch Preview Line",
                 ],
             ]
         ],
@@ -644,6 +649,8 @@ doctype_js.update(
         "NDIS Controlled Production Batch Posting Policy": "public/js/ndis_controlled_production_batch_posting_policy.js",
         "NDIS Controlled Production Batch Design Gate": "public/js/ndis_controlled_production_batch_design_gate.js",
         "NDIS Controlled Production Batch Design Gate Item": "public/js/ndis_controlled_production_batch_design_gate_item.js",
+        "NDIS Controlled Production Batch Preview": "public/js/ndis_controlled_production_batch_preview.js",
+        "NDIS Controlled Production Batch Preview Line": "public/js/ndis_controlled_production_batch_preview_line.js",
     }
 )
 
@@ -766,6 +773,8 @@ doctype_list_js.update(
         "NDIS Controlled Production Batch Posting Policy": "public/js/ndis_controlled_production_batch_posting_policy_list.js",
         "NDIS Controlled Production Batch Design Gate": "public/js/ndis_controlled_production_batch_design_gate_list.js",
         "NDIS Controlled Production Batch Design Gate Item": "public/js/ndis_controlled_production_batch_design_gate_item_list.js",
+        "NDIS Controlled Production Batch Preview": "public/js/ndis_controlled_production_batch_preview_list.js",
+        "NDIS Controlled Production Batch Preview Line": "public/js/ndis_controlled_production_batch_preview_line_list.js",
     }
 )
 
