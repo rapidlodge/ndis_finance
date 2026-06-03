@@ -239,6 +239,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Preview Report",
                     "NDIS Controlled Production Batch Preview Line Report",
                     "NDIS Controlled Production Batch Preview Exception Report",
+                    "NDIS Controlled Production Batch Adapter Report",
+                    "NDIS Controlled Production Batch Adapter Line Report",
+                    "NDIS Controlled Production Batch Adapter Exception Report",
                 ],
             ]
         ],
@@ -423,6 +426,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Design Gate Item",
                     "NDIS Controlled Production Batch Preview",
                     "NDIS Controlled Production Batch Preview Line",
+                    "NDIS Controlled Production Batch Adapter Run",
+                    "NDIS Controlled Production Batch Adapter Line",
                 ],
             ]
         ],
@@ -651,6 +656,8 @@ doctype_js.update(
         "NDIS Controlled Production Batch Design Gate Item": "public/js/ndis_controlled_production_batch_design_gate_item.js",
         "NDIS Controlled Production Batch Preview": "public/js/ndis_controlled_production_batch_preview.js",
         "NDIS Controlled Production Batch Preview Line": "public/js/ndis_controlled_production_batch_preview_line.js",
+        "NDIS Controlled Production Batch Adapter Run": "public/js/ndis_controlled_production_batch_adapter_run.js",
+        "NDIS Controlled Production Batch Adapter Line": "public/js/ndis_controlled_production_batch_adapter_line.js",
     }
 )
 
@@ -775,6 +782,8 @@ doctype_list_js.update(
         "NDIS Controlled Production Batch Design Gate Item": "public/js/ndis_controlled_production_batch_design_gate_item_list.js",
         "NDIS Controlled Production Batch Preview": "public/js/ndis_controlled_production_batch_preview_list.js",
         "NDIS Controlled Production Batch Preview Line": "public/js/ndis_controlled_production_batch_preview_line_list.js",
+        "NDIS Controlled Production Batch Adapter Run": "public/js/ndis_controlled_production_batch_adapter_run_list.js",
+        "NDIS Controlled Production Batch Adapter Line": "public/js/ndis_controlled_production_batch_adapter_line_list.js",
     }
 )
 

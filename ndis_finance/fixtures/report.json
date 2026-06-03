@@ -6085,5 +6085,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 13:23:47.320280",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Adapter Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Adapter Run",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Adapter Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 13:23:47.380670",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Adapter Line Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Adapter Line",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Adapter Line Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 13:23:47.399830",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Adapter Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Adapter Line",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Adapter Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
