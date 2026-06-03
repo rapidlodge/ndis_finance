@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 8E single controlled production batch smoke controls
+    "run_controlled_production_batch_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_production_batch_smoke_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 8D controlled production batch activation gate controls
     "run_controlled_production_batch_activation_gate": [
         "System Manager",

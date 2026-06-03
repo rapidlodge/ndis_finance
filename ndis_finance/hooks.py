@@ -245,6 +245,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Activation Gate Report",
                     "NDIS Controlled Production Batch Activation Exception Report",
                     "NDIS Controlled Production Batch Activation Guardrail Report",
+                    "NDIS Controlled Production Batch Smoke Report",
+                    "NDIS Controlled Production Batch Smoke Line Report",
+                    "NDIS Controlled Production Batch Smoke Guardrail Report",
                 ],
             ]
         ],
@@ -433,6 +436,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Adapter Line",
                     "NDIS Controlled Production Batch Activation Gate",
                     "NDIS Controlled Production Batch Activation Gate Item",
+                    "NDIS Controlled Production Batch Smoke Run",
+                    "NDIS Controlled Production Batch Smoke Line",
                 ],
             ]
         ],
@@ -533,6 +538,12 @@ fixtures = [
                     "Payment Entry-custom_ndis_real_remittance_batch_pe_smoke_run",
                     "Payment Entry-custom_ndis_real_remittance_batch_source_run",
                     "Payment Entry-custom_ndis_real_remittance_batch_pe_amount",
+                    "Payment Entry-custom_ndis_controlled_prod_batch_section",
+                    "Payment Entry-custom_ndis_controlled_prod_batch_smoke",
+                    "Payment Entry-custom_ndis_controlled_prod_batch_smoke_run",
+                    "Payment Entry-custom_ndis_controlled_prod_batch_activation_gate",
+                    "Payment Entry-custom_ndis_controlled_prod_batch_adapter_run",
+                    "Payment Entry-custom_ndis_controlled_prod_batch_preview",
                 ],
             ]
         ],
@@ -665,6 +676,8 @@ doctype_js.update(
         "NDIS Controlled Production Batch Adapter Line": "public/js/ndis_controlled_production_batch_adapter_line.js",
         "NDIS Controlled Production Batch Activation Gate": "public/js/ndis_controlled_production_batch_activation_gate.js",
         "NDIS Controlled Production Batch Activation Gate Item": "public/js/ndis_controlled_production_batch_activation_gate_item.js",
+        "NDIS Controlled Production Batch Smoke Run": "public/js/ndis_controlled_production_batch_smoke_run.js",
+        "NDIS Controlled Production Batch Smoke Line": "public/js/ndis_controlled_production_batch_smoke_line.js",
     }
 )
 
@@ -793,6 +806,8 @@ doctype_list_js.update(
         "NDIS Controlled Production Batch Adapter Line": "public/js/ndis_controlled_production_batch_adapter_line_list.js",
         "NDIS Controlled Production Batch Activation Gate": "public/js/ndis_controlled_production_batch_activation_gate_list.js",
         "NDIS Controlled Production Batch Activation Gate Item": "public/js/ndis_controlled_production_batch_activation_gate_item_list.js",
+        "NDIS Controlled Production Batch Smoke Run": "public/js/ndis_controlled_production_batch_smoke_run_list.js",
+        "NDIS Controlled Production Batch Smoke Line": "public/js/ndis_controlled_production_batch_smoke_line_list.js",
     }
 )
 

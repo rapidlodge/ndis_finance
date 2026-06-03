@@ -11,6 +11,129 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
+  "modified": "2026-06-03 18:31:37.769480",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Activation Gate Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Activation Gate",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Activation Gate Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 18:31:38.478660",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Activation Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Activation Gate Item",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Activation Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 18:31:38.532265",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Activation Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Activation Gate",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Activation Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
   "modified": "2026-05-19 12:30:20.584755",
   "module": "NDIS Finance",
   "name": "NDIS Executive KPI Trend Report",
@@ -6221,14 +6344,14 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-06-03 18:31:38.478660",
+  "modified": "2026-06-03 20:17:30.254660",
   "module": "NDIS Finance",
-  "name": "NDIS Controlled Production Batch Activation Exception Report",
+  "name": "NDIS Controlled Production Batch Smoke Report",
   "prepared_report": 0,
   "query": null,
-  "ref_doctype": "NDIS Controlled Production Batch Activation Gate Item",
+  "ref_doctype": "NDIS Controlled Production Batch Smoke Run",
   "reference_report": null,
-  "report_name": "NDIS Controlled Production Batch Activation Exception Report",
+  "report_name": "NDIS Controlled Production Batch Smoke Report",
   "report_script": null,
   "report_type": "Script Report",
   "roles": [
@@ -6262,14 +6385,14 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-06-03 18:31:37.769480",
+  "modified": "2026-06-03 20:17:30.339839",
   "module": "NDIS Finance",
-  "name": "NDIS Controlled Production Batch Activation Gate Report",
+  "name": "NDIS Controlled Production Batch Smoke Line Report",
   "prepared_report": 0,
   "query": null,
-  "ref_doctype": "NDIS Controlled Production Batch Activation Gate",
+  "ref_doctype": "NDIS Controlled Production Batch Smoke Line",
   "reference_report": null,
-  "report_name": "NDIS Controlled Production Batch Activation Gate Report",
+  "report_name": "NDIS Controlled Production Batch Smoke Line Report",
   "report_script": null,
   "report_type": "Script Report",
   "roles": [
@@ -6303,14 +6426,14 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2026-06-03 18:31:38.532265",
+  "modified": "2026-06-03 20:17:30.360298",
   "module": "NDIS Finance",
-  "name": "NDIS Controlled Production Batch Activation Guardrail Report",
+  "name": "NDIS Controlled Production Batch Smoke Guardrail Report",
   "prepared_report": 0,
   "query": null,
-  "ref_doctype": "NDIS Controlled Production Batch Activation Gate",
+  "ref_doctype": "NDIS Controlled Production Batch Smoke Run",
   "reference_report": null,
-  "report_name": "NDIS Controlled Production Batch Activation Guardrail Report",
+  "report_name": "NDIS Controlled Production Batch Smoke Guardrail Report",
   "report_script": null,
   "report_type": "Script Report",
   "roles": [
