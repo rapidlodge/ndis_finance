@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 8D controlled production batch activation gate controls
+    "run_controlled_production_batch_activation_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_production_batch_activation_gate": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 8C controlled production batch hard-block adapter controls
     "run_controlled_production_batch_adapter": [
         "System Manager",
