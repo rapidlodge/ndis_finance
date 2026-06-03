@@ -230,6 +230,9 @@ fixtures = [
                     "NDIS Real Remittance Batch PE Rollback Report",
                     "NDIS Real Remittance Batch PE Rollback Line Report",
                     "NDIS Real Remittance Batch PE Rollback Guardrail Report",
+                    "NDIS Real Remittance Batch PE Freeze Report",
+                    "NDIS Real Remittance Batch PE Freeze Item Report",
+                    "NDIS Real Remittance Batch PE Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -407,6 +410,8 @@ fixtures = [
                     "NDIS Real Remittance Batch PE Smoke Line",
                     "NDIS Real Remittance Batch PE Rollback Run",
                     "NDIS Real Remittance Batch PE Rollback Line",
+                    "NDIS Real Remittance Batch PE Evidence Freeze",
+                    "NDIS Real Remittance Batch PE Evidence Freeze Item",
                 ],
             ]
         ],
@@ -624,6 +629,8 @@ doctype_js.update(
         "NDIS Real Remittance Batch PE Smoke Line": "public/js/ndis_real_remittance_batch_pe_smoke_line.js",
         "NDIS Real Remittance Batch PE Rollback Run": "public/js/ndis_real_remittance_batch_pe_rollback_run.js",
         "NDIS Real Remittance Batch PE Rollback Line": "public/js/ndis_real_remittance_batch_pe_rollback_line.js",
+        "NDIS Real Remittance Batch PE Evidence Freeze": "public/js/ndis_real_remittance_batch_pe_freeze.js",
+        "NDIS Real Remittance Batch PE Evidence Freeze Item": "public/js/ndis_real_remittance_batch_pe_freeze_item.js",
     }
 )
 
@@ -741,6 +748,8 @@ doctype_list_js.update(
         "NDIS Real Remittance Batch PE Smoke Line": "public/js/ndis_real_remittance_batch_pe_smoke_line_list.js",
         "NDIS Real Remittance Batch PE Rollback Run": "public/js/ndis_real_remittance_batch_pe_rollback_run_list.js",
         "NDIS Real Remittance Batch PE Rollback Line": "public/js/ndis_real_remittance_batch_pe_rollback_line_list.js",
+        "NDIS Real Remittance Batch PE Evidence Freeze": "public/js/ndis_real_remittance_batch_pe_freeze_list.js",
+        "NDIS Real Remittance Batch PE Evidence Freeze Item": "public/js/ndis_real_remittance_batch_pe_freeze_item_list.js",
     }
 )
 

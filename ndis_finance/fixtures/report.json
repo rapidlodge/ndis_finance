@@ -5716,5 +5716,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 11:58:24.325213",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch PE Freeze Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch PE Evidence Freeze",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch PE Freeze Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 11:58:24.305080",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch PE Freeze Item Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch PE Evidence Freeze Item",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch PE Freeze Item Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-03 11:58:24.243917",
+  "module": "NDIS Finance",
+  "name": "NDIS Real Remittance Batch PE Freeze Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Real Remittance Batch PE Evidence Freeze",
+  "reference_report": null,
+  "report_name": "NDIS Real Remittance Batch PE Freeze Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
