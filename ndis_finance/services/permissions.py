@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 8A controlled production batch posting design gate controls
+    "run_controlled_production_batch_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_production_batch_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 7H controlled batch PE rollback evidence freeze controls
     "run_real_remittance_batch_pe_freeze": [
         "System Manager",
