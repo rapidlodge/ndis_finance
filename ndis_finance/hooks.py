@@ -248,6 +248,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Smoke Report",
                     "NDIS Controlled Production Batch Smoke Line Report",
                     "NDIS Controlled Production Batch Smoke Guardrail Report",
+                    "NDIS Controlled Production Batch Smoke Rollback Report",
+                    "NDIS Controlled Production Batch Smoke Rollback Line Report",
+                    "NDIS Controlled Production Batch Smoke Rollback Guardrail Report",
                 ],
             ]
         ],
@@ -438,6 +441,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Activation Gate Item",
                     "NDIS Controlled Production Batch Smoke Run",
                     "NDIS Controlled Production Batch Smoke Line",
+                    "NDIS Controlled Production Batch Smoke Rollback Run",
+                    "NDIS Controlled Production Batch Smoke Rollback Line",
                 ],
             ]
         ],
@@ -834,3 +839,25 @@ if phase1y_daily_job not in daily_events:
     daily_events.append(phase1y_daily_job)
 
 scheduler_events["daily"] = daily_events
+
+# Phase 8F - Controlled production batch smoke rollback
+
+try:
+    doctype_js
+except NameError:
+    doctype_js = {}
+
+doctype_js.update({
+    "NDIS Controlled Production Batch Smoke Rollback Run": "public/js/ndis_controlled_production_batch_smoke_rollback_run.js",
+    "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line.js",
+})
+
+try:
+    doctype_list_js
+except NameError:
+    doctype_list_js = {}
+
+doctype_list_js.update({
+    "NDIS Controlled Production Batch Smoke Rollback Run": "public/js/ndis_controlled_production_batch_smoke_rollback_run_list.js",
+    "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line_list.js",
+})
