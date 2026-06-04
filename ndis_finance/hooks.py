@@ -257,6 +257,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Policy Review Gate Report",
                     "NDIS Controlled Production Batch Policy Review Exception Report",
                     "NDIS Controlled Production Batch Policy Review Guardrail Report",
+                    "NDIS Limited Production Batch Policy Design Report",
+                    "NDIS Limited Production Batch Policy Design Item Report",
+                    "NDIS Limited Production Batch Policy Design Guardrail Report",
                 ],
             ]
         ],
@@ -453,6 +456,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Smoke Evidence Freeze Item",
                     "NDIS Controlled Production Batch Policy Review Gate",
                     "NDIS Controlled Production Batch Policy Review Gate Item",
+                    "NDIS Limited Production Batch Policy Design",
+                    "NDIS Limited Production Batch Policy Design Item",
                 ],
             ]
         ],
@@ -699,6 +704,8 @@ doctype_js.update(
         "NDIS Controlled Production Batch Smoke Evidence Freeze Item": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_item.js",
         "NDIS Controlled Production Batch Policy Review Gate": "public/js/ndis_controlled_production_batch_policy_review_gate.js",
         "NDIS Controlled Production Batch Policy Review Gate Item": "public/js/ndis_controlled_production_batch_policy_review_gate_item.js",
+        "NDIS Limited Production Batch Policy Design": "public/js/ndis_limited_production_batch_policy_design.js",
+        "NDIS Limited Production Batch Policy Design Item": "public/js/ndis_limited_production_batch_policy_design_item.js",
     }
 )
 
@@ -835,6 +842,8 @@ doctype_list_js.update(
         "NDIS Controlled Production Batch Smoke Evidence Freeze Item": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_item_list.js",
         "NDIS Controlled Production Batch Policy Review Gate": "public/js/ndis_controlled_production_batch_policy_review_gate_list.js",
         "NDIS Controlled Production Batch Policy Review Gate Item": "public/js/ndis_controlled_production_batch_policy_review_gate_item_list.js",
+        "NDIS Limited Production Batch Policy Design": "public/js/ndis_limited_production_batch_policy_design_list.js",
+        "NDIS Limited Production Batch Policy Design Item": "public/js/ndis_limited_production_batch_policy_design_item_list.js",
     }
 )
 
