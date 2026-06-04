@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 8G controlled production batch smoke evidence freeze controls
+    "run_controlled_production_batch_smoke_evidence_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_production_batch_smoke_evidence_freeze": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 8F controlled production batch smoke rollback controls
     "run_controlled_production_batch_smoke_rollback": [
         "System Manager",

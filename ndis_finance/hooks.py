@@ -251,6 +251,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Smoke Rollback Report",
                     "NDIS Controlled Production Batch Smoke Rollback Line Report",
                     "NDIS Controlled Production Batch Smoke Rollback Guardrail Report",
+                    "NDIS Controlled Production Batch Smoke Evidence Freeze Report",
+                    "NDIS Controlled Production Batch Smoke Evidence Freeze Exception Report",
+                    "NDIS Controlled Production Batch Smoke Evidence Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -443,6 +446,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Smoke Line",
                     "NDIS Controlled Production Batch Smoke Rollback Run",
                     "NDIS Controlled Production Batch Smoke Rollback Line",
+                    "NDIS Controlled Production Batch Smoke Evidence Freeze",
+                    "NDIS Controlled Production Batch Smoke Evidence Freeze Item",
                 ],
             ]
         ],
@@ -683,6 +688,10 @@ doctype_js.update(
         "NDIS Controlled Production Batch Activation Gate Item": "public/js/ndis_controlled_production_batch_activation_gate_item.js",
         "NDIS Controlled Production Batch Smoke Run": "public/js/ndis_controlled_production_batch_smoke_run.js",
         "NDIS Controlled Production Batch Smoke Line": "public/js/ndis_controlled_production_batch_smoke_line.js",
+        "NDIS Controlled Production Batch Smoke Rollback Run": "public/js/ndis_controlled_production_batch_smoke_rollback_run.js",
+        "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line.js",
+        "NDIS Controlled Production Batch Smoke Evidence Freeze": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze.js",
+        "NDIS Controlled Production Batch Smoke Evidence Freeze Item": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_item.js",
     }
 )
 
@@ -813,6 +822,10 @@ doctype_list_js.update(
         "NDIS Controlled Production Batch Activation Gate Item": "public/js/ndis_controlled_production_batch_activation_gate_item_list.js",
         "NDIS Controlled Production Batch Smoke Run": "public/js/ndis_controlled_production_batch_smoke_run_list.js",
         "NDIS Controlled Production Batch Smoke Line": "public/js/ndis_controlled_production_batch_smoke_line_list.js",
+        "NDIS Controlled Production Batch Smoke Rollback Run": "public/js/ndis_controlled_production_batch_smoke_rollback_run_list.js",
+        "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line_list.js",
+        "NDIS Controlled Production Batch Smoke Evidence Freeze": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_list.js",
+        "NDIS Controlled Production Batch Smoke Evidence Freeze Item": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_item_list.js",
     }
 )
 
