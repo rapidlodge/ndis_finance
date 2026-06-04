@@ -6700,5 +6700,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-04 16:06:05.234413",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Policy Review Gate Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Policy Review Gate",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Policy Review Gate Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-04 16:06:05.285171",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Policy Review Exception Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Policy Review Gate Item",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Policy Review Exception Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-04 16:06:05.305158",
+  "module": "NDIS Finance",
+  "name": "NDIS Controlled Production Batch Policy Review Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Controlled Production Batch Policy Review Gate",
+  "reference_report": null,
+  "report_name": "NDIS Controlled Production Batch Policy Review Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]

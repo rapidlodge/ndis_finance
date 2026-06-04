@@ -254,6 +254,9 @@ fixtures = [
                     "NDIS Controlled Production Batch Smoke Evidence Freeze Report",
                     "NDIS Controlled Production Batch Smoke Evidence Freeze Exception Report",
                     "NDIS Controlled Production Batch Smoke Evidence Freeze Guardrail Report",
+                    "NDIS Controlled Production Batch Policy Review Gate Report",
+                    "NDIS Controlled Production Batch Policy Review Exception Report",
+                    "NDIS Controlled Production Batch Policy Review Guardrail Report",
                 ],
             ]
         ],
@@ -448,6 +451,8 @@ fixtures = [
                     "NDIS Controlled Production Batch Smoke Rollback Line",
                     "NDIS Controlled Production Batch Smoke Evidence Freeze",
                     "NDIS Controlled Production Batch Smoke Evidence Freeze Item",
+                    "NDIS Controlled Production Batch Policy Review Gate",
+                    "NDIS Controlled Production Batch Policy Review Gate Item",
                 ],
             ]
         ],
@@ -692,6 +697,8 @@ doctype_js.update(
         "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line.js",
         "NDIS Controlled Production Batch Smoke Evidence Freeze": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze.js",
         "NDIS Controlled Production Batch Smoke Evidence Freeze Item": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_item.js",
+        "NDIS Controlled Production Batch Policy Review Gate": "public/js/ndis_controlled_production_batch_policy_review_gate.js",
+        "NDIS Controlled Production Batch Policy Review Gate Item": "public/js/ndis_controlled_production_batch_policy_review_gate_item.js",
     }
 )
 
@@ -826,6 +833,8 @@ doctype_list_js.update(
         "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line_list.js",
         "NDIS Controlled Production Batch Smoke Evidence Freeze": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_list.js",
         "NDIS Controlled Production Batch Smoke Evidence Freeze Item": "public/js/ndis_controlled_production_batch_smoke_evidence_freeze_item_list.js",
+        "NDIS Controlled Production Batch Policy Review Gate": "public/js/ndis_controlled_production_batch_policy_review_gate_list.js",
+        "NDIS Controlled Production Batch Policy Review Gate Item": "public/js/ndis_controlled_production_batch_policy_review_gate_item_list.js",
     }
 )
 
