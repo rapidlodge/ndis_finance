@@ -275,6 +275,9 @@ fixtures = [
                     "NDIS Limited Production Batch Smoke Rollback Report",
                     "NDIS Limited Production Batch Smoke Rollback Line Report",
                     "NDIS Limited Production Batch Smoke Rollback Guardrail Report",
+                    "NDIS Limited Production Batch Smoke Evidence Freeze Report",
+                    "NDIS Limited Production Batch Smoke Evidence Freeze Item Report",
+                    "NDIS Limited Production Batch Smoke Evidence Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -483,6 +486,8 @@ fixtures = [
                     "NDIS Limited Production Batch Smoke Run Line",
                     "NDIS Limited Production Batch Smoke Rollback Run",
                     "NDIS Limited Production Batch Smoke Rollback Line",
+                    "NDIS Limited Production Batch Smoke Evidence Freeze",
+                    "NDIS Limited Production Batch Smoke Evidence Freeze Item",
                 ],
             ]
         ],
@@ -746,6 +751,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Smoke Run Line": "public/js/ndis_limited_production_batch_smoke_run_line.js",
         "NDIS Limited Production Batch Smoke Rollback Run": "public/js/ndis_limited_production_batch_smoke_rollback_run.js",
         "NDIS Limited Production Batch Smoke Rollback Line": "public/js/ndis_limited_production_batch_smoke_rollback_line.js",
+        "NDIS Limited Production Batch Smoke Evidence Freeze": "public/js/ndis_limited_production_batch_smoke_evidence_freeze.js",
+        "NDIS Limited Production Batch Smoke Evidence Freeze Item": "public/js/ndis_limited_production_batch_smoke_evidence_freeze_item.js",
     }
 )
 
@@ -894,6 +901,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Smoke Run Line": "public/js/ndis_limited_production_batch_smoke_run_line_list.js",
         "NDIS Limited Production Batch Smoke Rollback Run": "public/js/ndis_limited_production_batch_smoke_rollback_run_list.js",
         "NDIS Limited Production Batch Smoke Rollback Line": "public/js/ndis_limited_production_batch_smoke_rollback_line_list.js",
+        "NDIS Limited Production Batch Smoke Evidence Freeze": "public/js/ndis_limited_production_batch_smoke_evidence_freeze_list.js",
+        "NDIS Limited Production Batch Smoke Evidence Freeze Item": "public/js/ndis_limited_production_batch_smoke_evidence_freeze_item_list.js",
     }
 )
 
