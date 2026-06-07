@@ -269,6 +269,21 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9D limited production batch hard-block adapter controls
+    "run_limited_production_batch_hard_block_adapter": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_production_batch_hard_block_adapter": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "attempt_limited_production_batch_live_creation": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+
     # Phase 9C limited production batch policy preview controls
     "run_limited_production_batch_policy_preview": [
         "System Manager",

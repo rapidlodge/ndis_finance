@@ -263,6 +263,9 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Preview Report",
                     "NDIS Limited Production Batch Policy Preview Line Report",
                     "NDIS Limited Production Batch Policy Preview Guardrail Report",
+                    "NDIS Limited Production Batch Adapter Report",
+                    "NDIS Limited Production Batch Adapter Line Report",
+                    "NDIS Limited Production Batch Adapter Guardrail Report",
                 ],
             ]
         ],
@@ -463,6 +466,8 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Design Item",
                     "NDIS Limited Production Batch Policy Preview",
                     "NDIS Limited Production Batch Policy Preview Line",
+                    "NDIS Limited Production Batch Adapter Run",
+                    "NDIS Limited Production Batch Adapter Run Line",
                 ],
             ]
         ],
@@ -713,6 +718,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Policy Design Item": "public/js/ndis_limited_production_batch_policy_design_item.js",
         "NDIS Limited Production Batch Policy Preview": "public/js/ndis_limited_production_batch_policy_preview.js",
         "NDIS Limited Production Batch Policy Preview Line": "public/js/ndis_limited_production_batch_policy_preview_line.js",
+        "NDIS Limited Production Batch Adapter Run": "public/js/ndis_limited_production_batch_adapter_run.js",
+        "NDIS Limited Production Batch Adapter Run Line": "public/js/ndis_limited_production_batch_adapter_run_line.js",
     }
 )
 
@@ -853,6 +860,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Policy Design Item": "public/js/ndis_limited_production_batch_policy_design_item_list.js",
         "NDIS Limited Production Batch Policy Preview": "public/js/ndis_limited_production_batch_policy_preview_list.js",
         "NDIS Limited Production Batch Policy Preview Line": "public/js/ndis_limited_production_batch_policy_preview_line_list.js",
+        "NDIS Limited Production Batch Adapter Run": "public/js/ndis_limited_production_batch_adapter_run_list.js",
+        "NDIS Limited Production Batch Adapter Run Line": "public/js/ndis_limited_production_batch_adapter_run_line_list.js",
     }
 )
 
