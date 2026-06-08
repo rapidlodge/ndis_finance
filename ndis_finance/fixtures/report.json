@@ -8053,5 +8053,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-08 11:54:42.852392",
+  "module": "NDIS Finance",
+  "name": "NDIS Limited Production Batch Enablement Preview Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Limited Production Batch Enablement Preview",
+  "reference_report": null,
+  "report_name": "NDIS Limited Production Batch Enablement Preview Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-08 11:54:42.916952",
+  "module": "NDIS Finance",
+  "name": "NDIS Limited Production Batch Enablement Preview Line Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Limited Production Batch Enablement Preview Line",
+  "reference_report": null,
+  "report_name": "NDIS Limited Production Batch Enablement Preview Line Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-08 11:54:42.939187",
+  "module": "NDIS Finance",
+  "name": "NDIS Limited Production Batch Enablement Preview Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Limited Production Batch Enablement Preview",
+  "reference_report": null,
+  "report_name": "NDIS Limited Production Batch Enablement Preview Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]

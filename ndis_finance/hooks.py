@@ -287,6 +287,9 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Design Gate Report",
                     "NDIS Limited Production Batch Enablement Design Gate Item Report",
                     "NDIS Limited Production Batch Enablement Design Gate Guardrail Report",
+                    "NDIS Limited Production Batch Enablement Preview Report",
+                    "NDIS Limited Production Batch Enablement Preview Line Report",
+                    "NDIS Limited Production Batch Enablement Preview Guardrail Report",
                 ],
             ]
         ],
@@ -503,6 +506,8 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Lock Item",
                     "NDIS Limited Production Batch Enablement Design Gate",
                     "NDIS Limited Production Batch Enablement Design Gate Item",
+                    "NDIS Limited Production Batch Enablement Preview",
+                    "NDIS Limited Production Batch Enablement Preview Line",
                 ],
             ]
         ],
@@ -774,6 +779,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Policy Lock Item": "public/js/ndis_limited_production_batch_policy_lock_item.js",
         "NDIS Limited Production Batch Enablement Design Gate": "public/js/ndis_limited_production_batch_enablement_design_gate.js",
         "NDIS Limited Production Batch Enablement Design Gate Item": "public/js/ndis_limited_production_batch_enablement_design_gate_item.js",
+        "NDIS Limited Production Batch Enablement Preview": "public/js/ndis_limited_production_batch_enablement_preview.js",
+        "NDIS Limited Production Batch Enablement Preview Line": "public/js/ndis_limited_production_batch_enablement_preview_line.js",
     }
 )
 
@@ -930,6 +937,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Policy Lock Item": "public/js/ndis_limited_production_batch_policy_lock_item_list.js",
         "NDIS Limited Production Batch Enablement Design Gate": "public/js/ndis_limited_production_batch_enablement_design_gate_list.js",
         "NDIS Limited Production Batch Enablement Design Gate Item": "public/js/ndis_limited_production_batch_enablement_design_gate_item_list.js",
+        "NDIS Limited Production Batch Enablement Preview": "public/js/ndis_limited_production_batch_enablement_preview_list.js",
+        "NDIS Limited Production Batch Enablement Preview Line": "public/js/ndis_limited_production_batch_enablement_preview_line_list.js",
     }
 )
 
