@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9O limited controlled enablement smoke controls
+    "run_limited_production_batch_enablement_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_production_batch_enablement_smoke": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9N limited production batch enablement activation gate controls
     "run_limited_production_batch_enablement_activation_gate": [
         "System Manager",

@@ -296,6 +296,9 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Activation Gate Guardrail Report",
                     "NDIS Limited Production Batch Enablement Activation Gate Item Report",
                     "NDIS Limited Production Batch Enablement Activation Gate Report",
+                    "NDIS Limited Production Batch Enablement Smoke Report",
+                    "NDIS Limited Production Batch Enablement Smoke Line Report",
+                    "NDIS Limited Production Batch Enablement Smoke Guardrail Report",
                 ],
             ]
         ],
@@ -518,6 +521,8 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Adapter Line",
                     "NDIS Limited Production Batch Enablement Activation Gate Item",
                     "NDIS Limited Production Batch Enablement Activation Gate",
+                    "NDIS Limited Production Batch Enablement Smoke Run",
+                    "NDIS Limited Production Batch Enablement Smoke Line",
                 ],
             ]
         ],
@@ -795,6 +800,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Enablement Adapter Line": "public/js/ndis_limited_production_batch_enablement_adapter_line.js",
         "NDIS Limited Production Batch Enablement Activation Gate Item": "public/js/ndis_limited_production_batch_enablement_activation_gate_item.js",
         "NDIS Limited Production Batch Enablement Activation Gate": "public/js/ndis_limited_production_batch_enablement_activation_gate.js",
+        "NDIS Limited Production Batch Enablement Smoke Run": "public/js/ndis_limited_production_batch_enablement_smoke.js",
+        "NDIS Limited Production Batch Enablement Smoke Line": "public/js/ndis_limited_production_batch_enablement_smoke_line.js",
     }
 )
 
@@ -957,6 +964,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Enablement Adapter Line": "public/js/ndis_limited_production_batch_enablement_adapter_line_list.js",
         "NDIS Limited Production Batch Enablement Activation Gate Item": "public/js/ndis_limited_production_batch_enablement_activation_gate_item_list.js",
         "NDIS Limited Production Batch Enablement Activation Gate": "public/js/ndis_limited_production_batch_enablement_activation_gate_list.js",
+        "NDIS Limited Production Batch Enablement Smoke Run": "public/js/ndis_limited_production_batch_enablement_smoke_list.js",
+        "NDIS Limited Production Batch Enablement Smoke Line": "public/js/ndis_limited_production_batch_enablement_smoke_line_list.js",
     }
 )
 
