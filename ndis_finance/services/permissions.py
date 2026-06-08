@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9Q limited production batch enablement evidence freeze controls
+    "run_limited_production_batch_enablement_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_production_batch_enablement_freeze": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9P limited controlled enablement smoke rollback controls
     "run_limited_production_batch_enablement_rollback": [
         "System Manager",

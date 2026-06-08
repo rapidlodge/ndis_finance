@@ -302,6 +302,9 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Rollback Report",
                     "NDIS Limited Production Batch Enablement Rollback Line Report",
                     "NDIS Limited Production Batch Enablement Rollback Guardrail Report",
+                    "NDIS Limited Production Batch Enablement Freeze Report",
+                    "NDIS Limited Production Batch Enablement Freeze Line Report",
+                    "NDIS Limited Production Batch Enablement Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -528,6 +531,8 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Smoke Line",
                     "NDIS Limited Production Batch Enablement Rollback Run",
                     "NDIS Limited Production Batch Enablement Rollback Line",
+                    "NDIS Limited Production Batch Enablement Evidence Freeze",
+                    "NDIS Limited Production Batch Enablement Evidence Freeze Line",
                 ],
             ]
         ],
@@ -809,6 +814,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Enablement Smoke Line": "public/js/ndis_limited_production_batch_enablement_smoke_line.js",
         "NDIS Limited Production Batch Enablement Rollback Run": "public/js/ndis_limited_production_batch_enablement_rollback.js",
         "NDIS Limited Production Batch Enablement Rollback Line": "public/js/ndis_limited_production_batch_enablement_rollback_line.js",
+        "NDIS Limited Production Batch Enablement Evidence Freeze": "public/js/ndis_limited_production_batch_enablement_freeze.js",
+        "NDIS Limited Production Batch Enablement Evidence Freeze Line": "public/js/ndis_limited_production_batch_enablement_freeze_line.js",
     }
 )
 
@@ -975,6 +982,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Enablement Smoke Line": "public/js/ndis_limited_production_batch_enablement_smoke_line_list.js",
         "NDIS Limited Production Batch Enablement Rollback Run": "public/js/ndis_limited_production_batch_enablement_rollback_list.js",
         "NDIS Limited Production Batch Enablement Rollback Line": "public/js/ndis_limited_production_batch_enablement_rollback_line_list.js",
+        "NDIS Limited Production Batch Enablement Evidence Freeze": "public/js/ndis_limited_production_batch_enablement_freeze_list.js",
+        "NDIS Limited Production Batch Enablement Evidence Freeze Line": "public/js/ndis_limited_production_batch_enablement_freeze_line_list.js",
     }
 )
 
