@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9S controlled limited production batch policy enablement controls
+    "run_limited_production_batch_policy_enablement": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_production_batch_policy_enablement": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9R limited production batch enablement readiness gate controls
     "run_limited_production_batch_enablement_readiness_gate": [
         "System Manager",
