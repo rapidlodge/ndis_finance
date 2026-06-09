@@ -311,6 +311,9 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Enablement Report",
                     "NDIS Limited Production Batch Policy Enablement Line Report",
                     "NDIS Limited Production Batch Policy Enablement Guardrail Report",
+                    "NDIS Limited Production Batch Policy Enablement Freeze Report",
+                    "NDIS Limited Production Batch Policy Enablement Freeze Line Report",
+                    "NDIS Limited Production Batch Policy Enablement Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -543,6 +546,8 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Readiness Gate Item",
                     "NDIS Limited Production Batch Policy Enablement Run",
                     "NDIS Limited Production Batch Policy Enablement Line",
+                    "NDIS Limited Production Batch Policy Enablement Freeze",
+                    "NDIS Limited Production Batch Policy Enablement Freeze Line",
                 ],
             ]
         ],
@@ -830,6 +835,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Enablement Readiness Gate Item": "public/js/ndis_limited_production_batch_enablement_readiness_gate_item.js",
         "NDIS Limited Production Batch Policy Enablement Run": "public/js/ndis_limited_production_batch_policy_enablement.js",
         "NDIS Limited Production Batch Policy Enablement Line": "public/js/ndis_limited_production_batch_policy_enablement_line.js",
+        "NDIS Limited Production Batch Policy Enablement Freeze": "public/js/ndis_limited_production_batch_policy_enablement_freeze.js",
+        "NDIS Limited Production Batch Policy Enablement Freeze Line": "public/js/ndis_limited_production_batch_policy_enablement_freeze_line.js",
     }
 )
 
@@ -1002,6 +1009,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Enablement Readiness Gate Item": "public/js/ndis_limited_production_batch_enablement_readiness_gate_item_list.js",
         "NDIS Limited Production Batch Policy Enablement Run": "public/js/ndis_limited_production_batch_policy_enablement_list.js",
         "NDIS Limited Production Batch Policy Enablement Line": "public/js/ndis_limited_production_batch_policy_enablement_line_list.js",
+        "NDIS Limited Production Batch Policy Enablement Freeze": "public/js/ndis_limited_production_batch_policy_enablement_freeze_list.js",
+        "NDIS Limited Production Batch Policy Enablement Freeze Line": "public/js/ndis_limited_production_batch_policy_enablement_freeze_line_list.js",
     }
 )
 
