@@ -305,6 +305,9 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Freeze Report",
                     "NDIS Limited Production Batch Enablement Freeze Line Report",
                     "NDIS Limited Production Batch Enablement Freeze Guardrail Report",
+                    "NDIS Limited Production Batch Enablement Readiness Gate Report",
+                    "NDIS Limited Production Batch Enablement Readiness Gate Item Report",
+                    "NDIS Limited Production Batch Enablement Readiness Gate Guardrail Report",
                 ],
             ]
         ],
@@ -533,6 +536,8 @@ fixtures = [
                     "NDIS Limited Production Batch Enablement Rollback Line",
                     "NDIS Limited Production Batch Enablement Evidence Freeze",
                     "NDIS Limited Production Batch Enablement Evidence Freeze Line",
+                    "NDIS Limited Production Batch Enablement Readiness Gate",
+                    "NDIS Limited Production Batch Enablement Readiness Gate Item",
                 ],
             ]
         ],
@@ -816,6 +821,8 @@ doctype_js.update(
         "NDIS Limited Production Batch Enablement Rollback Line": "public/js/ndis_limited_production_batch_enablement_rollback_line.js",
         "NDIS Limited Production Batch Enablement Evidence Freeze": "public/js/ndis_limited_production_batch_enablement_freeze.js",
         "NDIS Limited Production Batch Enablement Evidence Freeze Line": "public/js/ndis_limited_production_batch_enablement_freeze_line.js",
+        "NDIS Limited Production Batch Enablement Readiness Gate": "public/js/ndis_limited_production_batch_enablement_readiness_gate.js",
+        "NDIS Limited Production Batch Enablement Readiness Gate Item": "public/js/ndis_limited_production_batch_enablement_readiness_gate_item.js",
     }
 )
 
@@ -984,6 +991,8 @@ doctype_list_js.update(
         "NDIS Limited Production Batch Enablement Rollback Line": "public/js/ndis_limited_production_batch_enablement_rollback_line_list.js",
         "NDIS Limited Production Batch Enablement Evidence Freeze": "public/js/ndis_limited_production_batch_enablement_freeze_list.js",
         "NDIS Limited Production Batch Enablement Evidence Freeze Line": "public/js/ndis_limited_production_batch_enablement_freeze_line_list.js",
+        "NDIS Limited Production Batch Enablement Readiness Gate": "public/js/ndis_limited_production_batch_enablement_readiness_gate_list.js",
+        "NDIS Limited Production Batch Enablement Readiness Gate Item": "public/js/ndis_limited_production_batch_enablement_readiness_gate_item_list.js",
     }
 )
 
