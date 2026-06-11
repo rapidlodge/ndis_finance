@@ -314,6 +314,9 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Enablement Freeze Report",
                     "NDIS Limited Production Batch Policy Enablement Freeze Line Report",
                     "NDIS Limited Production Batch Policy Enablement Freeze Guardrail Report",
+                    "NDIS Limited Production Batch Use Monitor Gate Report",
+                    "NDIS Limited Production Batch Use Monitor Item Report",
+                    "NDIS Limited Production Batch Use Monitor Guardrail Report",
                 ],
             ]
         ],
@@ -548,6 +551,8 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Enablement Line",
                     "NDIS Limited Production Batch Policy Enablement Freeze",
                     "NDIS Limited Production Batch Policy Enablement Freeze Line",
+                    "NDIS Limited Production Batch Use Monitor Gate",
+                    "NDIS Limited Production Batch Use Monitor Item",
                 ],
             ]
         ],
@@ -1058,4 +1063,25 @@ except NameError:
 doctype_list_js.update({
     "NDIS Controlled Production Batch Smoke Rollback Run": "public/js/ndis_controlled_production_batch_smoke_rollback_run_list.js",
     "NDIS Controlled Production Batch Smoke Rollback Line": "public/js/ndis_controlled_production_batch_smoke_rollback_line_list.js",
+})
+# Phase 9U - Limited production batch use monitor gate
+
+try:
+    doctype_js
+except NameError:
+    doctype_js = {}
+
+doctype_js.update({
+    "NDIS Limited Production Batch Use Monitor Gate": "public/js/ndis_limited_production_batch_use_monitor_gate.js",
+    "NDIS Limited Production Batch Use Monitor Item": "public/js/ndis_limited_production_batch_use_monitor_item.js",
+})
+
+try:
+    doctype_list_js
+except NameError:
+    doctype_list_js = {}
+
+doctype_list_js.update({
+    "NDIS Limited Production Batch Use Monitor Gate": "public/js/ndis_limited_production_batch_use_monitor_gate_list.js",
+    "NDIS Limited Production Batch Use Monitor Item": "public/js/ndis_limited_production_batch_use_monitor_item_list.js",
 })
