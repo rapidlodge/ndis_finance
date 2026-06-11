@@ -329,6 +329,9 @@ fixtures = [
                     "NDIS Limited Batch Posting Adapter Hard Block Report",
                     "NDIS Limited Batch Posting Adapter Hard Block Item Report",
                     "NDIS Limited Batch Posting Adapter Hard Block Guardrail Report",
+                    "NDIS Limited Batch Adapter Activation Gate Report",
+                    "NDIS Limited Batch Adapter Activation Gate Item Report",
+                    "NDIS Limited Batch Adapter Activation Gate Guardrail Report",
                 ],
             ]
         ],
@@ -573,6 +576,8 @@ fixtures = [
                     "NDIS Limited Batch Posting Adapter Preview Item",
                     "NDIS Limited Batch Posting Adapter Hard Block",
                     "NDIS Limited Batch Posting Adapter Hard Block Item",
+                    "NDIS Limited Batch Adapter Activation Gate",
+                    "NDIS Limited Batch Adapter Activation Gate Item",
                 ],
             ]
         ],
@@ -1102,6 +1107,8 @@ doctype_js.update({
     "NDIS Limited Batch Posting Adapter Preview Item": "public/js/ndis_limited_batch_posting_adapter_preview_item.js",
     "NDIS Limited Batch Posting Adapter Hard Block": "public/js/ndis_limited_batch_posting_adapter_hard_block.js",
     "NDIS Limited Batch Posting Adapter Hard Block Item": "public/js/ndis_limited_batch_posting_adapter_hard_block_item.js",
+    "NDIS Limited Batch Adapter Activation Gate": "public/js/ndis_limited_batch_adapter_activation_gate.js",
+    "NDIS Limited Batch Adapter Activation Gate Item": "public/js/ndis_limited_batch_adapter_activation_gate_item.js",
 })
 
 try:
@@ -1120,4 +1127,6 @@ doctype_list_js.update({
     "NDIS Limited Batch Posting Adapter Preview Item": "public/js/ndis_limited_batch_posting_adapter_preview_item_list.js",
     "NDIS Limited Batch Posting Adapter Hard Block": "public/js/ndis_limited_batch_posting_adapter_hard_block_list.js",
     "NDIS Limited Batch Posting Adapter Hard Block Item": "public/js/ndis_limited_batch_posting_adapter_hard_block_item_list.js",
+    "NDIS Limited Batch Adapter Activation Gate": "public/js/ndis_limited_batch_adapter_activation_gate_list.js",
+    "NDIS Limited Batch Adapter Activation Gate Item": "public/js/ndis_limited_batch_adapter_activation_gate_item_list.js",
 })
