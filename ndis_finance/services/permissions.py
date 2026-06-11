@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9X controlled limited batch posting adapter preview controls
+    "run_limited_batch_posting_adapter_preview": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_batch_posting_adapter_preview": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9W controlled limited batch runtime guard evidence freeze controls
     "run_limited_batch_runtime_guard_evidence_freeze": [
         "System Manager",

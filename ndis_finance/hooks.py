@@ -323,6 +323,9 @@ fixtures = [
                     "NDIS Limited Batch Runtime Guard Evidence Freeze Report",
                     "NDIS Limited Batch Runtime Guard Evidence Item Report",
                     "NDIS Limited Batch Runtime Guard Evidence Guardrail Report",
+                    "NDIS Limited Batch Posting Adapter Preview Report",
+                    "NDIS Limited Batch Posting Adapter Preview Item Report",
+                    "NDIS Limited Batch Posting Adapter Preview Guardrail Report",
                 ],
             ]
         ],
@@ -563,6 +566,8 @@ fixtures = [
                     "NDIS Limited Batch Runtime Guard Item",
                     "NDIS Limited Batch Runtime Guard Evidence Freeze",
                     "NDIS Limited Batch Runtime Guard Evidence Item",
+                    "NDIS Limited Batch Posting Adapter Preview",
+                    "NDIS Limited Batch Posting Adapter Preview Item",
                 ],
             ]
         ],
@@ -1088,6 +1093,8 @@ doctype_js.update({
     "NDIS Limited Batch Runtime Guard Item": "public/js/ndis_limited_batch_runtime_guard_item.js",
     "NDIS Limited Batch Runtime Guard Evidence Freeze": "public/js/ndis_limited_batch_runtime_guard_evidence_freeze.js",
     "NDIS Limited Batch Runtime Guard Evidence Item": "public/js/ndis_limited_batch_runtime_guard_evidence_item.js",
+    "NDIS Limited Batch Posting Adapter Preview": "public/js/ndis_limited_batch_posting_adapter_preview.js",
+    "NDIS Limited Batch Posting Adapter Preview Item": "public/js/ndis_limited_batch_posting_adapter_preview_item.js",
 })
 
 try:
@@ -1102,4 +1109,6 @@ doctype_list_js.update({
     "NDIS Limited Batch Runtime Guard Item": "public/js/ndis_limited_batch_runtime_guard_item_list.js",
     "NDIS Limited Batch Runtime Guard Evidence Freeze": "public/js/ndis_limited_batch_runtime_guard_evidence_freeze_list.js",
     "NDIS Limited Batch Runtime Guard Evidence Item": "public/js/ndis_limited_batch_runtime_guard_evidence_item_list.js",
+    "NDIS Limited Batch Posting Adapter Preview": "public/js/ndis_limited_batch_posting_adapter_preview_list.js",
+    "NDIS Limited Batch Posting Adapter Preview Item": "public/js/ndis_limited_batch_posting_adapter_preview_item_list.js",
 })
