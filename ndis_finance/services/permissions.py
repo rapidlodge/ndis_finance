@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9Y guarded limited batch posting adapter hard-block controls
+    "run_limited_batch_posting_adapter_hard_block": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_batch_posting_adapter_hard_block": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9X controlled limited batch posting adapter preview controls
     "run_limited_batch_posting_adapter_preview": [
         "System Manager",
