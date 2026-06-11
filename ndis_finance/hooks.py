@@ -320,6 +320,9 @@ fixtures = [
                     "NDIS Limited Batch Runtime Guard Report",
                     "NDIS Limited Batch Runtime Guard Item Report",
                     "NDIS Limited Batch Runtime Guard Guardrail Report",
+                    "NDIS Limited Batch Runtime Guard Evidence Freeze Report",
+                    "NDIS Limited Batch Runtime Guard Evidence Item Report",
+                    "NDIS Limited Batch Runtime Guard Evidence Guardrail Report",
                 ],
             ]
         ],
@@ -558,6 +561,8 @@ fixtures = [
                     "NDIS Limited Production Batch Use Monitor Item",
                     "NDIS Limited Batch Runtime Guard",
                     "NDIS Limited Batch Runtime Guard Item",
+                    "NDIS Limited Batch Runtime Guard Evidence Freeze",
+                    "NDIS Limited Batch Runtime Guard Evidence Item",
                 ],
             ]
         ],
@@ -1081,6 +1086,8 @@ doctype_js.update({
     "NDIS Limited Production Batch Use Monitor Item": "public/js/ndis_limited_production_batch_use_monitor_item.js",
     "NDIS Limited Batch Runtime Guard": "public/js/ndis_limited_batch_runtime_guard.js",
     "NDIS Limited Batch Runtime Guard Item": "public/js/ndis_limited_batch_runtime_guard_item.js",
+    "NDIS Limited Batch Runtime Guard Evidence Freeze": "public/js/ndis_limited_batch_runtime_guard_evidence_freeze.js",
+    "NDIS Limited Batch Runtime Guard Evidence Item": "public/js/ndis_limited_batch_runtime_guard_evidence_item.js",
 })
 
 try:
@@ -1093,4 +1100,6 @@ doctype_list_js.update({
     "NDIS Limited Production Batch Use Monitor Item": "public/js/ndis_limited_production_batch_use_monitor_item_list.js",
     "NDIS Limited Batch Runtime Guard": "public/js/ndis_limited_batch_runtime_guard_list.js",
     "NDIS Limited Batch Runtime Guard Item": "public/js/ndis_limited_batch_runtime_guard_item_list.js",
+    "NDIS Limited Batch Runtime Guard Evidence Freeze": "public/js/ndis_limited_batch_runtime_guard_evidence_freeze_list.js",
+    "NDIS Limited Batch Runtime Guard Evidence Item": "public/js/ndis_limited_batch_runtime_guard_evidence_item_list.js",
 })

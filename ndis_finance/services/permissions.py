@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9W controlled limited batch runtime guard evidence freeze controls
+    "run_limited_batch_runtime_guard_evidence_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_batch_runtime_guard_evidence_freeze": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9V controlled limited batch runtime guard controls
     "run_limited_batch_runtime_guard": [
         "System Manager",
