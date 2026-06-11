@@ -317,6 +317,9 @@ fixtures = [
                     "NDIS Limited Production Batch Use Monitor Gate Report",
                     "NDIS Limited Production Batch Use Monitor Item Report",
                     "NDIS Limited Production Batch Use Monitor Guardrail Report",
+                    "NDIS Limited Batch Runtime Guard Report",
+                    "NDIS Limited Batch Runtime Guard Item Report",
+                    "NDIS Limited Batch Runtime Guard Guardrail Report",
                 ],
             ]
         ],
@@ -553,6 +556,8 @@ fixtures = [
                     "NDIS Limited Production Batch Policy Enablement Freeze Line",
                     "NDIS Limited Production Batch Use Monitor Gate",
                     "NDIS Limited Production Batch Use Monitor Item",
+                    "NDIS Limited Batch Runtime Guard",
+                    "NDIS Limited Batch Runtime Guard Item",
                 ],
             ]
         ],
@@ -1074,6 +1079,8 @@ except NameError:
 doctype_js.update({
     "NDIS Limited Production Batch Use Monitor Gate": "public/js/ndis_limited_production_batch_use_monitor_gate.js",
     "NDIS Limited Production Batch Use Monitor Item": "public/js/ndis_limited_production_batch_use_monitor_item.js",
+    "NDIS Limited Batch Runtime Guard": "public/js/ndis_limited_batch_runtime_guard.js",
+    "NDIS Limited Batch Runtime Guard Item": "public/js/ndis_limited_batch_runtime_guard_item.js",
 })
 
 try:
@@ -1084,4 +1091,6 @@ except NameError:
 doctype_list_js.update({
     "NDIS Limited Production Batch Use Monitor Gate": "public/js/ndis_limited_production_batch_use_monitor_gate_list.js",
     "NDIS Limited Production Batch Use Monitor Item": "public/js/ndis_limited_production_batch_use_monitor_item_list.js",
+    "NDIS Limited Batch Runtime Guard": "public/js/ndis_limited_batch_runtime_guard_list.js",
+    "NDIS Limited Batch Runtime Guard Item": "public/js/ndis_limited_batch_runtime_guard_item_list.js",
 })

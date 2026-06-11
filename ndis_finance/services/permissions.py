@@ -269,6 +269,22 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 9V controlled limited batch runtime guard controls
+    "run_limited_batch_runtime_guard": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_limited_batch_runtime_guard": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+    "simulate_limited_batch_runtime_guard": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 9U limited production batch use monitor gate controls
     "run_limited_production_batch_use_monitor_gate": [
         "System Manager",
