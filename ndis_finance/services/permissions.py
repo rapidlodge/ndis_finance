@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10E final guarded adapter policy decision controls
+    "run_guarded_adapter_final_policy_decision_keep_enabled": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_guarded_adapter_final_policy_decision_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10D final guarded adapter policy review controls
     "run_guarded_adapter_final_policy_review": [
         "System Manager",
