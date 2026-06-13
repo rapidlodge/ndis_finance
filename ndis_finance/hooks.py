@@ -341,6 +341,9 @@ fixtures = [
                     "NDIS Guarded Adapter Smoke Rollback Freeze Report",
                     "NDIS Guarded Adapter Smoke Rollback Freeze Item Report",
                     "NDIS Guarded Adapter Smoke Rollback Freeze Guardrail Report",
+                    "NDIS Guarded Adapter Final Policy Review Report",
+                    "NDIS Guarded Adapter Final Policy Review Item Report",
+                    "NDIS Guarded Adapter Final Policy Review Guardrail Report",
                 ],
             ]
         ],
@@ -593,6 +596,8 @@ fixtures = [
                     "NDIS Guarded Limited Adapter Smoke Rollback Item",
                     "NDIS Guarded Adapter Smoke Rollback Freeze",
                     "NDIS Guarded Adapter Smoke Rollback Freeze Item",
+                    "NDIS Guarded Adapter Final Policy Review",
+                    "NDIS Guarded Adapter Final Policy Review Item",
                 ],
             ]
         ],
@@ -1130,6 +1135,8 @@ doctype_js.update({
     "NDIS Guarded Limited Adapter Smoke Rollback Item": "public/js/ndis_guarded_limited_adapter_smoke_rollback_item.js",
     "NDIS Guarded Adapter Smoke Rollback Freeze": "public/js/ndis_guarded_adapter_smoke_rollback_freeze.js",
     "NDIS Guarded Adapter Smoke Rollback Freeze Item": "public/js/ndis_guarded_adapter_smoke_rollback_freeze_item.js",
+    "NDIS Guarded Adapter Final Policy Review": "public/js/ndis_guarded_adapter_final_policy_review.js",
+    "NDIS Guarded Adapter Final Policy Review Item": "public/js/ndis_guarded_adapter_final_policy_review_item.js",
 })
 
 try:
@@ -1156,4 +1163,6 @@ doctype_list_js.update({
     "NDIS Guarded Limited Adapter Smoke Rollback Item": "public/js/ndis_guarded_limited_adapter_smoke_rollback_item_list.js",
     "NDIS Guarded Adapter Smoke Rollback Freeze": "public/js/ndis_guarded_adapter_smoke_rollback_freeze_list.js",
     "NDIS Guarded Adapter Smoke Rollback Freeze Item": "public/js/ndis_guarded_adapter_smoke_rollback_freeze_item_list.js",
+    "NDIS Guarded Adapter Final Policy Review": "public/js/ndis_guarded_adapter_final_policy_review_list.js",
+    "NDIS Guarded Adapter Final Policy Review Item": "public/js/ndis_guarded_adapter_final_policy_review_item_list.js",
 })
