@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10B guarded limited adapter smoke rollback controls
+    "run_guarded_limited_adapter_smoke_rollback": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_guarded_limited_adapter_smoke_rollback_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10A guarded limited adapter smoke controls
     "run_guarded_limited_adapter_smoke": [
         "System Manager",
