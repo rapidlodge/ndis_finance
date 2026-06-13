@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10G pre-operation monitoring check controls
+    "run_controlled_limited_operation_pre_check": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_limited_operation_pre_check_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10F controlled limited operations monitoring register controls
     "run_controlled_limited_operations_monitoring_register": [
         "System Manager",
