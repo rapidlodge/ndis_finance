@@ -10144,5 +10144,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-13 13:40:59.944859",
+  "module": "NDIS Finance",
+  "name": "NDIS Guarded Adapter Smoke Rollback Freeze Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Guarded Adapter Smoke Rollback Freeze",
+  "reference_report": null,
+  "report_name": "NDIS Guarded Adapter Smoke Rollback Freeze Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-13 13:40:59.999319",
+  "module": "NDIS Finance",
+  "name": "NDIS Guarded Adapter Smoke Rollback Freeze Item Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Guarded Adapter Smoke Rollback Freeze Item",
+  "reference_report": null,
+  "report_name": "NDIS Guarded Adapter Smoke Rollback Freeze Item Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-13 13:41:00.030310",
+  "module": "NDIS Finance",
+  "name": "NDIS Guarded Adapter Smoke Rollback Freeze Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Guarded Adapter Smoke Rollback Freeze",
+  "reference_report": null,
+  "report_name": "NDIS Guarded Adapter Smoke Rollback Freeze Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]

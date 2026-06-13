@@ -338,6 +338,9 @@ fixtures = [
                     "NDIS Guarded Limited Adapter Smoke Rollback Report",
                     "NDIS Guarded Limited Adapter Smoke Rollback Item Report",
                     "NDIS Guarded Limited Adapter Smoke Rollback Guardrail Report",
+                    "NDIS Guarded Adapter Smoke Rollback Freeze Report",
+                    "NDIS Guarded Adapter Smoke Rollback Freeze Item Report",
+                    "NDIS Guarded Adapter Smoke Rollback Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -588,6 +591,8 @@ fixtures = [
                     "NDIS Guarded Limited Adapter Smoke Item",
                     "NDIS Guarded Limited Adapter Smoke Rollback",
                     "NDIS Guarded Limited Adapter Smoke Rollback Item",
+                    "NDIS Guarded Adapter Smoke Rollback Freeze",
+                    "NDIS Guarded Adapter Smoke Rollback Freeze Item",
                 ],
             ]
         ],
@@ -1123,6 +1128,8 @@ doctype_js.update({
     "NDIS Guarded Limited Adapter Smoke Item": "public/js/ndis_guarded_limited_adapter_smoke_item.js",
     "NDIS Guarded Limited Adapter Smoke Rollback": "public/js/ndis_guarded_limited_adapter_smoke_rollback.js",
     "NDIS Guarded Limited Adapter Smoke Rollback Item": "public/js/ndis_guarded_limited_adapter_smoke_rollback_item.js",
+    "NDIS Guarded Adapter Smoke Rollback Freeze": "public/js/ndis_guarded_adapter_smoke_rollback_freeze.js",
+    "NDIS Guarded Adapter Smoke Rollback Freeze Item": "public/js/ndis_guarded_adapter_smoke_rollback_freeze_item.js",
 })
 
 try:
@@ -1147,4 +1154,6 @@ doctype_list_js.update({
     "NDIS Guarded Limited Adapter Smoke Item": "public/js/ndis_guarded_limited_adapter_smoke_item_list.js",
     "NDIS Guarded Limited Adapter Smoke Rollback": "public/js/ndis_guarded_limited_adapter_smoke_rollback_list.js",
     "NDIS Guarded Limited Adapter Smoke Rollback Item": "public/js/ndis_guarded_limited_adapter_smoke_rollback_item_list.js",
+    "NDIS Guarded Adapter Smoke Rollback Freeze": "public/js/ndis_guarded_adapter_smoke_rollback_freeze_list.js",
+    "NDIS Guarded Adapter Smoke Rollback Freeze Item": "public/js/ndis_guarded_adapter_smoke_rollback_freeze_item_list.js",
 })
