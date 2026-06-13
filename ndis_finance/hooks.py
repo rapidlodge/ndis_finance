@@ -347,6 +347,9 @@ fixtures = [
                     "NDIS Guarded Adapter Final Policy Decision Report",
                     "NDIS Guarded Adapter Final Policy Decision Item Report",
                     "NDIS Guarded Adapter Final Policy Decision Guardrail Report",
+                    "NDIS Controlled Limited Operations Monitoring Register Report",
+                    "NDIS Controlled Limited Operations Monitoring Register Item Report",
+                    "NDIS Controlled Limited Operations Monitoring Register Guardrail Report",
                 ],
             ]
         ],
@@ -603,6 +606,8 @@ fixtures = [
                     "NDIS Guarded Adapter Final Policy Review Item",
                     "NDIS Guarded Adapter Final Policy Decision",
                     "NDIS Guarded Adapter Final Policy Decision Item",
+                    "NDIS Controlled Limited Operations Monitoring Register",
+                    "NDIS Controlled Limited Operations Monitoring Register Item",
                 ],
             ]
         ],
@@ -1144,6 +1149,8 @@ doctype_js.update({
     "NDIS Guarded Adapter Final Policy Review Item": "public/js/ndis_guarded_adapter_final_policy_review_item.js",
     "NDIS Guarded Adapter Final Policy Decision": "public/js/ndis_guarded_adapter_final_policy_decision.js",
     "NDIS Guarded Adapter Final Policy Decision Item": "public/js/ndis_guarded_adapter_final_policy_decision_item.js",
+    "NDIS Controlled Limited Operations Monitoring Register": "public/js/ndis_controlled_limited_operations_monitoring_register.js",
+    "NDIS Controlled Limited Operations Monitoring Register Item": "public/js/ndis_controlled_limited_operations_monitoring_register_item.js",
 })
 
 try:
@@ -1174,4 +1181,6 @@ doctype_list_js.update({
     "NDIS Guarded Adapter Final Policy Review Item": "public/js/ndis_guarded_adapter_final_policy_review_item_list.js",
     "NDIS Guarded Adapter Final Policy Decision": "public/js/ndis_guarded_adapter_final_policy_decision_list.js",
     "NDIS Guarded Adapter Final Policy Decision Item": "public/js/ndis_guarded_adapter_final_policy_decision_item_list.js",
+    "NDIS Controlled Limited Operations Monitoring Register": "public/js/ndis_controlled_limited_operations_monitoring_register_list.js",
+    "NDIS Controlled Limited Operations Monitoring Register Item": "public/js/ndis_controlled_limited_operations_monitoring_register_item_list.js",
 })

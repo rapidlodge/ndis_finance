@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10F controlled limited operations monitoring register controls
+    "run_controlled_limited_operations_monitoring_register": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_limited_operations_monitoring_register_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10E final guarded adapter policy decision controls
     "run_guarded_adapter_final_policy_decision_keep_enabled": [
         "System Manager",
