@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10J single guarded limited operation smoke execution controls
+    "run_single_guarded_limited_operation_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_single_guarded_limited_operation_smoke_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10I guarded limited operation execution gate controls
     "run_guarded_limited_operation_execution_gate": [
         "System Manager",

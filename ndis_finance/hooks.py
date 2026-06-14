@@ -359,6 +359,9 @@ fixtures = [
                     "NDIS Guarded Limited Operation Execution Gate Report",
                     "NDIS Guarded Limited Operation Execution Gate Item Report",
                     "NDIS Guarded Limited Operation Execution Gate Guardrail Report",
+                    "NDIS Single Guarded Limited Operation Smoke Report",
+                    "NDIS Single Guarded Limited Operation Smoke Item Report",
+                    "NDIS Single Guarded Limited Operation Smoke Guardrail Report",
                 ],
             ]
         ],
@@ -623,6 +626,8 @@ fixtures = [
                     "NDIS Guarded Limited Operation Preview Item",
                     "NDIS Guarded Limited Operation Execution Gate",
                     "NDIS Guarded Limited Operation Execution Gate Item",
+                    "NDIS Single Guarded Limited Operation Smoke",
+                    "NDIS Single Guarded Limited Operation Smoke Item",
                 ],
             ]
         ],
@@ -1172,6 +1177,8 @@ doctype_js.update({
     "NDIS Guarded Limited Operation Preview Item": "public/js/ndis_guarded_limited_operation_preview_item.js",
     "NDIS Guarded Limited Operation Execution Gate": "public/js/ndis_guarded_limited_operation_execution_gate.js",
     "NDIS Guarded Limited Operation Execution Gate Item": "public/js/ndis_guarded_limited_operation_execution_gate_item.js",
+    "NDIS Single Guarded Limited Operation Smoke": "public/js/ndis_single_guarded_limited_operation_smoke.js",
+    "NDIS Single Guarded Limited Operation Smoke Item": "public/js/ndis_single_guarded_limited_operation_smoke_item.js",
 })
 
 try:
@@ -1210,4 +1217,6 @@ doctype_list_js.update({
     "NDIS Guarded Limited Operation Preview Item": "public/js/ndis_guarded_limited_operation_preview_item_list.js",
     "NDIS Guarded Limited Operation Execution Gate": "public/js/ndis_guarded_limited_operation_execution_gate_list.js",
     "NDIS Guarded Limited Operation Execution Gate Item": "public/js/ndis_guarded_limited_operation_execution_gate_item_list.js",
+    "NDIS Single Guarded Limited Operation Smoke": "public/js/ndis_single_guarded_limited_operation_smoke_list.js",
+    "NDIS Single Guarded Limited Operation Smoke Item": "public/js/ndis_single_guarded_limited_operation_smoke_item_list.js",
 })
