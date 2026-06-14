@@ -365,6 +365,9 @@ fixtures = [
                     "NDIS Single Guarded Limited Operation Smoke Rollback Report",
                     "NDIS Single Guarded Limited Operation Smoke Rollback Item Report",
                     "NDIS Single Guarded Limited Operation Smoke Rollback Guardrail Report",
+                    "NDIS Single Guarded Op Smoke Rollback Freeze Report",
+                    "NDIS Single Guarded Op Smoke Rollback Freeze Item Report",
+                    "NDIS Single Guarded Op Smoke Rollback Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -633,6 +636,8 @@ fixtures = [
                     "NDIS Single Guarded Limited Operation Smoke Item",
                     "NDIS Single Guarded Limited Operation Smoke Rollback",
                     "NDIS Single Guarded Limited Operation Smoke Rollback Item",
+                    "NDIS Single Guarded Op Smoke Rollback Freeze",
+                    "NDIS Single Guarded Op Smoke Rollback Freeze Item",
                 ],
             ]
         ],
@@ -1186,6 +1191,8 @@ doctype_js.update({
     "NDIS Single Guarded Limited Operation Smoke Item": "public/js/ndis_single_guarded_limited_operation_smoke_item.js",
     "NDIS Single Guarded Limited Operation Smoke Rollback": "public/js/ndis_single_guarded_limited_operation_smoke_rollback.js",
     "NDIS Single Guarded Limited Operation Smoke Rollback Item": "public/js/ndis_single_guarded_limited_operation_smoke_rollback_item.js",
+    "NDIS Single Guarded Op Smoke Rollback Freeze": "public/js/ndis_single_guarded_op_smoke_rollback_freeze.js",
+    "NDIS Single Guarded Op Smoke Rollback Freeze Item": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_item.js",
 })
 
 try:
@@ -1228,4 +1235,6 @@ doctype_list_js.update({
     "NDIS Single Guarded Limited Operation Smoke Item": "public/js/ndis_single_guarded_limited_operation_smoke_item_list.js",
     "NDIS Single Guarded Limited Operation Smoke Rollback": "public/js/ndis_single_guarded_limited_operation_smoke_rollback_list.js",
     "NDIS Single Guarded Limited Operation Smoke Rollback Item": "public/js/ndis_single_guarded_limited_operation_smoke_rollback_item_list.js",
+    "NDIS Single Guarded Op Smoke Rollback Freeze": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_list.js",
+    "NDIS Single Guarded Op Smoke Rollback Freeze Item": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_item_list.js",
 })
