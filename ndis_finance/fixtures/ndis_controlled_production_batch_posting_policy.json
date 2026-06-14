@@ -214,7 +214,7 @@
   "policy_id": "PHASE8A-CAP-FIRST-PRODUCTION-BATCH",
   "policy_name": "First controlled production batch cap",
   "policy_type": "Batch Cap",
-  "production_batch_enabled": 0,
+  "production_batch_enabled": 1,
   "receivable_account": "12010 - Trade Debtors - CHCPL",
   "requires_cfo_acknowledgement": 1,
   "requires_freeze_after_rollback": 1,

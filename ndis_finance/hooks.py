@@ -371,6 +371,9 @@ fixtures = [
                     "NDIS Limited Operation Closeout Gate Report",
                     "NDIS Limited Operation Closeout Gate Item Report",
                     "NDIS Limited Operation Closeout Gate Guardrail Report",
+                    "NDIS Controlled Limited Ops Baseline Report",
+                    "NDIS Controlled Limited Ops Baseline Item Report",
+                    "NDIS Controlled Limited Ops Baseline Guardrail Report",
                 ],
             ]
         ],
@@ -643,6 +646,8 @@ fixtures = [
                     "NDIS Single Guarded Op Smoke Rollback Freeze Item",
                     "NDIS Limited Operation Closeout Gate",
                     "NDIS Limited Operation Closeout Gate Item",
+                    "NDIS Controlled Limited Ops Baseline",
+                    "NDIS Controlled Limited Ops Baseline Item",
                 ],
             ]
         ],
@@ -1200,6 +1205,8 @@ doctype_js.update({
     "NDIS Single Guarded Op Smoke Rollback Freeze Item": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_item.js",
     "NDIS Limited Operation Closeout Gate": "public/js/ndis_limited_operation_closeout_gate.js",
     "NDIS Limited Operation Closeout Gate Item": "public/js/ndis_limited_operation_closeout_gate_item.js",
+    "NDIS Controlled Limited Ops Baseline": "public/js/ndis_controlled_limited_ops_baseline.js",
+    "NDIS Controlled Limited Ops Baseline Item": "public/js/ndis_controlled_limited_ops_baseline_item.js",
 })
 
 try:
@@ -1246,4 +1253,6 @@ doctype_list_js.update({
     "NDIS Single Guarded Op Smoke Rollback Freeze Item": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_item_list.js",
     "NDIS Limited Operation Closeout Gate": "public/js/ndis_limited_operation_closeout_gate_list.js",
     "NDIS Limited Operation Closeout Gate Item": "public/js/ndis_limited_operation_closeout_gate_item_list.js",
+    "NDIS Controlled Limited Ops Baseline": "public/js/ndis_controlled_limited_ops_baseline_list.js",
+    "NDIS Controlled Limited Ops Baseline Item": "public/js/ndis_controlled_limited_ops_baseline_item_list.js",
 })
