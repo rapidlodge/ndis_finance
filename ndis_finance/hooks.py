@@ -368,6 +368,9 @@ fixtures = [
                     "NDIS Single Guarded Op Smoke Rollback Freeze Report",
                     "NDIS Single Guarded Op Smoke Rollback Freeze Item Report",
                     "NDIS Single Guarded Op Smoke Rollback Freeze Guardrail Report",
+                    "NDIS Limited Operation Closeout Gate Report",
+                    "NDIS Limited Operation Closeout Gate Item Report",
+                    "NDIS Limited Operation Closeout Gate Guardrail Report",
                 ],
             ]
         ],
@@ -638,6 +641,8 @@ fixtures = [
                     "NDIS Single Guarded Limited Operation Smoke Rollback Item",
                     "NDIS Single Guarded Op Smoke Rollback Freeze",
                     "NDIS Single Guarded Op Smoke Rollback Freeze Item",
+                    "NDIS Limited Operation Closeout Gate",
+                    "NDIS Limited Operation Closeout Gate Item",
                 ],
             ]
         ],
@@ -1193,6 +1198,8 @@ doctype_js.update({
     "NDIS Single Guarded Limited Operation Smoke Rollback Item": "public/js/ndis_single_guarded_limited_operation_smoke_rollback_item.js",
     "NDIS Single Guarded Op Smoke Rollback Freeze": "public/js/ndis_single_guarded_op_smoke_rollback_freeze.js",
     "NDIS Single Guarded Op Smoke Rollback Freeze Item": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_item.js",
+    "NDIS Limited Operation Closeout Gate": "public/js/ndis_limited_operation_closeout_gate.js",
+    "NDIS Limited Operation Closeout Gate Item": "public/js/ndis_limited_operation_closeout_gate_item.js",
 })
 
 try:
@@ -1237,4 +1244,6 @@ doctype_list_js.update({
     "NDIS Single Guarded Limited Operation Smoke Rollback Item": "public/js/ndis_single_guarded_limited_operation_smoke_rollback_item_list.js",
     "NDIS Single Guarded Op Smoke Rollback Freeze": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_list.js",
     "NDIS Single Guarded Op Smoke Rollback Freeze Item": "public/js/ndis_single_guarded_op_smoke_rollback_freeze_item_list.js",
+    "NDIS Limited Operation Closeout Gate": "public/js/ndis_limited_operation_closeout_gate_list.js",
+    "NDIS Limited Operation Closeout Gate Item": "public/js/ndis_limited_operation_closeout_gate_item_list.js",
 })
