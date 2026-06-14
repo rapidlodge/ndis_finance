@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10I guarded limited operation execution gate controls
+    "run_guarded_limited_operation_execution_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_guarded_limited_operation_execution_gate_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10H guarded limited operation preview controls
     "run_guarded_limited_operation_preview": [
         "System Manager",
