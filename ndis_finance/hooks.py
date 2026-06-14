@@ -353,6 +353,9 @@ fixtures = [
                     "NDIS Controlled Limited Operation Pre Check Report",
                     "NDIS Controlled Limited Operation Pre Check Item Report",
                     "NDIS Controlled Limited Operation Pre Check Guardrail Report",
+                    "NDIS Guarded Limited Operation Preview Report",
+                    "NDIS Guarded Limited Operation Preview Item Report",
+                    "NDIS Guarded Limited Operation Preview Guardrail Report",
                 ],
             ]
         ],
@@ -613,6 +616,8 @@ fixtures = [
                     "NDIS Controlled Limited Operations Monitoring Register Item",
                     "NDIS Controlled Limited Operation Pre Check",
                     "NDIS Controlled Limited Operation Pre Check Item",
+                    "NDIS Guarded Limited Operation Preview",
+                    "NDIS Guarded Limited Operation Preview Item",
                 ],
             ]
         ],
@@ -1158,6 +1163,8 @@ doctype_js.update({
     "NDIS Controlled Limited Operations Monitoring Register Item": "public/js/ndis_controlled_limited_operations_monitoring_register_item.js",
     "NDIS Controlled Limited Operation Pre Check": "public/js/ndis_controlled_limited_operation_pre_check.js",
     "NDIS Controlled Limited Operation Pre Check Item": "public/js/ndis_controlled_limited_operation_pre_check_item.js",
+    "NDIS Guarded Limited Operation Preview": "public/js/ndis_guarded_limited_operation_preview.js",
+    "NDIS Guarded Limited Operation Preview Item": "public/js/ndis_guarded_limited_operation_preview_item.js",
 })
 
 try:
@@ -1192,4 +1199,6 @@ doctype_list_js.update({
     "NDIS Controlled Limited Operations Monitoring Register Item": "public/js/ndis_controlled_limited_operations_monitoring_register_item_list.js",
     "NDIS Controlled Limited Operation Pre Check": "public/js/ndis_controlled_limited_operation_pre_check_list.js",
     "NDIS Controlled Limited Operation Pre Check Item": "public/js/ndis_controlled_limited_operation_pre_check_item_list.js",
+    "NDIS Guarded Limited Operation Preview": "public/js/ndis_guarded_limited_operation_preview_list.js",
+    "NDIS Guarded Limited Operation Preview Item": "public/js/ndis_guarded_limited_operation_preview_item_list.js",
 })
