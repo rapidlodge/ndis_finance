@@ -377,6 +377,9 @@ fixtures = [
                     "NDIS Controlled Limited Ops Runtime Watch Report",
                     "NDIS Controlled Limited Ops Runtime Watch Item Report",
                     "NDIS Controlled Limited Ops Runtime Watch Guardrail Report",
+                    "NDIS Runtime Watch Violation Sim Report",
+                    "NDIS Runtime Watch Violation Sim Item Report",
+                    "NDIS Runtime Watch Violation Sim Guardrail Report",
                 ],
             ]
         ],
@@ -653,6 +656,8 @@ fixtures = [
                     "NDIS Controlled Limited Ops Baseline Item",
                     "NDIS Controlled Limited Ops Runtime Watch",
                     "NDIS Controlled Limited Ops Runtime Watch Item",
+                    "NDIS Runtime Watch Violation Sim",
+                    "NDIS Runtime Watch Violation Sim Item",
                 ],
             ]
         ],
@@ -1214,6 +1219,8 @@ doctype_js.update({
     "NDIS Controlled Limited Ops Baseline Item": "public/js/ndis_controlled_limited_ops_baseline_item.js",
     "NDIS Controlled Limited Ops Runtime Watch": "public/js/ndis_controlled_limited_ops_runtime_watch.js",
     "NDIS Controlled Limited Ops Runtime Watch Item": "public/js/ndis_controlled_limited_ops_runtime_watch_item.js",
+    "NDIS Runtime Watch Violation Sim": "public/js/ndis_runtime_watch_violation_sim.js",
+    "NDIS Runtime Watch Violation Sim Item": "public/js/ndis_runtime_watch_violation_sim_item.js",
 })
 
 try:
@@ -1264,4 +1271,6 @@ doctype_list_js.update({
     "NDIS Controlled Limited Ops Baseline Item": "public/js/ndis_controlled_limited_ops_baseline_item_list.js",
     "NDIS Controlled Limited Ops Runtime Watch": "public/js/ndis_controlled_limited_ops_runtime_watch_list.js",
     "NDIS Controlled Limited Ops Runtime Watch Item": "public/js/ndis_controlled_limited_ops_runtime_watch_item_list.js",
+    "NDIS Runtime Watch Violation Sim": "public/js/ndis_runtime_watch_violation_sim_list.js",
+    "NDIS Runtime Watch Violation Sim Item": "public/js/ndis_runtime_watch_violation_sim_item_list.js",
 })
