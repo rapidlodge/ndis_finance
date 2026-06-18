@@ -380,6 +380,9 @@ fixtures = [
                     "NDIS Runtime Watch Violation Sim Report",
                     "NDIS Runtime Watch Violation Sim Item Report",
                     "NDIS Runtime Watch Violation Sim Guardrail Report",
+                    "NDIS Runtime Watch Violation Sim Freeze Report",
+                    "NDIS Runtime Watch Violation Sim Freeze Item Report",
+                    "NDIS Runtime Watch Violation Sim Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -658,6 +661,8 @@ fixtures = [
                     "NDIS Controlled Limited Ops Runtime Watch Item",
                     "NDIS Runtime Watch Violation Sim",
                     "NDIS Runtime Watch Violation Sim Item",
+                    "NDIS Runtime Watch Violation Sim Freeze",
+                    "NDIS Runtime Watch Violation Sim Freeze Item",
                 ],
             ]
         ],
@@ -1221,6 +1226,8 @@ doctype_js.update({
     "NDIS Controlled Limited Ops Runtime Watch Item": "public/js/ndis_controlled_limited_ops_runtime_watch_item.js",
     "NDIS Runtime Watch Violation Sim": "public/js/ndis_runtime_watch_violation_sim.js",
     "NDIS Runtime Watch Violation Sim Item": "public/js/ndis_runtime_watch_violation_sim_item.js",
+    "NDIS Runtime Watch Violation Sim Freeze": "public/js/ndis_runtime_watch_violation_sim_freeze.js",
+    "NDIS Runtime Watch Violation Sim Freeze Item": "public/js/ndis_runtime_watch_violation_sim_freeze_item.js",
 })
 
 try:
@@ -1273,4 +1280,6 @@ doctype_list_js.update({
     "NDIS Controlled Limited Ops Runtime Watch Item": "public/js/ndis_controlled_limited_ops_runtime_watch_item_list.js",
     "NDIS Runtime Watch Violation Sim": "public/js/ndis_runtime_watch_violation_sim_list.js",
     "NDIS Runtime Watch Violation Sim Item": "public/js/ndis_runtime_watch_violation_sim_item_list.js",
+    "NDIS Runtime Watch Violation Sim Freeze": "public/js/ndis_runtime_watch_violation_sim_freeze_list.js",
+    "NDIS Runtime Watch Violation Sim Freeze Item": "public/js/ndis_runtime_watch_violation_sim_freeze_item_list.js",
 })

@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10Q runtime watch violation simulation freeze controls
+    "run_runtime_watch_violation_simulation_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_runtime_watch_violation_simulation_freeze_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10P runtime watch violation simulation controls
     "run_runtime_watch_violation_simulation": [
         "System Manager",
