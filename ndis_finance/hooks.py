@@ -383,6 +383,9 @@ fixtures = [
                     "NDIS Runtime Watch Violation Sim Freeze Report",
                     "NDIS Runtime Watch Violation Sim Freeze Item Report",
                     "NDIS Runtime Watch Violation Sim Freeze Guardrail Report",
+                    "NDIS Runtime Watch Governance Closeout Report",
+                    "NDIS Runtime Watch Governance Closeout Item Report",
+                    "NDIS Runtime Watch Governance Closeout Guardrail Report",
                 ],
             ]
         ],
@@ -663,6 +666,8 @@ fixtures = [
                     "NDIS Runtime Watch Violation Sim Item",
                     "NDIS Runtime Watch Violation Sim Freeze",
                     "NDIS Runtime Watch Violation Sim Freeze Item",
+                    "NDIS Runtime Watch Governance Closeout",
+                    "NDIS Runtime Watch Governance Closeout Item",
                 ],
             ]
         ],
@@ -1228,6 +1233,8 @@ doctype_js.update({
     "NDIS Runtime Watch Violation Sim Item": "public/js/ndis_runtime_watch_violation_sim_item.js",
     "NDIS Runtime Watch Violation Sim Freeze": "public/js/ndis_runtime_watch_violation_sim_freeze.js",
     "NDIS Runtime Watch Violation Sim Freeze Item": "public/js/ndis_runtime_watch_violation_sim_freeze_item.js",
+    "NDIS Runtime Watch Governance Closeout": "public/js/ndis_runtime_watch_governance_closeout.js",
+    "NDIS Runtime Watch Governance Closeout Item": "public/js/ndis_runtime_watch_governance_closeout_item.js",
 })
 
 try:
@@ -1282,4 +1289,6 @@ doctype_list_js.update({
     "NDIS Runtime Watch Violation Sim Item": "public/js/ndis_runtime_watch_violation_sim_item_list.js",
     "NDIS Runtime Watch Violation Sim Freeze": "public/js/ndis_runtime_watch_violation_sim_freeze_list.js",
     "NDIS Runtime Watch Violation Sim Freeze Item": "public/js/ndis_runtime_watch_violation_sim_freeze_item_list.js",
+    "NDIS Runtime Watch Governance Closeout": "public/js/ndis_runtime_watch_governance_closeout_list.js",
+    "NDIS Runtime Watch Governance Closeout Item": "public/js/ndis_runtime_watch_governance_closeout_item_list.js",
 })

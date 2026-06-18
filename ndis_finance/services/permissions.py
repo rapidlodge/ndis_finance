@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10R runtime watch governance closeout controls
+    "run_runtime_watch_governance_closeout": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_runtime_watch_governance_closeout_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10Q runtime watch violation simulation freeze controls
     "run_runtime_watch_violation_simulation_freeze": [
         "System Manager",
