@@ -374,6 +374,9 @@ fixtures = [
                     "NDIS Controlled Limited Ops Baseline Report",
                     "NDIS Controlled Limited Ops Baseline Item Report",
                     "NDIS Controlled Limited Ops Baseline Guardrail Report",
+                    "NDIS Controlled Limited Ops Runtime Watch Report",
+                    "NDIS Controlled Limited Ops Runtime Watch Item Report",
+                    "NDIS Controlled Limited Ops Runtime Watch Guardrail Report",
                 ],
             ]
         ],
@@ -648,6 +651,8 @@ fixtures = [
                     "NDIS Limited Operation Closeout Gate Item",
                     "NDIS Controlled Limited Ops Baseline",
                     "NDIS Controlled Limited Ops Baseline Item",
+                    "NDIS Controlled Limited Ops Runtime Watch",
+                    "NDIS Controlled Limited Ops Runtime Watch Item",
                 ],
             ]
         ],
@@ -1207,6 +1212,8 @@ doctype_js.update({
     "NDIS Limited Operation Closeout Gate Item": "public/js/ndis_limited_operation_closeout_gate_item.js",
     "NDIS Controlled Limited Ops Baseline": "public/js/ndis_controlled_limited_ops_baseline.js",
     "NDIS Controlled Limited Ops Baseline Item": "public/js/ndis_controlled_limited_ops_baseline_item.js",
+    "NDIS Controlled Limited Ops Runtime Watch": "public/js/ndis_controlled_limited_ops_runtime_watch.js",
+    "NDIS Controlled Limited Ops Runtime Watch Item": "public/js/ndis_controlled_limited_ops_runtime_watch_item.js",
 })
 
 try:
@@ -1255,4 +1262,6 @@ doctype_list_js.update({
     "NDIS Limited Operation Closeout Gate Item": "public/js/ndis_limited_operation_closeout_gate_item_list.js",
     "NDIS Controlled Limited Ops Baseline": "public/js/ndis_controlled_limited_ops_baseline_list.js",
     "NDIS Controlled Limited Ops Baseline Item": "public/js/ndis_controlled_limited_ops_baseline_item_list.js",
+    "NDIS Controlled Limited Ops Runtime Watch": "public/js/ndis_controlled_limited_ops_runtime_watch_list.js",
+    "NDIS Controlled Limited Ops Runtime Watch Item": "public/js/ndis_controlled_limited_ops_runtime_watch_item_list.js",
 })

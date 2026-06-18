@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10O controlled limited operations runtime watch controls
+    "run_controlled_limited_operations_runtime_watch": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_controlled_limited_operations_runtime_watch_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10N controlled limited operations steady-state baseline controls
     "run_controlled_limited_operations_steady_state_baseline": [
         "System Manager",
