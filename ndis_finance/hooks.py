@@ -386,6 +386,9 @@ fixtures = [
                     "NDIS Runtime Watch Governance Closeout Report",
                     "NDIS Runtime Watch Governance Closeout Item Report",
                     "NDIS Runtime Watch Governance Closeout Guardrail Report",
+                    "NDIS Governed Limited Ops Readiness Report",
+                    "NDIS Governed Limited Ops Readiness Item Report",
+                    "NDIS Governed Limited Ops Readiness Guardrail Report",
                 ],
             ]
         ],
@@ -668,6 +671,8 @@ fixtures = [
                     "NDIS Runtime Watch Violation Sim Freeze Item",
                     "NDIS Runtime Watch Governance Closeout",
                     "NDIS Runtime Watch Governance Closeout Item",
+                    "NDIS Governed Limited Ops Readiness",
+                    "NDIS Governed Limited Ops Readiness Item",
                 ],
             ]
         ],
@@ -1235,6 +1240,8 @@ doctype_js.update({
     "NDIS Runtime Watch Violation Sim Freeze Item": "public/js/ndis_runtime_watch_violation_sim_freeze_item.js",
     "NDIS Runtime Watch Governance Closeout": "public/js/ndis_runtime_watch_governance_closeout.js",
     "NDIS Runtime Watch Governance Closeout Item": "public/js/ndis_runtime_watch_governance_closeout_item.js",
+    "NDIS Governed Limited Ops Readiness": "public/js/ndis_governed_limited_ops_readiness.js",
+    "NDIS Governed Limited Ops Readiness Item": "public/js/ndis_governed_limited_ops_readiness_item.js",
 })
 
 try:
@@ -1291,4 +1298,6 @@ doctype_list_js.update({
     "NDIS Runtime Watch Violation Sim Freeze Item": "public/js/ndis_runtime_watch_violation_sim_freeze_item_list.js",
     "NDIS Runtime Watch Governance Closeout": "public/js/ndis_runtime_watch_governance_closeout_list.js",
     "NDIS Runtime Watch Governance Closeout Item": "public/js/ndis_runtime_watch_governance_closeout_item_list.js",
+    "NDIS Governed Limited Ops Readiness": "public/js/ndis_governed_limited_ops_readiness_list.js",
+    "NDIS Governed Limited Ops Readiness Item": "public/js/ndis_governed_limited_ops_readiness_item_list.js",
 })

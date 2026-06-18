@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 10S governed controlled limited operations readiness controls
+    "run_governed_limited_ops_readiness": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_governed_limited_ops_readiness_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 10R runtime watch governance closeout controls
     "run_runtime_watch_governance_closeout": [
         "System Manager",
