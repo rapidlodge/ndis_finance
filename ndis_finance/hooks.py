@@ -392,6 +392,9 @@ fixtures = [
                     "NDIS Governed Limited Op Pre Exec Report",
                     "NDIS Governed Limited Op Pre Exec Item Report",
                     "NDIS Governed Limited Op Pre Exec Guardrail Report",
+                    "NDIS Governed Limited Op Preview Report",
+                    "NDIS Governed Limited Op Preview Item Report",
+                    "NDIS Governed Limited Op Preview Guardrail Report",
                 ],
             ]
         ],
@@ -678,6 +681,8 @@ fixtures = [
                     "NDIS Governed Limited Ops Readiness Item",
                     "NDIS Governed Limited Op Pre Exec",
                     "NDIS Governed Limited Op Pre Exec Item",
+                    "NDIS Governed Limited Op Preview",
+                    "NDIS Governed Limited Op Preview Item",
                 ],
             ]
         ],
@@ -1249,6 +1254,8 @@ doctype_js.update({
     "NDIS Governed Limited Ops Readiness Item": "public/js/ndis_governed_limited_ops_readiness_item.js",
     "NDIS Governed Limited Op Pre Exec": "public/js/ndis_governed_limited_op_pre_exec.js",
     "NDIS Governed Limited Op Pre Exec Item": "public/js/ndis_governed_limited_op_pre_exec_item.js",
+    "NDIS Governed Limited Op Preview": "public/js/ndis_governed_limited_op_preview.js",
+    "NDIS Governed Limited Op Preview Item": "public/js/ndis_governed_limited_op_preview_item.js",
 })
 
 try:
@@ -1309,4 +1316,6 @@ doctype_list_js.update({
     "NDIS Governed Limited Ops Readiness Item": "public/js/ndis_governed_limited_ops_readiness_item_list.js",
     "NDIS Governed Limited Op Pre Exec": "public/js/ndis_governed_limited_op_pre_exec_list.js",
     "NDIS Governed Limited Op Pre Exec Item": "public/js/ndis_governed_limited_op_pre_exec_item_list.js",
+    "NDIS Governed Limited Op Preview": "public/js/ndis_governed_limited_op_preview_list.js",
+    "NDIS Governed Limited Op Preview Item": "public/js/ndis_governed_limited_op_preview_item_list.js",
 })
