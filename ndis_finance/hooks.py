@@ -404,6 +404,9 @@ fixtures = [
                     "NDIS Governed Limited Op Rollback Report",
                     "NDIS Governed Limited Op Rollback Item Report",
                     "NDIS Governed Limited Op Rollback Guardrail Report",
+                    "NDIS Governed Limited Op Freeze Report",
+                    "NDIS Governed Limited Op Freeze Item Report",
+                    "NDIS Governed Limited Op Freeze Guardrail Report",
                 ],
             ]
         ],
@@ -698,6 +701,8 @@ fixtures = [
                     "NDIS Governed Limited Op Smoke Item",
                     "NDIS Governed Limited Op Rollback",
                     "NDIS Governed Limited Op Rollback Item",
+                    "NDIS Governed Limited Op Freeze",
+                    "NDIS Governed Limited Op Freeze Item",
                 ],
             ]
         ],
@@ -1277,6 +1282,8 @@ doctype_js.update({
     "NDIS Governed Limited Op Smoke Item": "public/js/ndis_governed_limited_op_smoke_item.js",
     "NDIS Governed Limited Op Rollback": "public/js/ndis_governed_limited_op_rollback.js",
     "NDIS Governed Limited Op Rollback Item": "public/js/ndis_governed_limited_op_rollback_item.js",
+    "NDIS Governed Limited Op Freeze": "public/js/ndis_governed_limited_op_freeze.js",
+    "NDIS Governed Limited Op Freeze Item": "public/js/ndis_governed_limited_op_freeze_item.js",
 })
 
 try:
@@ -1345,4 +1352,6 @@ doctype_list_js.update({
     "NDIS Governed Limited Op Smoke Item": "public/js/ndis_governed_limited_op_smoke_item_list.js",
     "NDIS Governed Limited Op Rollback": "public/js/ndis_governed_limited_op_rollback_list.js",
     "NDIS Governed Limited Op Rollback Item": "public/js/ndis_governed_limited_op_rollback_item_list.js",
+    "NDIS Governed Limited Op Freeze": "public/js/ndis_governed_limited_op_freeze_list.js",
+    "NDIS Governed Limited Op Freeze Item": "public/js/ndis_governed_limited_op_freeze_item_list.js",
 })
