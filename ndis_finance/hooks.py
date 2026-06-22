@@ -431,6 +431,9 @@ fixtures = [
                     "NDIS Governed Limited Op Candidate Validation Report",
                     "NDIS Governed Limited Op Candidate Validation Item Report",
                     "NDIS Governed Limited Op Candidate Validation Guardrail Report",
+                    "NDIS Governed Next Op Preview Report",
+                    "NDIS Governed Next Op Preview Item Report",
+                    "NDIS Governed Next Op Preview Guardrail Report",
                 ],
             ]
         ],
@@ -743,6 +746,8 @@ fixtures = [
                     "NDIS Governed Limited Op Candidate Item",
                     "NDIS Governed Limited Op Candidate Validation",
                     "NDIS Governed Limited Op Candidate Validation Item",
+                    "NDIS Governed Next Op Preview",
+                    "NDIS Governed Next Op Preview Item",
                 ],
             ]
         ],
@@ -1340,6 +1345,8 @@ doctype_js.update({
     "NDIS Governed Limited Op Candidate Item": "public/js/ndis_governed_limited_op_candidate_item.js",
     "NDIS Governed Limited Op Candidate Validation": "public/js/ndis_governed_limited_op_candidate_validation.js",
     "NDIS Governed Limited Op Candidate Validation Item": "public/js/ndis_governed_limited_op_candidate_validation_item.js",
+    "NDIS Governed Next Op Preview": "public/js/ndis_governed_next_op_preview.js",
+    "NDIS Governed Next Op Preview Item": "public/js/ndis_governed_next_op_preview_item.js",
 })
 
 try:
@@ -1426,4 +1433,6 @@ doctype_list_js.update({
     "NDIS Governed Limited Op Candidate Item": "public/js/ndis_governed_limited_op_candidate_item_list.js",
     "NDIS Governed Limited Op Candidate Validation": "public/js/ndis_governed_limited_op_candidate_validation_list.js",
     "NDIS Governed Limited Op Candidate Validation Item": "public/js/ndis_governed_limited_op_candidate_validation_item_list.js",
+    "NDIS Governed Next Op Preview": "public/js/ndis_governed_next_op_preview_list.js",
+    "NDIS Governed Next Op Preview Item": "public/js/ndis_governed_next_op_preview_item_list.js",
 })
