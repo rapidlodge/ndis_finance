@@ -428,6 +428,9 @@ fixtures = [
                     "NDIS Governed Limited Op Candidate Report",
                     "NDIS Governed Limited Op Candidate Item Report",
                     "NDIS Governed Limited Op Candidate Guardrail Report",
+                    "NDIS Governed Limited Op Candidate Validation Report",
+                    "NDIS Governed Limited Op Candidate Validation Item Report",
+                    "NDIS Governed Limited Op Candidate Validation Guardrail Report",
                 ],
             ]
         ],
@@ -738,6 +741,8 @@ fixtures = [
                     "NDIS Governed Limited Op Design Item",
                     "NDIS Governed Limited Op Candidate",
                     "NDIS Governed Limited Op Candidate Item",
+                    "NDIS Governed Limited Op Candidate Validation",
+                    "NDIS Governed Limited Op Candidate Validation Item",
                 ],
             ]
         ],
@@ -1333,6 +1338,8 @@ doctype_js.update({
     "NDIS Governed Limited Op Design Item": "public/js/ndis_governed_limited_op_design_item.js",
     "NDIS Governed Limited Op Candidate": "public/js/ndis_governed_limited_op_candidate.js",
     "NDIS Governed Limited Op Candidate Item": "public/js/ndis_governed_limited_op_candidate_item.js",
+    "NDIS Governed Limited Op Candidate Validation": "public/js/ndis_governed_limited_op_candidate_validation.js",
+    "NDIS Governed Limited Op Candidate Validation Item": "public/js/ndis_governed_limited_op_candidate_validation_item.js",
 })
 
 try:
@@ -1417,4 +1424,6 @@ doctype_list_js.update({
     "NDIS Governed Limited Op Design Item": "public/js/ndis_governed_limited_op_design_item_list.js",
     "NDIS Governed Limited Op Candidate": "public/js/ndis_governed_limited_op_candidate_list.js",
     "NDIS Governed Limited Op Candidate Item": "public/js/ndis_governed_limited_op_candidate_item_list.js",
+    "NDIS Governed Limited Op Candidate Validation": "public/js/ndis_governed_limited_op_candidate_validation_list.js",
+    "NDIS Governed Limited Op Candidate Validation Item": "public/js/ndis_governed_limited_op_candidate_validation_item_list.js",
 })
