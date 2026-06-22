@@ -135,6 +135,7 @@ SETUP_PHASES = (
     "ndis_finance.setup.phase11c.install",
     "ndis_finance.setup.phase11d.install",
     "ndis_finance.setup.phase11e.install",
+    "ndis_finance.setup.phase11f.install",
 )
 
 ROLES = [
