@@ -419,6 +419,9 @@ fixtures = [
                     "NDIS Governed Limited Op Precheck Report",
                     "NDIS Governed Limited Op Precheck Item Report",
                     "NDIS Governed Limited Op Precheck Guardrail Report",
+                    "NDIS Governed Limited Op Planning Report",
+                    "NDIS Governed Limited Op Planning Item Report",
+                    "NDIS Governed Limited Op Planning Guardrail Report",
                 ],
             ]
         ],
@@ -723,6 +726,8 @@ fixtures = [
                     "NDIS Governed Steady State Monitor Item",
                     "NDIS Governed Limited Op Precheck",
                     "NDIS Governed Limited Op Precheck Item",
+                    "NDIS Governed Limited Op Planning",
+                    "NDIS Governed Limited Op Planning Item",
                 ],
             ]
         ],
@@ -1312,6 +1317,8 @@ doctype_js.update({
     "NDIS Governed Steady State Monitor Item": "public/js/ndis_governed_steady_state_monitor_item.js",
     "NDIS Governed Limited Op Precheck": "public/js/ndis_governed_limited_op_precheck.js",
     "NDIS Governed Limited Op Precheck Item": "public/js/ndis_governed_limited_op_precheck_item.js",
+    "NDIS Governed Limited Op Planning": "public/js/ndis_governed_limited_op_planning.js",
+    "NDIS Governed Limited Op Planning Item": "public/js/ndis_governed_limited_op_planning_item.js",
 })
 
 try:
@@ -1390,4 +1397,6 @@ doctype_list_js.update({
     "NDIS Governed Steady State Monitor Item": "public/js/ndis_governed_steady_state_monitor_item_list.js",
     "NDIS Governed Limited Op Precheck": "public/js/ndis_governed_limited_op_precheck_list.js",
     "NDIS Governed Limited Op Precheck Item": "public/js/ndis_governed_limited_op_precheck_item_list.js",
+    "NDIS Governed Limited Op Planning": "public/js/ndis_governed_limited_op_planning_list.js",
+    "NDIS Governed Limited Op Planning Item": "public/js/ndis_governed_limited_op_planning_item_list.js",
 })
