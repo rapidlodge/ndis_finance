@@ -413,6 +413,9 @@ fixtures = [
                     "NDIS Governed Steady State Baseline Report",
                     "NDIS Governed Steady State Baseline Item Report",
                     "NDIS Governed Steady State Baseline Guardrail Report",
+                    "NDIS Governed Steady State Monitor Report",
+                    "NDIS Governed Steady State Monitor Item Report",
+                    "NDIS Governed Steady State Monitor Guardrail Report",
                 ],
             ]
         ],
@@ -713,6 +716,8 @@ fixtures = [
                     "NDIS Governed Limited Op Closeout Item",
                     "NDIS Governed Steady State Baseline",
                     "NDIS Governed Steady State Baseline Item",
+                    "NDIS Governed Steady State Monitor",
+                    "NDIS Governed Steady State Monitor Item",
                 ],
             ]
         ],
@@ -1298,6 +1303,8 @@ doctype_js.update({
     "NDIS Governed Limited Op Closeout Item": "public/js/ndis_governed_limited_op_closeout_item.js",
     "NDIS Governed Steady State Baseline": "public/js/ndis_governed_steady_state_baseline.js",
     "NDIS Governed Steady State Baseline Item": "public/js/ndis_governed_steady_state_baseline_item.js",
+    "NDIS Governed Steady State Monitor": "public/js/ndis_governed_steady_state_monitor.js",
+    "NDIS Governed Steady State Monitor Item": "public/js/ndis_governed_steady_state_monitor_item.js",
 })
 
 try:
@@ -1372,4 +1379,6 @@ doctype_list_js.update({
     "NDIS Governed Limited Op Closeout Item": "public/js/ndis_governed_limited_op_closeout_item_list.js",
     "NDIS Governed Steady State Baseline": "public/js/ndis_governed_steady_state_baseline_list.js",
     "NDIS Governed Steady State Baseline Item": "public/js/ndis_governed_steady_state_baseline_item_list.js",
+    "NDIS Governed Steady State Monitor": "public/js/ndis_governed_steady_state_monitor_list.js",
+    "NDIS Governed Steady State Monitor Item": "public/js/ndis_governed_steady_state_monitor_item_list.js",
 })

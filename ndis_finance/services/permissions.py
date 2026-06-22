@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 11B governed steady-state runtime monitor controls
+    "run_governed_steady_state_monitor": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_governed_steady_state_monitor_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 11A governed steady-state continuation baseline controls
     "run_governed_steady_state_baseline": [
         "System Manager",
