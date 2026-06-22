@@ -269,6 +269,17 @@ ACTION_ROLE_MAP = {
         "NDIS CFO",
         "NDIS Finance Manager",
     ],
+    # Phase 11C next governed limited operation precheck controls
+    "run_next_governed_limited_operation_precheck": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_governed_limited_operation_precheck_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 11B governed steady-state runtime monitor controls
     "run_governed_steady_state_monitor": [
         "System Manager",
