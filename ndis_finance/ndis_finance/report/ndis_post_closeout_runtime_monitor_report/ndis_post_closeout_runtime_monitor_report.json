@@ -1,0 +1,40 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2026-06-25 18:42:10.456523",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2026-06-25 18:42:10.456523",
+ "modified_by": "Administrator",
+ "module": "NDIS Finance",
+ "name": "NDIS Post Closeout Runtime Monitor Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "NDIS Post Closeout Runtime Monitor",
+ "report_name": "NDIS Post Closeout Runtime Monitor Report",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "NDIS CFO"
+  },
+  {
+   "role": "NDIS Finance Manager"
+  },
+  {
+   "role": "NDIS Finance Officer"
+  },
+  {
+   "role": "NDIS Finance Read Only"
+  }
+ ],
+ "timeout": 0
+}
