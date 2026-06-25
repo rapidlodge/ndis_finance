@@ -3,6 +3,17 @@ from frappe import _
 
 
 ACTION_ROLE_MAP = {
+    # Phase 11N post-closeout steady-state baseline controls
+    "run_post_closeout_steady_state_baseline": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_post_closeout_steady_state_baseline_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 11M next governed limited operation closeout controls
     "run_next_governed_limited_operation_closeout": [
         "System Manager",
