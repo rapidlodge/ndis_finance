@@ -3,6 +3,17 @@ from frappe import _
 
 
 ACTION_ROLE_MAP = {
+    # Phase 11J next governed limited operation smoke execution controls
+    "run_next_governed_limited_operation_smoke": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_governed_limited_operation_smoke_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     "create_claim_batch": [
         "System Manager",
         "NDIS CFO",
