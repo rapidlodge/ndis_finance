@@ -3,6 +3,17 @@ from frappe import _
 
 
 ACTION_ROLE_MAP = {
+    # Phase 11M next governed limited operation closeout controls
+    "run_next_governed_limited_operation_closeout": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_governed_limited_operation_closeout_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 11L next governed limited operation rollback freeze controls
     "run_next_governed_limited_operation_rollback_freeze": [
         "System Manager",

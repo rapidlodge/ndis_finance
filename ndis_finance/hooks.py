@@ -446,6 +446,9 @@ fixtures = [
                     "NDIS Governed Next Op Rollback Freeze Report",
                     "NDIS Governed Next Op Rollback Freeze Item Report",
                     "NDIS Governed Next Op Rollback Freeze Guardrail Report",
+                    "NDIS Governed Next Op Closeout Report",
+                    "NDIS Governed Next Op Closeout Item Report",
+                    "NDIS Governed Next Op Closeout Guardrail Report",
                 ],
             ]
         ],
@@ -768,6 +771,8 @@ fixtures = [
                     "NDIS Governed Next Op Rollback Item",
                     "NDIS Governed Next Op Rollback Freeze",
                     "NDIS Governed Next Op Rollback Freeze Item",
+                    "NDIS Governed Next Op Closeout",
+                    "NDIS Governed Next Op Closeout Item",
                 ],
             ]
         ],
@@ -1507,4 +1512,26 @@ except NameError:
 doctype_list_js.update({
     "NDIS Governed Next Op Rollback Freeze": "public/js/ndis_governed_next_op_rollback_freeze_list.js",
     "NDIS Governed Next Op Rollback Freeze Item": "public/js/ndis_governed_next_op_rollback_freeze_item_list.js",
+})
+
+# Phase 11M - Next governed limited operation cycle closeout
+
+try:
+    doctype_js
+except NameError:
+    doctype_js = {}
+
+doctype_js.update({
+    "NDIS Governed Next Op Closeout": "public/js/ndis_governed_next_op_closeout.js",
+    "NDIS Governed Next Op Closeout Item": "public/js/ndis_governed_next_op_closeout_item.js",
+})
+
+try:
+    doctype_list_js
+except NameError:
+    doctype_list_js = {}
+
+doctype_list_js.update({
+    "NDIS Governed Next Op Closeout": "public/js/ndis_governed_next_op_closeout_list.js",
+    "NDIS Governed Next Op Closeout Item": "public/js/ndis_governed_next_op_closeout_item_list.js",
 })
