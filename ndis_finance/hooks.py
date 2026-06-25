@@ -440,6 +440,9 @@ fixtures = [
                     "NDIS Governed Next Op Smoke Report",
                     "NDIS Governed Next Op Smoke Item Report",
                     "NDIS Governed Next Op Smoke Guardrail Report",
+                    "NDIS Governed Next Op Rollback Report",
+                    "NDIS Governed Next Op Rollback Item Report",
+                    "NDIS Governed Next Op Rollback Guardrail Report",
                 ],
             ]
         ],
@@ -758,6 +761,8 @@ fixtures = [
                     "NDIS Governed Next Op Exec Gate Item",
                     "NDIS Governed Next Op Smoke",
                     "NDIS Governed Next Op Smoke Item",
+                    "NDIS Governed Next Op Rollback",
+                    "NDIS Governed Next Op Rollback Item",
                 ],
             ]
         ],
@@ -1453,4 +1458,26 @@ doctype_list_js.update({
     "NDIS Governed Next Op Exec Gate Item": "public/js/ndis_governed_next_op_exec_gate_item_list.js",
     "NDIS Governed Next Op Smoke": "public/js/ndis_governed_next_op_smoke_list.js",
     "NDIS Governed Next Op Smoke Item": "public/js/ndis_governed_next_op_smoke_item_list.js",
+})
+
+# Phase 11K - Next governed limited operation smoke rollback
+
+try:
+    doctype_js
+except NameError:
+    doctype_js = {}
+
+doctype_js.update({
+    "NDIS Governed Next Op Rollback": "public/js/ndis_governed_next_op_rollback.js",
+    "NDIS Governed Next Op Rollback Item": "public/js/ndis_governed_next_op_rollback_item.js",
+})
+
+try:
+    doctype_list_js
+except NameError:
+    doctype_list_js = {}
+
+doctype_list_js.update({
+    "NDIS Governed Next Op Rollback": "public/js/ndis_governed_next_op_rollback_list.js",
+    "NDIS Governed Next Op Rollback Item": "public/js/ndis_governed_next_op_rollback_item_list.js",
 })
