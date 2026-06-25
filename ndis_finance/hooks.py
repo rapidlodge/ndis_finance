@@ -455,6 +455,9 @@ fixtures = [
                     "NDIS Post Closeout Runtime Monitor Report",
                     "NDIS Post Closeout Runtime Monitor Item Report",
                     "NDIS Post Closeout Runtime Monitor Guardrail Report",
+                    "NDIS Next Controlled Cycle Planning Report",
+                    "NDIS Next Controlled Cycle Plan Item Report",
+                    "NDIS Next Controlled Cycle Planning Guardrail Report",
                 ],
             ]
         ],
@@ -783,6 +786,8 @@ fixtures = [
                     "NDIS Post Closeout Steady Baseline Item",
                     "NDIS Post Closeout Runtime Monitor",
                     "NDIS Post Closeout Runtime Monitor Item",
+                    "NDIS Next Controlled Cycle Planning",
+                    "NDIS Next Controlled Cycle Plan Item",
                 ],
             ]
         ],
@@ -1568,4 +1573,16 @@ doctype_js.update({
 doctype_list_js.update({
     "NDIS Post Closeout Runtime Monitor": "public/js/ndis_post_closeout_runtime_monitor_list.js",
     "NDIS Post Closeout Runtime Monitor Item": "public/js/ndis_post_closeout_runtime_monitor_item_list.js",
+})
+
+# Phase 11P - Next controlled-cycle planning gate
+
+doctype_js.update({
+    "NDIS Next Controlled Cycle Planning": "public/js/ndis_next_controlled_cycle_planning.js",
+    "NDIS Next Controlled Cycle Plan Item": "public/js/ndis_next_controlled_cycle_plan_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Controlled Cycle Planning": "public/js/ndis_next_controlled_cycle_planning_list.js",
+    "NDIS Next Controlled Cycle Plan Item": "public/js/ndis_next_controlled_cycle_plan_item_list.js",
 })
