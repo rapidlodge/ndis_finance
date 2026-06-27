@@ -476,6 +476,9 @@ fixtures = [
                     "NDIS Next Controlled Cycle Smoke Report",
                     "NDIS Next Controlled Cycle Smoke Item Report",
                     "NDIS Next Controlled Cycle Smoke Guardrail Report",
+                    "NDIS Next Controlled Cycle Rollback Report",
+                    "NDIS Next Controlled Cycle Rollback Item Report",
+                    "NDIS Next Controlled Cycle Rollback Guardrail Report",
                 ],
             ]
         ],
@@ -818,6 +821,8 @@ fixtures = [
                     "NDIS Next Controlled Cycle Exec Gate Item",
                     "NDIS Next Controlled Cycle Smoke",
                     "NDIS Next Controlled Cycle Smoke Item",
+                    "NDIS Next Controlled Cycle Rollback",
+                    "NDIS Next Controlled Cycle Rollback Item",
                 ],
             ]
         ],
@@ -1687,4 +1692,16 @@ doctype_js.update({
 doctype_list_js.update({
     "NDIS Next Controlled Cycle Smoke": "public/js/ndis_next_controlled_cycle_smoke_list.js",
     "NDIS Next Controlled Cycle Smoke Item": "public/js/ndis_next_controlled_cycle_smoke_item_list.js",
+})
+
+# Phase 11W - Next controlled-cycle smoke rollback
+
+doctype_js.update({
+    "NDIS Next Controlled Cycle Rollback": "public/js/ndis_next_controlled_cycle_rollback.js",
+    "NDIS Next Controlled Cycle Rollback Item": "public/js/ndis_next_controlled_cycle_rollback_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Controlled Cycle Rollback": "public/js/ndis_next_controlled_cycle_rollback_list.js",
+    "NDIS Next Controlled Cycle Rollback Item": "public/js/ndis_next_controlled_cycle_rollback_item_list.js",
 })
