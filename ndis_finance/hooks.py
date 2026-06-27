@@ -464,6 +464,9 @@ fixtures = [
                     "NDIS Next Controlled Cycle Candidate Report",
                     "NDIS Next Controlled Cycle Candidate Item Report",
                     "NDIS Next Controlled Cycle Candidate Guardrail Report",
+                    "NDIS Next Controlled Cycle Cand Valid Report",
+                    "NDIS Next Controlled Cycle Cand Valid Item Report",
+                    "NDIS Next Controlled Cycle Cand Valid Guardrail Report",
                 ],
             ]
         ],
@@ -798,6 +801,8 @@ fixtures = [
                     "NDIS Next Controlled Cycle Design Item",
                     "NDIS Next Controlled Cycle Candidate",
                     "NDIS Next Controlled Cycle Cand Item",
+                    "NDIS Next Controlled Cycle Cand Valid",
+                    "NDIS Next Controlled Cycle Cand Valid Item",
                 ],
             ]
         ],
@@ -1619,4 +1624,16 @@ doctype_js.update({
 doctype_list_js.update({
     "NDIS Next Controlled Cycle Candidate": "public/js/ndis_next_controlled_cycle_candidate_list.js",
     "NDIS Next Controlled Cycle Cand Item": "public/js/ndis_next_controlled_cycle_candidate_item_list.js",
+})
+
+# Phase 11S - Next controlled-cycle candidate validation gate
+
+doctype_js.update({
+    "NDIS Next Controlled Cycle Cand Valid": "public/js/ndis_next_controlled_cycle_cand_valid.js",
+    "NDIS Next Controlled Cycle Cand Valid Item": "public/js/ndis_next_controlled_cycle_cand_valid_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Controlled Cycle Cand Valid": "public/js/ndis_next_controlled_cycle_cand_valid_list.js",
+    "NDIS Next Controlled Cycle Cand Valid Item": "public/js/ndis_next_controlled_cycle_cand_valid_item_list.js",
 })
