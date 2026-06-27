@@ -467,6 +467,9 @@ fixtures = [
                     "NDIS Next Controlled Cycle Cand Valid Report",
                     "NDIS Next Controlled Cycle Cand Valid Item Report",
                     "NDIS Next Controlled Cycle Cand Valid Guardrail Report",
+                    "NDIS Next Controlled Cycle Preview Report",
+                    "NDIS Next Controlled Cycle Preview Item Report",
+                    "NDIS Next Controlled Cycle Preview Guardrail Report",
                 ],
             ]
         ],
@@ -803,6 +806,8 @@ fixtures = [
                     "NDIS Next Controlled Cycle Cand Item",
                     "NDIS Next Controlled Cycle Cand Valid",
                     "NDIS Next Controlled Cycle Cand Valid Item",
+                    "NDIS Next Controlled Cycle Preview",
+                    "NDIS Next Controlled Cycle Preview Item",
                 ],
             ]
         ],
@@ -1636,4 +1641,16 @@ doctype_js.update({
 doctype_list_js.update({
     "NDIS Next Controlled Cycle Cand Valid": "public/js/ndis_next_controlled_cycle_cand_valid_list.js",
     "NDIS Next Controlled Cycle Cand Valid Item": "public/js/ndis_next_controlled_cycle_cand_valid_item_list.js",
+})
+
+# Phase 11T - Next controlled-cycle preview gate
+
+doctype_js.update({
+    "NDIS Next Controlled Cycle Preview": "public/js/ndis_next_controlled_cycle_preview.js",
+    "NDIS Next Controlled Cycle Preview Item": "public/js/ndis_next_controlled_cycle_preview_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Controlled Cycle Preview": "public/js/ndis_next_controlled_cycle_preview_list.js",
+    "NDIS Next Controlled Cycle Preview Item": "public/js/ndis_next_controlled_cycle_preview_item_list.js",
 })
