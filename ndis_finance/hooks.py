@@ -482,6 +482,9 @@ fixtures = [
                     "NDIS Next Controlled Cycle Rollback Freeze Report",
                     "NDIS Next Controlled Cycle Rollback Freeze Item Report",
                     "NDIS Next Controlled Cycle Rollback Freeze Guardrail Report",
+                    "NDIS Next Controlled Cycle Closeout Report",
+                    "NDIS Next Controlled Cycle Closeout Item Report",
+                    "NDIS Next Controlled Cycle Closeout Guardrail Report",
                 ],
             ]
         ],
@@ -828,6 +831,8 @@ fixtures = [
                     "NDIS Next Controlled Cycle Rollback Item",
                     "NDIS Next Controlled Cycle Rollback Freeze",
                     "NDIS Next Controlled Cycle Rollback Freeze Item",
+                    "NDIS Next Controlled Cycle Closeout",
+                    "NDIS Next Controlled Cycle Closeout Item",
                 ],
             ]
         ],
@@ -1721,4 +1726,16 @@ doctype_js.update({
 doctype_list_js.update({
     "NDIS Next Controlled Cycle Rollback Freeze": "public/js/ndis_next_controlled_cycle_rollback_freeze_list.js",
     "NDIS Next Controlled Cycle Rollback Freeze Item": "public/js/ndis_next_controlled_cycle_rollback_freeze_item_list.js",
+})
+
+# Phase 11Y - Next controlled-cycle closeout
+
+doctype_js.update({
+    "NDIS Next Controlled Cycle Closeout": "public/js/ndis_next_controlled_cycle_closeout.js",
+    "NDIS Next Controlled Cycle Closeout Item": "public/js/ndis_next_controlled_cycle_closeout_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Controlled Cycle Closeout": "public/js/ndis_next_controlled_cycle_closeout_list.js",
+    "NDIS Next Controlled Cycle Closeout Item": "public/js/ndis_next_controlled_cycle_closeout_item_list.js",
 })
