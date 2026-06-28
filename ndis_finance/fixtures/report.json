@@ -16171,5 +16171,128 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-28 16:39:58.160073",
+  "module": "NDIS Finance",
+  "name": "NDIS Next Post Closeout Steady Baseline Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Next Post Closeout Steady Baseline",
+  "reference_report": null,
+  "report_name": "NDIS Next Post Closeout Steady Baseline Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-28 16:39:58.202481",
+  "module": "NDIS Finance",
+  "name": "NDIS Next Post Closeout Steady Baseline Item Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Next Post Closeout Steady Baseline Item",
+  "reference_report": null,
+  "report_name": "NDIS Next Post Closeout Steady Baseline Item Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2026-06-28 16:39:58.221330",
+  "module": "NDIS Finance",
+  "name": "NDIS Next Post Closeout Steady Baseline Guardrail Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "NDIS Next Post Closeout Steady Baseline",
+  "reference_report": null,
+  "report_name": "NDIS Next Post Closeout Steady Baseline Guardrail Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "role": "System Manager"
+   },
+   {
+    "role": "NDIS CFO"
+   },
+   {
+    "role": "NDIS Finance Manager"
+   },
+   {
+    "role": "NDIS Finance Officer"
+   },
+   {
+    "role": "NDIS Finance Read Only"
+   }
+  ],
+  "timeout": 0
  }
 ]
