@@ -3,6 +3,17 @@ from frappe import _
 
 
 ACTION_ROLE_MAP = {
+    # Phase 11X next controlled-cycle rollback freeze controls
+    "run_next_controlled_cycle_rollback_freeze": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_controlled_cycle_rollback_freeze_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 11W next controlled-cycle smoke rollback controls
     "run_next_controlled_cycle_rollback": [
         "System Manager",
