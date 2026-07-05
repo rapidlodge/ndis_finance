@@ -1940,3 +1940,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12H - Governed limited-operation smoke execution
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Smoke": "public/js/ndis_next_governed_limited_op_smoke.js",
+    "NDIS Next Governed Limited Op Smoke Item": "public/js/ndis_next_governed_limited_op_smoke_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Smoke": "public/js/ndis_next_governed_limited_op_smoke_list.js",
+    "NDIS Next Governed Limited Op Smoke Item": "public/js/ndis_next_governed_limited_op_smoke_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Smoke",
+            "NDIS Next Governed Limited Op Smoke Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Smoke Report",
+            "NDIS Next Governed Limited Op Smoke Item Report",
+            "NDIS Next Governed Limited Op Smoke Guardrail Report"
+        ]]]
+    }
+])
