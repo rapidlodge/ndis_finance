@@ -3,6 +3,17 @@ from frappe import _
 
 
 ACTION_ROLE_MAP = {
+    # Phase 12D governed limited-operation candidate selection controls
+    "run_governed_limited_operation_candidate_selection": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_governed_limited_operation_candidate_selection_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 12C governed limited-operation design controls
     "run_governed_limited_operation_design": [
         "System Manager",
