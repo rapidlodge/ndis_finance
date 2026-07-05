@@ -491,6 +491,9 @@ fixtures = [
                     "NDIS Next Post Closeout Runtime Monitor Report",
                     "NDIS Next Post Closeout Runtime Monitor Item Report",
                     "NDIS Next Post Closeout Runtime Monitor Guardrail Report",
+                    "NDIS Next Governed Limited Op Planning Report",
+                    "NDIS Next Governed Limited Op Planning Item Report",
+                    "NDIS Next Governed Limited Op Planning Guardrail Report",
                 ],
             ]
         ],
@@ -843,6 +846,8 @@ fixtures = [
                     "NDIS Next Post Closeout Steady Baseline Item",
                     "NDIS Next Post Closeout Runtime Monitor",
                     "NDIS Next Post Closeout Runtime Monitor Item",
+                    "NDIS Next Governed Limited Op Planning",
+                    "NDIS Next Governed Limited Op Planning Item",
                 ],
             ]
         ],
@@ -1772,4 +1777,16 @@ doctype_js.update({
 doctype_list_js.update({
     "NDIS Next Post Closeout Runtime Monitor": "public/js/ndis_next_post_closeout_runtime_monitor_list.js",
     "NDIS Next Post Closeout Runtime Monitor Item": "public/js/ndis_next_post_closeout_runtime_monitor_item_list.js",
+})
+
+# Phase 12B - Governed limited-operation planning
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Planning": "public/js/ndis_next_governed_limited_op_planning.js",
+    "NDIS Next Governed Limited Op Planning Item": "public/js/ndis_next_governed_limited_op_planning_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Planning": "public/js/ndis_next_governed_limited_op_planning_list.js",
+    "NDIS Next Governed Limited Op Planning Item": "public/js/ndis_next_governed_limited_op_planning_item_list.js",
 })
