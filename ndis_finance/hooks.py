@@ -1790,3 +1790,33 @@ doctype_list_js.update({
     "NDIS Next Governed Limited Op Planning": "public/js/ndis_next_governed_limited_op_planning_list.js",
     "NDIS Next Governed Limited Op Planning Item": "public/js/ndis_next_governed_limited_op_planning_item_list.js",
 })
+
+# Phase 12C - Governed limited-operation design
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Design": "public/js/ndis_next_governed_limited_op_design.js",
+    "NDIS Next Governed Limited Op Design Item": "public/js/ndis_next_governed_limited_op_design_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Design": "public/js/ndis_next_governed_limited_op_design_list.js",
+    "NDIS Next Governed Limited Op Design Item": "public/js/ndis_next_governed_limited_op_design_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Design",
+            "NDIS Next Governed Limited Op Design Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Design Report",
+            "NDIS Next Governed Limited Op Design Item Report",
+            "NDIS Next Governed Limited Op Design Guardrail Report"
+        ]]]
+    }
+])
