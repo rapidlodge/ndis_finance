@@ -1880,3 +1880,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12F - Governed limited-operation preview
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Preview": "public/js/ndis_next_governed_limited_op_preview.js",
+    "NDIS Next Governed Limited Op Preview Item": "public/js/ndis_next_governed_limited_op_preview_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Preview": "public/js/ndis_next_governed_limited_op_preview_list.js",
+    "NDIS Next Governed Limited Op Preview Item": "public/js/ndis_next_governed_limited_op_preview_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Preview",
+            "NDIS Next Governed Limited Op Preview Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Preview Report",
+            "NDIS Next Governed Limited Op Preview Item Report",
+            "NDIS Next Governed Limited Op Preview Guardrail Report"
+        ]]]
+    }
+])
