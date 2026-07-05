@@ -1850,3 +1850,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12E - Governed limited-operation candidate validation
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Cand Valid": "public/js/ndis_next_governed_limited_op_cand_valid.js",
+    "NDIS Next Governed Limited Op Cand Valid Item": "public/js/ndis_next_governed_limited_op_cand_valid_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Cand Valid": "public/js/ndis_next_governed_limited_op_cand_valid_list.js",
+    "NDIS Next Governed Limited Op Cand Valid Item": "public/js/ndis_next_governed_limited_op_cand_valid_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Cand Valid",
+            "NDIS Next Governed Limited Op Cand Valid Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Cand Valid Report",
+            "NDIS Next Governed Limited Op Cand Valid Item Report",
+            "NDIS Next Governed Limited Op Cand Valid Guardrail Report"
+        ]]]
+    }
+])
