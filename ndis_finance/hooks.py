@@ -2060,3 +2060,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12L - Governed limited-operation steady-state baseline
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Steady Baseline": "public/js/ndis_next_governed_limited_op_steady_baseline.js",
+    "NDIS Next Governed Limited Op Steady Baseline Item": "public/js/ndis_next_governed_limited_op_steady_baseline_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Steady Baseline": "public/js/ndis_next_governed_limited_op_steady_baseline_list.js",
+    "NDIS Next Governed Limited Op Steady Baseline Item": "public/js/ndis_next_governed_limited_op_steady_baseline_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Steady Baseline",
+            "NDIS Next Governed Limited Op Steady Baseline Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Steady Baseline Report",
+            "NDIS Next Governed Limited Op Steady Baseline Item Report",
+            "NDIS Next Governed Limited Op Steady Baseline Guardrail Report"
+        ]]]
+    }
+])
