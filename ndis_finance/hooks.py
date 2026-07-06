@@ -2030,3 +2030,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12K - Governed limited-operation smoke closeout
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Closeout": "public/js/ndis_next_governed_limited_op_closeout.js",
+    "NDIS Next Governed Limited Op Closeout Item": "public/js/ndis_next_governed_limited_op_closeout_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Closeout": "public/js/ndis_next_governed_limited_op_closeout_list.js",
+    "NDIS Next Governed Limited Op Closeout Item": "public/js/ndis_next_governed_limited_op_closeout_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Closeout",
+            "NDIS Next Governed Limited Op Closeout Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Closeout Report",
+            "NDIS Next Governed Limited Op Closeout Item Report",
+            "NDIS Next Governed Limited Op Closeout Guardrail Report"
+        ]]]
+    }
+])
