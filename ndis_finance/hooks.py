@@ -2000,3 +2000,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12J - Governed limited-operation rollback evidence freeze
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Rollback Freeze": "public/js/ndis_next_governed_limited_op_rollback_freeze.js",
+    "NDIS Next Governed Limited Op Rollback Freeze Item": "public/js/ndis_next_governed_limited_op_rollback_freeze_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Rollback Freeze": "public/js/ndis_next_governed_limited_op_rollback_freeze_list.js",
+    "NDIS Next Governed Limited Op Rollback Freeze Item": "public/js/ndis_next_governed_limited_op_rollback_freeze_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Rollback Freeze",
+            "NDIS Next Governed Limited Op Rollback Freeze Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Rollback Freeze Report",
+            "NDIS Next Governed Limited Op Rollback Freeze Item Report",
+            "NDIS Next Governed Limited Op Rollback Freeze Guardrail Report"
+        ]]]
+    }
+])
