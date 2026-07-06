@@ -1970,3 +1970,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12I - Governed limited-operation smoke rollback
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Rollback": "public/js/ndis_next_governed_limited_op_rollback.js",
+    "NDIS Next Governed Limited Op Rollback Item": "public/js/ndis_next_governed_limited_op_rollback_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Rollback": "public/js/ndis_next_governed_limited_op_rollback_list.js",
+    "NDIS Next Governed Limited Op Rollback Item": "public/js/ndis_next_governed_limited_op_rollback_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Rollback",
+            "NDIS Next Governed Limited Op Rollback Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Rollback Report",
+            "NDIS Next Governed Limited Op Rollback Item Report",
+            "NDIS Next Governed Limited Op Rollback Guardrail Report"
+        ]]]
+    }
+])
