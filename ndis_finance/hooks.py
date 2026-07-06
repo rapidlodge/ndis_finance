@@ -1821,6 +1821,36 @@ fixtures.extend([
     }
 ])
 
+# Phase 12M - Governed limited-operation runtime monitor
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Runtime Monitor": "public/js/ndis_next_governed_limited_op_runtime_monitor.js",
+    "NDIS Next Governed Limited Op Runtime Monitor Item": "public/js/ndis_next_governed_limited_op_runtime_monitor_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Runtime Monitor": "public/js/ndis_next_governed_limited_op_runtime_monitor_list.js",
+    "NDIS Next Governed Limited Op Runtime Monitor Item": "public/js/ndis_next_governed_limited_op_runtime_monitor_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Runtime Monitor",
+            "NDIS Next Governed Limited Op Runtime Monitor Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Runtime Monitor Report",
+            "NDIS Next Governed Limited Op Runtime Monitor Item Report",
+            "NDIS Next Governed Limited Op Runtime Monitor Guardrail Report"
+        ]]]
+    }
+])
+
 # Phase 12D - Governed limited-operation candidate selection
 
 doctype_js.update({

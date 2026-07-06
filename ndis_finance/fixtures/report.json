@@ -17770,5 +17770,173 @@
    }
   ],
   "timeout": 0
+ },
+ {
+  "name": "NDIS Next Governed Limited Op Runtime Monitor Report",
+  "modified": "2026-07-06 17:58:53.107922",
+  "docstatus": 0,
+  "report_name": "NDIS Next Governed Limited Op Runtime Monitor Report",
+  "ref_doctype": "NDIS Next Governed Limited Op Runtime Monitor",
+  "reference_report": null,
+  "is_standard": "Yes",
+  "module": "NDIS Finance",
+  "report_type": "Script Report",
+  "letter_head": null,
+  "add_total_row": 0,
+  "disabled": 0,
+  "prepared_report": 0,
+  "add_translate_data": 0,
+  "timeout": 0,
+  "query": null,
+  "report_script": null,
+  "javascript": null,
+  "json": null,
+  "doctype": "Report",
+  "filters": [],
+  "columns": [],
+  "roles": [
+   {
+    "modified": "2026-07-06 17:58:53.107922",
+    "docstatus": 0,
+    "role": "System Manager",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.107922",
+    "docstatus": 0,
+    "role": "NDIS CFO",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.107922",
+    "docstatus": 0,
+    "role": "NDIS Finance Manager",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.107922",
+    "docstatus": 0,
+    "role": "NDIS Finance Officer",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.107922",
+    "docstatus": 0,
+    "role": "NDIS Finance Read Only",
+    "doctype": "Has Role"
+   }
+  ]
+ },
+ {
+  "name": "NDIS Next Governed Limited Op Runtime Monitor Item Report",
+  "modified": "2026-07-06 17:58:53.214852",
+  "docstatus": 0,
+  "report_name": "NDIS Next Governed Limited Op Runtime Monitor Item Report",
+  "ref_doctype": "NDIS Next Governed Limited Op Runtime Monitor Item",
+  "reference_report": null,
+  "is_standard": "Yes",
+  "module": "NDIS Finance",
+  "report_type": "Script Report",
+  "letter_head": null,
+  "add_total_row": 0,
+  "disabled": 0,
+  "prepared_report": 0,
+  "add_translate_data": 0,
+  "timeout": 0,
+  "query": null,
+  "report_script": null,
+  "javascript": null,
+  "json": null,
+  "doctype": "Report",
+  "filters": [],
+  "columns": [],
+  "roles": [
+   {
+    "modified": "2026-07-06 17:58:53.214852",
+    "docstatus": 0,
+    "role": "System Manager",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.214852",
+    "docstatus": 0,
+    "role": "NDIS CFO",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.214852",
+    "docstatus": 0,
+    "role": "NDIS Finance Manager",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.214852",
+    "docstatus": 0,
+    "role": "NDIS Finance Officer",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.214852",
+    "docstatus": 0,
+    "role": "NDIS Finance Read Only",
+    "doctype": "Has Role"
+   }
+  ]
+ },
+ {
+  "name": "NDIS Next Governed Limited Op Runtime Monitor Guardrail Report",
+  "modified": "2026-07-06 17:58:53.292037",
+  "docstatus": 0,
+  "report_name": "NDIS Next Governed Limited Op Runtime Monitor Guardrail Report",
+  "ref_doctype": "NDIS Next Governed Limited Op Runtime Monitor",
+  "reference_report": null,
+  "is_standard": "Yes",
+  "module": "NDIS Finance",
+  "report_type": "Script Report",
+  "letter_head": null,
+  "add_total_row": 0,
+  "disabled": 0,
+  "prepared_report": 0,
+  "add_translate_data": 0,
+  "timeout": 0,
+  "query": null,
+  "report_script": null,
+  "javascript": null,
+  "json": null,
+  "doctype": "Report",
+  "filters": [],
+  "columns": [],
+  "roles": [
+   {
+    "modified": "2026-07-06 17:58:53.292037",
+    "docstatus": 0,
+    "role": "System Manager",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.292037",
+    "docstatus": 0,
+    "role": "NDIS CFO",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.292037",
+    "docstatus": 0,
+    "role": "NDIS Finance Manager",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.292037",
+    "docstatus": 0,
+    "role": "NDIS Finance Officer",
+    "doctype": "Has Role"
+   },
+   {
+    "modified": "2026-07-06 17:58:53.292037",
+    "docstatus": 0,
+    "role": "NDIS Finance Read Only",
+    "doctype": "Has Role"
+   }
+  ]
  }
 ]
