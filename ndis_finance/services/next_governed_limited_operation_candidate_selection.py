@@ -2,25 +2,43 @@ import json
 
 import frappe
 from frappe import _
-from frappe.utils import flt, get_datetime, now_datetime, today
+from frappe.utils import flt, now_datetime, today
 
 from ndis_finance.services.permissions import assert_action
 
 
-CANDIDATE_ACK = "I_CONFIRM_PHASE11F_APPROVE_NEXT_GOVERNED_LIMITED_OPERATION_CANDIDATES_NO_POSTING"
+CANDIDATE_ACK = "I_CONFIRM_PHASE12P_APPROVE_NEXT_GOVERNED_LIMITED_OPERATION_CANDIDATE_SELECTION_NO_POSTING"
+
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
-DESIGN_DOCTYPE = "NDIS Governed Limited Op Design"
-CANDIDATE_DOCTYPE = "NDIS Governed Limited Op Candidate"
-CANDIDATE_ITEM_DOCTYPE = "NDIS Governed Limited Op Candidate Item"
+DESIGN_DOCTYPE = "NDIS Next Governed Limited Op Design"
+DESIGN_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Design Item"
+CANDIDATE_DOCTYPE = "NDIS Next Governed Limited Op Candidate Selection"
+CANDIDATE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Candidate Selection Item"
+
+DESIGN_READY_FIELD = "ready_for_next_governed_limited_op_candidate_selection_gate"
+CANDIDATE_READY_FIELD = "ready_for_next_governed_limited_op_candidate_validation_gate"
+
+EXPECTED_PAYMENT_ENTRY = "ACC-PAY-2026-00012"
+EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
+
+EXPECTED_PAYMENT_ENTRY_COUNT = 11
+EXPECTED_PAYMENT_ENTRY_GL_COUNT = 70
+EXPECTED_TOTAL_AMOUNT = 3.00
+EXPECTED_INVOICE_COUNT = 3
+EXPECTED_VOUCHER_GL_ROWS = 8
+EXPECTED_VOUCHER_GL_NET = 0.00
+EXPECTED_REVERSAL_GL_ROWS = 4
+
+SELECTED_SOURCE_DOCTYPE = "Sales Invoice"
+SELECTED_REFERENCE_DOCTYPE = "Sales Invoice"
+SELECTED_PARTY_TYPE = "Customer"
+SELECTED_PAYMENT_ENTRY_COUNT = 1
+SELECTED_GL_ENTRY_COUNT = 0
 
 
-def make_candidate_id():
-    timestamp = get_datetime().strftime("%Y%m%d-%H%M%S")
-    return f"NDIS-GOVERNED-LIMITED-OP-CANDIDATE-{timestamp}-{frappe.generate_hash(length=5).upper()}"
-
-
-def currency():
-    return frappe.defaults.get_global_default("currency") or "AUD"
+def make_candidate_selection_id():
+    timestamp = now_datetime().strftime("%Y%m%d-%H%M%S")
+    return f"NDIS-NEXT-GOVERNED-LIMITED-OP-CANDIDATE-{timestamp}-{frappe.generate_hash(length=5).upper()}"
 
 
 def safe_json(value):
@@ -28,6 +46,10 @@ def safe_json(value):
         return json.dumps(value, indent=2, default=str)
     except Exception:
         return str(value)
+
+
+def currency():
+    return frappe.defaults.get_global_default("currency") or "AUD"
 
 
 def count_dt(doctype, filters=None):
@@ -43,32 +65,20 @@ def has_column(doctype, fieldname):
         return False
 
 
-def get_value_if_has(doctype, name, fieldname, default=None):
-    if not name or not frappe.db.exists(doctype, name):
-        return default
-    if not has_column(doctype, fieldname):
-        return default
-    value = frappe.db.get_value(doctype, name, fieldname)
-    return default if value is None else value
-
-
 def get_flag(doctype, name, fieldname, default=0):
-    value = get_value_if_has(doctype, name, fieldname, default)
-    return int(value or 0)
+    if not name or not frappe.db.exists(doctype, name) or not has_column(doctype, fieldname):
+        return default
+    return int(frappe.db.get_value(doctype, name, fieldname) or 0)
 
 
 def production_batch_enabled_policy_count():
-    if not frappe.db.exists("DocType", POLICY_DOCTYPE):
-        return 0
-    if not has_column(POLICY_DOCTYPE, "production_batch_enabled"):
+    if not frappe.db.exists("DocType", POLICY_DOCTYPE) or not has_column(POLICY_DOCTYPE, "production_batch_enabled"):
         return 0
     return count_dt(POLICY_DOCTYPE, {"production_batch_enabled": 1})
 
 
 def live_posting_allowed_policy_count():
-    if not frappe.db.exists("DocType", POLICY_DOCTYPE):
-        return 0
-    if not has_column(POLICY_DOCTYPE, "live_posting_allowed"):
+    if not frappe.db.exists("DocType", POLICY_DOCTYPE) or not has_column(POLICY_DOCTYPE, "live_posting_allowed"):
         return 0
     return count_dt(POLICY_DOCTYPE, {"live_posting_allowed": 1})
 
@@ -85,77 +95,93 @@ def guardrails():
 
 
 def latest_design():
+    filters = {
+        "status": "Design Approved",
+        "design_status": "Next Governed Limited Operation Design Approved",
+        "design_approved": 1,
+        "phase12n_planning_verified": 1,
+        "planning_approved_verified": 1,
+        "planned_source_verified": 1,
+        "planned_reference_verified": 1,
+        "planned_party_type_verified": 1,
+        "planned_shape_verified": 1,
+        "planned_side_effects_blocked_verified": 1,
+        "design_source_locked": 1,
+        "design_shape_locked": 1,
+        "design_reference_set_locked": 1,
+        "design_reference_set_verified": 1,
+        "candidate_selection_not_started": 1,
+        "policy_state_preserved_verified": 1,
+        "no_new_accounting_movement_verified": 1,
+        "design_source_doctype": SELECTED_SOURCE_DOCTYPE,
+        "design_reference_doctype": SELECTED_REFERENCE_DOCTYPE,
+        "design_party_type": SELECTED_PARTY_TYPE,
+        "design_invoice_count": EXPECTED_INVOICE_COUNT,
+        "design_total_amount": EXPECTED_TOTAL_AMOUNT,
+        "design_payment_entry_count": SELECTED_PAYMENT_ENTRY_COUNT,
+        "design_gl_entry_count": SELECTED_GL_ENTRY_COUNT,
+        "design_live_posting_allowed": 0,
+        "design_journal_entry_side_effect_allowed": 0,
+        "design_purchase_invoice_side_effect_allowed": 0,
+        "monitored_payment_entry": EXPECTED_PAYMENT_ENTRY,
+        "monitored_payment_entry_docstatus": 2,
+        "monitored_payment_entry_status": "Cancelled",
+        "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT,
+        "payment_entry_gl_count_after": EXPECTED_PAYMENT_ENTRY_GL_COUNT,
+        "actual_payment_entry_created_count": 0,
+        "actual_payment_entry_cancelled_count": 0,
+        "actual_gl_created_count": 0,
+        "submitted_journal_entry_count_today": 0,
+        "purchase_invoice_count_today": 0,
+        "target_policy_enabled_after": 1,
+        "target_policy_live_after": 0,
+        "actual_policy_mutation_count": 0,
+    }
+    if has_column(DESIGN_DOCTYPE, DESIGN_READY_FIELD):
+        filters[DESIGN_READY_FIELD] = 1
+
     rows = frappe.get_all(
         DESIGN_DOCTYPE,
-        filters={
-            "status": "Design Approved",
-            "design_status": "Next Governed Limited Operation Design Approved",
-            "design_approved": 1,
-            "phase11d_planning_verified": 1,
-            "planning_envelope_locked_verified": 1,
-            "design_shape_locked": 1,
-            "design_source_model_locked": 1,
-            "design_guardrails_locked": 1,
-            "ready_for_next_governed_limited_operation_candidate_selection": 1,
-            "designed_source_doctype": "Sales Invoice",
-            "designed_reference_doctype": "Sales Invoice",
-            "designed_party_type": "Customer",
-            "designed_line_count": 3,
-            "designed_total_amount": 3.00,
-            "designed_payment_entry_count": 1,
-            "designed_live_posting_allowed": 0,
-            "designed_journal_entry_side_effect_allowed": 0,
-            "designed_purchase_invoice_side_effect_allowed": 0,
-            "no_new_accounting_movement_verified": 1,
-            "policy_state_preserved_verified": 1,
-            "policy_mutation_performed": 0,
-            "actual_policy_mutation_count": 0,
-            "target_policy_enabled_after": 1,
-            "target_policy_live_after": 0,
-            "locked_payment_entry_count": 8,
-            "locked_payment_entry_gl_count": 46,
-            "payment_entry_docstatus": 2,
-            "payment_entry_status": "Cancelled",
-            "actual_payment_entry_created_count": 0,
-            "actual_payment_entry_cancelled_count": 0,
-            "actual_gl_created_count": 0,
-            "submitted_journal_entry_count_today": 0,
-            "purchase_invoice_count_today": 0,
-        },
+        filters=filters,
         fields=[
             "name",
             "design_id",
+            "design_source_doctype",
+            "design_reference_doctype",
+            "design_party_type",
+            "design_customer",
+            "design_company",
+            "design_currency",
+            "design_invoice_names",
+            "design_invoice_count",
+            "design_total_amount",
+            "design_payment_entry_count",
+            "design_gl_entry_count",
+            "design_live_posting_allowed",
+            "design_journal_entry_side_effect_allowed",
+            "design_purchase_invoice_side_effect_allowed",
+            "design_reference_set_locked",
+            "monitored_payment_entry",
+            "monitored_payment_entry_docstatus",
+            "monitored_payment_entry_status",
+            "monitored_voucher_gl_rows",
+            "monitored_voucher_gl_net",
+            "monitored_reversal_gl_rows",
+            "monitored_restored_invoice_amount",
             "planning",
-            "precheck",
             "monitor",
             "baseline",
             "closeout",
-            "governed_freeze",
+            "freeze",
             "rollback",
             "smoke",
-            "payment_entry",
+            "execution_gate",
+            "preview",
+            "candidate_validation",
+            "candidate_selection",
             "target_policy_doctype",
             "target_policy",
             "target_policy_name",
-            "target_policy_enabled_after",
-            "target_policy_live_after",
-            "locked_payment_entry_count",
-            "locked_payment_entry_gl_count",
-            "locked_policy_enabled_count",
-            "locked_policy_live_allowed_count",
-            "locked_live_posting",
-            "locked_journal_entry_side_effect",
-            "locked_purchase_invoice_side_effect",
-            "designed_source_doctype",
-            "designed_reference_doctype",
-            "designed_party_type",
-            "designed_line_count",
-            "designed_total_amount",
-            "designed_payment_entry_count",
-            "payment_entry_docstatus",
-            "payment_entry_status",
-            "payment_entry_count_after",
-            "payment_entry_gl_count_after",
         ],
         order_by="checked_on desc, creation desc",
         limit=1,
@@ -163,7 +189,7 @@ def latest_design():
     return rows[0] if rows else None
 
 
-def existing_candidate(design):
+def existing_approved_candidate_selection(design):
     rows = frappe.get_all(
         CANDIDATE_DOCTYPE,
         filters={
@@ -171,306 +197,286 @@ def existing_candidate(design):
             "status": "Candidate Selection Approved",
             "candidate_selection_approved": 1,
         },
-        fields=["name", "candidate_id"],
+        fields=["name", "candidate_selection_id", "selected_invoice_names"],
         limit=1,
     )
     return rows[0] if rows else None
 
 
-def get_historical_payment_entry_context(payment_entry):
-    if not payment_entry or not frappe.db.exists("Payment Entry", payment_entry):
-        return {}
-
-    pe = frappe.get_doc("Payment Entry", payment_entry)
-
-    return {
-        "payment_entry": pe.name,
-        "party_type": pe.party_type,
-        "party": pe.party,
-        "company": pe.company,
-        "paid_from": getattr(pe, "paid_from", None),
-        "paid_to": getattr(pe, "paid_to", None),
-        "paid_amount": flt(getattr(pe, "paid_amount", 0), 2),
-        "received_amount": flt(getattr(pe, "received_amount", 0), 2),
-        "docstatus": pe.docstatus,
-        "status": pe.status,
-    }
-
-
-def select_sales_invoice_candidates(design, context):
-    if not design or not context:
-        return [], ["Design or historical Payment Entry context missing."]
-
-    issues = []
-
-    if context.get("party_type") != "Customer":
-        issues.append(f"Historical Payment Entry party type must be Customer. Found {context.get('party_type')}.")
-
-    if not context.get("party"):
-        issues.append("Historical Payment Entry customer is missing.")
-
-    if not context.get("company"):
-        issues.append("Historical Payment Entry company is missing.")
-
-    if issues:
-        return [], issues
-
-    filters = {
-        "docstatus": 1,
-        "company": context["company"],
-        "customer": context["party"],
-        "outstanding_amount": [">=", 1],
-    }
-
-    if has_column("Sales Invoice", "is_return"):
-        filters["is_return"] = 0
-
+def design_rows(design):
     rows = frappe.get_all(
-        "Sales Invoice",
-        filters=filters,
+        DESIGN_ITEM_DOCTYPE,
+        filters={
+            "design": design,
+            "category": "Designed Reference",
+            "status": "Pass",
+            "reference_doctype": "Sales Invoice",
+        },
         fields=[
-            "name",
+            "line_no",
+            "reference_doctype",
+            "reference_name",
             "customer",
             "company",
             "currency",
-            "posting_date",
-            "due_date",
-            "grand_total",
-            "outstanding_amount",
+            "design_amount",
+            "current_outstanding_amount",
+            "monitored_payment_entry",
         ],
-        order_by="posting_date asc, creation asc",
-        limit=20,
+        order_by="line_no asc, creation asc",
     )
-
-    if len(rows) < 3:
-        issues.append(f"At least 3 eligible Sales Invoices with outstanding amount >= 1.00 are required. Found {len(rows)}.")
-        return [], issues
-
-    selected = []
-    currency_value = rows[0].currency
-
-    for row in rows:
-        if row.customer != context["party"]:
-            continue
-        if row.company != context["company"]:
-            continue
-        if row.currency != currency_value:
-            continue
-        if flt(row.outstanding_amount or 0, 2) < 1:
-            continue
-
-        selected.append(
-            {
-                "line_no": len(selected) + 1,
-                "reference_doctype": "Sales Invoice",
-                "reference_name": row.name,
-                "customer": row.customer,
-                "company": row.company,
-                "currency": row.currency,
-                "posting_date": row.posting_date,
-                "due_date": row.due_date,
-                "outstanding_amount": flt(row.outstanding_amount or 0, 2),
-                "allocated_amount": 1.00,
-            }
+    result = []
+    for idx, row in enumerate(rows, start=1):
+        si = (
+            frappe.db.get_value(
+                "Sales Invoice",
+                row.reference_name,
+                ["docstatus", "customer", "company", "currency", "outstanding_amount"],
+                as_dict=True,
+            )
+            if frappe.db.exists("Sales Invoice", row.reference_name)
+            else None
         )
+        result.append(
+            frappe._dict(
+                {
+                    "idx": int(row.line_no or idx),
+                    "reference_doctype": row.reference_doctype,
+                    "reference_name": row.reference_name,
+                    "selected_amount": flt(row.design_amount or 0, 2),
+                    "current_outstanding_amount": flt((si.outstanding_amount if si else 0) or 0, 2),
+                    "customer": si.customer if si else row.customer,
+                    "company": si.company if si else row.company,
+                    "currency": si.currency if si else row.currency,
+                    "docstatus": int(si.docstatus or 0) if si else None,
+                    "monitored_payment_entry": row.monitored_payment_entry,
+                }
+            )
+        )
+    return result
 
-        if len(selected) == 3:
-            break
 
-    if len(selected) != 3:
-        issues.append(f"Could not select exactly 3 same-customer/company/currency Sales Invoice candidates. Selected {len(selected)}.")
-        return selected, issues
-
-    total = flt(sum(flt(row["allocated_amount"], 2) for row in selected), 2)
-
-    if total != 3:
-        issues.append(f"Selected allocation total must be 3.00. Found {total}.")
-
-    return selected, issues
+def reference_names(rows):
+    return [row.reference_name for row in rows]
 
 
-def validate_candidate_source(design, selected, guard, policy_enabled, policy_live, config):
+def selected_total(rows):
+    return flt(sum(flt(row.selected_amount or 0, 2) for row in rows), 2)
+
+
+def unique_value(rows, fieldname):
+    values = sorted({getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)})
+    return values[0] if len(values) == 1 else None
+
+
+def same_value_verified(rows, fieldname):
+    values = {getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)}
+    return int(len(rows) == EXPECTED_INVOICE_COUNT and len(values) == 1)
+
+
+def outstanding_total(invoice_names):
+    if not invoice_names:
+        return 0
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(outstanding_amount), 0), 2)
+        FROM `tabSales Invoice`
+        WHERE name IN %(names)s
+        """,
+        {"names": tuple(invoice_names)},
+    )[0][0]
+    return flt(value or 0, 2)
+
+
+def voucher_gl_rows(payment_entry):
+    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
+
+
+def voucher_gl_net(payment_entry):
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
+        FROM `tabGL Entry`
+        WHERE voucher_type='Payment Entry'
+        AND voucher_no=%s
+        """,
+        payment_entry,
+    )[0][0]
+    return flt(value or 0, 2)
+
+
+def reversal_gl_rows(payment_entry):
+    rows = voucher_gl_rows(payment_entry)
+    return max(0, int(rows or 0) - 4)
+
+
+def validate_source(design, rows, guard, config, policy_enabled, policy_live):
     issues = []
-
     if not design:
-        issues.append("No approved Phase 11E design record found.")
+        issues.append("No approved Phase 12O next governed limited-operation design found.")
         return issues
 
-    existing = existing_candidate(design.name)
+    existing = existing_approved_candidate_selection(design.name)
     if existing:
-        issues.append(f"Phase 11F candidate selection already exists for this design: {existing.candidate_id}")
+        issues.append(
+            f"Approved Phase 12P candidate selection already exists for this design: {existing.candidate_selection_id} / {existing.selected_invoice_names}"
+        )
 
-    required_links = {
-        "design": (DESIGN_DOCTYPE, design.name),
-        "planning": ("NDIS Governed Limited Op Planning", design.planning),
-        "payment_entry": ("Payment Entry", design.payment_entry),
-        "target_policy": (POLICY_DOCTYPE, design.target_policy),
-    }
+    payment_entry = design.monitored_payment_entry
+    if payment_entry != EXPECTED_PAYMENT_ENTRY:
+        issues.append(f"Expected monitored Payment Entry {EXPECTED_PAYMENT_ENTRY}. Found {payment_entry}.")
+    if not frappe.db.exists("Payment Entry", payment_entry):
+        issues.append(f"Monitored Payment Entry does not exist: {payment_entry}")
+        return issues
 
-    for label, pair in required_links.items():
-        doctype, name = pair
-        if not name:
-            issues.append(f"Missing evidence link: {label}")
-        elif not frappe.db.exists(doctype, name):
-            issues.append(f"Linked evidence does not exist: {doctype} {name}")
-
-    if int(design.designed_line_count or 0) != 3:
-        issues.append("Design line count must be 3.")
-
-    if flt(design.designed_total_amount or 0, 2) != 3:
-        issues.append("Design total amount must be 3.00.")
-
-    if int(design.designed_payment_entry_count or 0) != 1:
+    pe = frappe.get_doc("Payment Entry", payment_entry)
+    if pe.docstatus != 2:
+        issues.append(f"Monitored Payment Entry must remain cancelled. docstatus={pe.docstatus}")
+    if pe.status != "Cancelled":
+        issues.append(f"Monitored Payment Entry status must remain Cancelled. status={pe.status}")
+    if design.design_source_doctype != SELECTED_SOURCE_DOCTYPE:
+        issues.append("Design source DocType changed.")
+    if design.design_reference_doctype != SELECTED_REFERENCE_DOCTYPE:
+        issues.append("Design reference DocType changed.")
+    if design.design_party_type != SELECTED_PARTY_TYPE:
+        issues.append("Design party type changed.")
+    if int(design.design_payment_entry_count or 0) != SELECTED_PAYMENT_ENTRY_COUNT:
         issues.append("Design Payment Entry count must be 1.")
-
-    if int(design.locked_payment_entry_count or 0) != 8:
-        issues.append("Locked Payment Entry count must be 8.")
-
-    if int(design.locked_payment_entry_gl_count or 0) != 46:
-        issues.append("Locked Payment Entry GL count must be 46.")
-
-    if policy_enabled != 1:
-        issues.append("Target policy production_batch_enabled must be 1 before Phase 11F. Phase 11F must not repair this.")
-
-    if policy_live != 0:
-        issues.append("Target policy live_posting_allowed must be 0 before Phase 11F. Phase 11F must not repair this.")
-
+    if int(design.design_gl_entry_count or 0) != SELECTED_GL_ENTRY_COUNT:
+        issues.append("Design GL count must be 0 before execution.")
+    if int(design.design_live_posting_allowed or 0) != 0:
+        issues.append("Design live posting allowed must remain 0.")
+    if int(design.design_journal_entry_side_effect_allowed or 0) != 0:
+        issues.append("Design Journal Entry side effect allowed must remain 0.")
+    if int(design.design_purchase_invoice_side_effect_allowed or 0) != 0:
+        issues.append("Design Purchase Invoice side effect allowed must remain 0.")
+    if reference_names(rows) != EXPECTED_INVOICES:
+        issues.append(f"Candidate invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
+    if len(rows) != EXPECTED_INVOICE_COUNT:
+        issues.append(f"Candidate invoice count must be {EXPECTED_INVOICE_COUNT}. Found {len(rows)}.")
+    if selected_total(rows) != EXPECTED_TOTAL_AMOUNT:
+        issues.append(f"Candidate total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {selected_total(rows)}.")
+    if not same_value_verified(rows, "customer"):
+        issues.append("Selected Sales Invoices must share the same customer.")
+    if not same_value_verified(rows, "company"):
+        issues.append("Selected Sales Invoices must share the same company.")
+    if not same_value_verified(rows, "currency"):
+        issues.append("Selected Sales Invoices must share the same currency.")
+    if voucher_gl_rows(payment_entry) != EXPECTED_VOUCHER_GL_ROWS:
+        issues.append(f"Voucher GL rows must remain {EXPECTED_VOUCHER_GL_ROWS}. Found {voucher_gl_rows(payment_entry)}.")
+    if voucher_gl_net(payment_entry) != EXPECTED_VOUCHER_GL_NET:
+        issues.append(f"Voucher GL net must remain 0.00. Found {voucher_gl_net(payment_entry)}.")
+    if reversal_gl_rows(payment_entry) != EXPECTED_REVERSAL_GL_ROWS:
+        issues.append(f"Reversal GL rows must remain {EXPECTED_REVERSAL_GL_ROWS}. Found {reversal_gl_rows(payment_entry)}.")
+    restored = outstanding_total(EXPECTED_INVOICES)
+    if restored != EXPECTED_TOTAL_AMOUNT:
+        issues.append(f"Restored invoice amount must remain {EXPECTED_TOTAL_AMOUNT}. Found {restored}.")
+    if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT:
+        issues.append("Payment Entry count must remain 11 before candidate selection.")
+    if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT:
+        issues.append("Payment Entry GL count must remain 70 before candidate selection.")
+    if guard["submitted_journal_entry_count_today"] != 0:
+        issues.append("Submitted Journal Entry today must remain 0 before candidate selection.")
+    if guard["purchase_invoice_count_today"] != 0:
+        issues.append("Purchase Invoice today must remain 0 before candidate selection.")
     if guard["production_batch_enabled_policy_count"] != 1:
         issues.append("Exactly one controlled production batch policy must remain enabled.")
-
     if guard["live_posting_allowed_policy_count"] != 0:
         issues.append("Controlled production live allowed policy count must remain 0.")
-
-    if guard["payment_entry_count"] != int(design.locked_payment_entry_count or 0):
-        issues.append("Current Payment Entry count must match locked count from Phase 11E.")
-
-    if guard["payment_entry_gl_count"] != int(design.locked_payment_entry_gl_count or 0):
-        issues.append("Current Payment Entry GL count must match locked count from Phase 11E.")
-
-    if guard["submitted_journal_entry_count_today"] != 0:
-        issues.append("Submitted Journal Entry count today must remain 0.")
-
-    if guard["purchase_invoice_count_today"] != 0:
-        issues.append("Purchase Invoice count today must remain 0.")
-
-    if int(config["sandbox_enabled"]) != 1:
-        issues.append("Sandbox config must be 1.")
-
-    if int(config["production_mode"]) != 0:
+    if policy_enabled != 1:
+        issues.append("Target policy production_batch_enabled must remain 1.")
+    if policy_live != 0:
+        issues.append("Target policy live_posting_allowed must remain 0.")
+    if config["sandbox_enabled"] != 1:
+        issues.append("Sandbox config must be enabled.")
+    if config["production_mode"] != 0:
         issues.append("Production mode config must remain 0.")
-
-    if int(config["live_pe_enabled"]) != 0:
+    if config["live_pe_enabled"] != 0:
         issues.append("Live Payment Entry posting config must remain 0.")
-
-    if len(selected) != 3:
-        issues.append(f"Exactly 3 Sales Invoice candidates must be selected. Found {len(selected)}.")
-
-    if selected:
-        customers = {row["customer"] for row in selected}
-        companies = {row["company"] for row in selected}
-        currencies = {row["currency"] for row in selected}
-        doctypes = {row["reference_doctype"] for row in selected}
-        allocation_total = flt(sum(flt(row["allocated_amount"], 2) for row in selected), 2)
-
-        if doctypes != {"Sales Invoice"}:
-            issues.append("All selected references must be Sales Invoice.")
-
-        if len(customers) != 1:
-            issues.append("All selected Sales Invoices must have the same customer.")
-
-        if len(companies) != 1:
-            issues.append("All selected Sales Invoices must have the same company.")
-
-        if len(currencies) != 1:
-            issues.append("All selected Sales Invoices must have the same currency.")
-
-        if allocation_total != 3:
-            issues.append(f"Selected allocation total must be 3.00. Found {allocation_total}.")
-
-        for row in selected:
-            if flt(row["outstanding_amount"], 2) < flt(row["allocated_amount"], 2):
-                issues.append(f"Selected invoice {row['reference_name']} outstanding amount is less than allocated amount.")
-
     return issues
 
 
-def add_item(items, status, severity, category, check_key, check_label, detail, source_doctype=None, source_name=None, candidate_line=None):
-    row = {
-        "status": status,
-        "severity": severity,
-        "category": category,
-        "check_key": check_key,
-        "check_label": check_label,
-        "detail": detail,
-        "source_doctype": source_doctype,
-        "source_name": source_name,
-    }
-
-    if candidate_line:
-        row.update(candidate_line)
-
-    items.append(row)
-
-
-def build_items(design, selected, issues, ack_ok):
+def build_items(rows, issues, ack_ok, payment_entry=None):
     items = []
-
-    if design:
-        add_item(
-            items,
-            "Pass",
-            "Low",
-            "Evidence",
-            "phase11e_design_exists",
-            "Phase 11E design exists",
-            f"Design found: {design.design_id}.",
-            DESIGN_DOCTYPE,
-            design.name,
+    if not issues:
+        items.append(
+            {
+                "status": "Pass",
+                "severity": "Critical",
+                "category": "Candidate Source",
+                "check_key": "candidate_selection_source_valid",
+                "check_label": "Candidate selection source valid",
+                "detail": "The Phase 12O design gate is stable and exact candidate invoices can be selected.",
+                "monitored_payment_entry": payment_entry,
+            }
         )
     else:
-        add_item(items, "Blocker", "Critical", "Evidence", "phase11e_design_exists", "Phase 11E design exists", "No approved Phase 11E design found.")
-
-    if not issues:
-        add_item(items, "Pass", "Critical", "Candidate Source", "candidate_source_valid", "Candidate source valid", "Sales Invoice candidates are valid for the next governed operation.")
-    else:
         for issue in issues:
-            add_item(items, "Blocker", "Critical", "Candidate Source", "candidate_source_valid", "Candidate source valid", issue)
+            items.append(
+                {
+                    "status": "Blocker",
+                    "severity": "Critical",
+                    "category": "Candidate Source",
+                    "check_key": "candidate_selection_source_valid",
+                    "check_label": "Candidate selection source valid",
+                    "detail": issue,
+                    "monitored_payment_entry": payment_entry,
+                }
+            )
 
-    for line in selected:
-        add_item(
-            items,
-            "Pass",
-            "High",
-            "Selected Candidate",
-            "selected_sales_invoice",
-            f"Selected Sales Invoice {line['line_no']}",
-            f"{line['reference_name']} allocated {line['allocated_amount']} with outstanding {line['outstanding_amount']}.",
-            "Sales Invoice",
-            line["reference_name"],
-            candidate_line=line,
+    for row in rows:
+        items.append(
+            {
+                "status": "Pass",
+                "severity": "High",
+                "category": "Selected Reference",
+                "check_key": "selected_sales_invoice_reference",
+                "check_label": f"Selected Sales Invoice {row.idx}",
+                "detail": f"{row.reference_name} selected amount={row.selected_amount}, outstanding={row.current_outstanding_amount}.",
+                "line_no": row.idx,
+                "reference_doctype": row.reference_doctype,
+                "reference_name": row.reference_name,
+                "customer": row.customer,
+                "company": row.company,
+                "currency": row.currency,
+                "selected_amount": row.selected_amount,
+                "current_outstanding_amount": row.current_outstanding_amount,
+                "monitored_payment_entry": payment_entry,
+            }
         )
 
     checks = [
-        ("candidate_selection_locked", "Candidate selection locked", "3 Sales Invoice references"),
-        ("same_customer", "Same customer verified", selected[0]["customer"] if selected else None),
-        ("same_company", "Same company verified", selected[0]["company"] if selected else None),
-        ("same_currency", "Same currency verified", selected[0]["currency"] if selected else None),
-        ("allocation_total", "Allocation total verified", "3.00"),
-        ("no_payment_entry", "No Payment Entry created", 0),
-        ("no_gl", "No GL Entry created", 0),
-        ("no_je_pi", "No JE / PI side effects", "0 / 0"),
-        ("policy_state", "Policy state preserved at 1 / 0", "1 / 0"),
-        ("validation_ready", "Ready for candidate validation", 1),
+        ("design_approved", "Design approved", 1),
+        ("candidate_selection_locked", "Candidate selection locked", 1),
+        ("selected_reference_set_locked", "Selected reference set locked", ", ".join(EXPECTED_INVOICES)),
+        ("selected_shape", "Selected shape", f"{EXPECTED_INVOICE_COUNT} / {EXPECTED_TOTAL_AMOUNT} / {SELECTED_PAYMENT_ENTRY_COUNT} / {SELECTED_GL_ENTRY_COUNT}"),
+        ("selected_side_effects", "Selected live/JE/PI side effects", "0 / 0 / 0"),
+        ("candidate_validation_gate_ready", "Ready for next governed limited-operation candidate validation gate", 1),
     ]
-
     for key, label, value in checks:
-        add_item(items, "Pass", "High", "Candidate Evidence", key, label, f"value={value}")
+        items.append(
+            {
+                "status": "Pass",
+                "severity": "High",
+                "category": "Candidate Evidence",
+                "check_key": key,
+                "check_label": label,
+                "detail": f"value={value}",
+                "monitored_payment_entry": payment_entry,
+            }
+        )
 
-    if ack_ok:
-        add_item(items, "Pass", "Low", "Acknowledgement", "ack_ok", "Acknowledgement supplied", "Exact acknowledgement supplied.")
-    else:
-        add_item(items, "Warning", "Medium", "Acknowledgement", "ack_ok", "Acknowledgement supplied", f"Required acknowledgement not supplied: {CANDIDATE_ACK}")
-
+    items.append(
+        {
+            "status": "Pass" if ack_ok else "Warning",
+            "severity": "Low" if ack_ok else "Medium",
+            "category": "Acknowledgement",
+            "check_key": "ack_ok",
+            "check_label": "Acknowledgement supplied",
+            "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {CANDIDATE_ACK}",
+            "monitored_payment_entry": payment_entry,
+        }
+    )
     return items
 
 
@@ -484,22 +490,13 @@ def summarise_items(items):
     }
 
 
-def calculate_score(blockers, warnings):
-    score = 100
-    score -= int(blockers or 0) * 25
-    score -= int(warnings or 0) * 5
-    return max(0, round(score, 2))
-
-
 def create_items(doc, items):
     for item in items:
         row = frappe.new_doc(CANDIDATE_ITEM_DOCTYPE)
-        row.candidate = doc.name
-
+        row.candidate_selection = doc.name
         for fieldname, value in item.items():
             if row.meta.has_field(fieldname):
                 setattr(row, fieldname, value)
-
         row.checked_on = doc.checked_on
         row.insert(ignore_permissions=True)
 
@@ -509,110 +506,145 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
     assert_action("run_next_governed_limited_operation_candidate_selection")
 
     design = latest_design()
+    rows = design_rows(design.name) if design else []
+    payment_entry = design.monitored_payment_entry if design else None
     guard_before = guardrails()
     ack_ok = acknowledgement == CANDIDATE_ACK
-
     config = {
         "sandbox_enabled": int(frappe.conf.get("ndis_finance_sandbox_posting_enabled") or 0),
         "production_mode": int(frappe.conf.get("ndis_finance_production_mode") or 0),
         "live_pe_enabled": int(frappe.conf.get("ndis_finance_live_payment_entry_posting_enabled") or 0),
     }
-
-    context = get_historical_payment_entry_context(design.payment_entry if design else None)
-    selected, selection_issues = select_sales_invoice_candidates(design, context)
-
     policy_enabled_before = get_flag(POLICY_DOCTYPE, design.target_policy, "production_batch_enabled") if design else 0
     policy_live_before = get_flag(POLICY_DOCTYPE, design.target_policy, "live_posting_allowed") if design else 0
-
-    issues = []
-    issues.extend(selection_issues)
-    issues.extend(validate_candidate_source(design, selected, guard_before, policy_enabled_before, policy_live_before, config))
-
+    source_issues = validate_source(design, rows, guard_before, config, policy_enabled_before, policy_live_before)
     guard_after = guardrails()
     policy_enabled_after = get_flag(POLICY_DOCTYPE, design.target_policy, "production_batch_enabled") if design else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, design.target_policy, "live_posting_allowed") if design else 0
-
-    no_new_movement = int(
-        guard_before["payment_entry_count"] == guard_after["payment_entry_count"]
-        and guard_before["payment_entry_gl_count"] == guard_after["payment_entry_gl_count"]
-        and guard_before["submitted_journal_entry_count_today"] == guard_after["submitted_journal_entry_count_today"]
-        and guard_before["purchase_invoice_count_today"] == guard_after["purchase_invoice_count_today"]
+    actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
+    actual_pe_cancelled = 0
+    actual_gl_created = guard_after["payment_entry_gl_count"] - guard_before["payment_entry_gl_count"]
+    policy_mutation_count = int(
+        policy_enabled_before != policy_enabled_after
+        or policy_live_before != policy_live_after
+        or guard_before["production_batch_enabled_policy_count"] != guard_after["production_batch_enabled_policy_count"]
+        or guard_before["live_posting_allowed_policy_count"] != guard_after["live_posting_allowed_policy_count"]
     )
 
-    policy_preserved = int(
-        policy_enabled_before == 1
-        and policy_enabled_after == 1
-        and policy_live_before == 0
-        and policy_live_after == 0
-        and guard_before["production_batch_enabled_policy_count"] == guard_after["production_batch_enabled_policy_count"]
-        and guard_before["live_posting_allowed_policy_count"] == guard_after["live_posting_allowed_policy_count"]
-    )
+    pe_docstatus = 0
+    pe_status = None
+    voucher_rows = 0
+    voucher_net = 0
+    reversal_rows = 0
+    restored_amount = outstanding_total(EXPECTED_INVOICES)
+    if payment_entry and frappe.db.exists("Payment Entry", payment_entry):
+        pe = frappe.get_doc("Payment Entry", payment_entry)
+        pe_docstatus = int(pe.docstatus or 0)
+        pe_status = pe.status
+        voucher_rows = voucher_gl_rows(payment_entry)
+        voucher_net = voucher_gl_net(payment_entry)
+        reversal_rows = reversal_gl_rows(payment_entry)
 
-    if not no_new_movement:
-        issues.append("Accounting movement changed while preparing Phase 11F candidate selection evidence.")
+    post_issues = list(source_issues)
+    if actual_pe_created != 0:
+        post_issues.append(f"Candidate selection must create 0 Payment Entries. Created {actual_pe_created}.")
+    if actual_pe_cancelled != 0:
+        post_issues.append(f"Candidate selection must cancel 0 Payment Entries. Cancelled {actual_pe_cancelled}.")
+    if actual_gl_created != 0:
+        post_issues.append(f"Candidate selection must create 0 GL rows. Created {actual_gl_created}.")
+    if policy_mutation_count != 0:
+        post_issues.append("Policy state changed during candidate selection. This is not allowed.")
 
-    items = build_items(design, selected, issues, ack_ok)
-    item_summary = summarise_items(items)
-    score = calculate_score(item_summary["blocker_count"], item_summary["warning_count"])
-
-    selected_customer = selected[0]["customer"] if selected else None
-    selected_company = selected[0]["company"] if selected else None
-    selected_currency = selected[0]["currency"] if selected else None
-    selected_total = flt(sum(flt(row["allocated_amount"], 2) for row in selected), 2)
-
-    allowed = int(
-        ack_ok
-        and item_summary["blocker_count"] == 0
+    completed = int(
+        not int(dry_run or 0)
+        and ack_ok
         and design
-        and len(selected) == 3
-        and selected_total == 3
-        and no_new_movement
-        and policy_preserved
+        and payment_entry
+        and not post_issues
+        and pe_docstatus == 2
+        and pe_status == "Cancelled"
+        and reference_names(rows) == EXPECTED_INVOICES
+        and selected_total(rows) == EXPECTED_TOTAL_AMOUNT
+        and voucher_rows == EXPECTED_VOUCHER_GL_ROWS
+        and voucher_net == 0
+        and reversal_rows == EXPECTED_REVERSAL_GL_ROWS
+        and restored_amount == EXPECTED_TOTAL_AMOUNT
+        and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
+        and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
+        and guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT
+        and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT
+        and actual_pe_created == 0
+        and actual_pe_cancelled == 0
+        and actual_gl_created == 0
+        and guard_after["submitted_journal_entry_count_today"] == 0
+        and guard_after["purchase_invoice_count_today"] == 0
+        and policy_mutation_count == 0
     )
 
+    design_source_ok = int(design and design.design_source_doctype == SELECTED_SOURCE_DOCTYPE)
+    design_reference_ok = int(design and design.design_reference_doctype == SELECTED_REFERENCE_DOCTYPE)
+    design_party_ok = int(design and design.design_party_type == SELECTED_PARTY_TYPE)
+    design_shape_ok = int(
+        design
+        and int(design.design_invoice_count or 0) == EXPECTED_INVOICE_COUNT
+        and flt(design.design_total_amount or 0, 2) == EXPECTED_TOTAL_AMOUNT
+        and int(design.design_payment_entry_count or 0) == SELECTED_PAYMENT_ENTRY_COUNT
+        and int(design.design_gl_entry_count or 0) == SELECTED_GL_ENTRY_COUNT
+    )
+
+    items = build_items(rows, post_issues, ack_ok, payment_entry=payment_entry)
+    item_summary = summarise_items(items)
     result = {
         "dry_run": bool(int(dry_run or 0)),
-        "status": "Candidate Selection Approved" if allowed else "Needs Review",
-        "candidate_selection_status": "Next Governed Limited Operation Candidate Selection Approved" if allowed else "Needs Review",
-        "candidate_selection_approved": allowed,
-        "phase11e_design_verified": 1 if design else 0,
-        "phase11d_planning_verified": 1 if design else 0,
-        "design_shape_locked_verified": 1 if design else 0,
-        "candidate_selection_locked": allowed,
-        "candidate_source_verified": int(len(selected) == 3),
-        "same_customer_verified": int(bool(selected_customer) and len({row["customer"] for row in selected}) == 1),
-        "same_company_verified": int(bool(selected_company) and len({row["company"] for row in selected}) == 1),
-        "same_currency_verified": int(bool(selected_currency) and len({row["currency"] for row in selected}) == 1),
-        "allocation_total_verified": int(selected_total == 3),
-        "ready_for_next_governed_limited_operation_candidate_validation": allowed,
-        "payment_entry_cancelled_verified": 1 if design else 0,
-        "no_new_accounting_movement_verified": no_new_movement,
-        "policy_state_preserved_verified": policy_preserved,
-        "policy_mutation_performed": 0,
-        "actual_policy_mutation_count": 0,
-        "selected_source_doctype": "Sales Invoice",
-        "selected_reference_doctype": "Sales Invoice",
-        "selected_party_type": "Customer",
-        "selected_customer": selected_customer,
-        "selected_company": selected_company,
-        "selected_currency": selected_currency,
-        "selected_line_count": len(selected),
-        "selected_total_amount": selected_total,
-        "selected_payment_entry_count": 1 if selected else 0,
+        "status": "Candidate Selection Approved" if completed else "Needs Review",
+        "candidate_status": "Next Governed Limited Operation Candidate Selection Approved" if completed else "Needs Review",
+        "candidate_selection_approved": completed,
+        "phase12o_design_verified": 1 if design else 0,
+        "design_approved_verified": 1 if design else 0,
+        "design_source_verified": design_source_ok,
+        "design_reference_verified": design_reference_ok,
+        "design_party_type_verified": design_party_ok,
+        "design_shape_verified": design_shape_ok,
+        "design_reference_set_locked_verified": int(design and int(design.design_reference_set_locked or 0) == 1),
+        "design_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
+        "candidate_selection_locked": completed,
+        "selected_reference_set_locked": completed,
+        "selected_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
+        "policy_state_preserved_verified": int(
+            policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0
+        ),
+        "no_new_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 0 and actual_gl_created == 0),
+        "selected_source_doctype": SELECTED_SOURCE_DOCTYPE,
+        "selected_reference_doctype": SELECTED_REFERENCE_DOCTYPE,
+        "selected_party_type": SELECTED_PARTY_TYPE,
+        "selected_customer": unique_value(rows, "customer"),
+        "selected_company": unique_value(rows, "company"),
+        "selected_currency": unique_value(rows, "currency"),
+        "selected_invoice_names": ", ".join(reference_names(rows)),
+        "selected_invoice_count": len(rows),
+        "selected_total_amount": selected_total(rows),
+        "selected_payment_entry_count": SELECTED_PAYMENT_ENTRY_COUNT,
+        "selected_gl_entry_count": SELECTED_GL_ENTRY_COUNT,
         "selected_live_posting_allowed": 0,
         "selected_journal_entry_side_effect_allowed": 0,
         "selected_purchase_invoice_side_effect_allowed": 0,
-        "candidate_selection_mode": "Candidate Selection Only - No Posting",
-        "design": design.name if design else None,
-        "planning": design.planning if design else None,
-        "precheck": design.precheck if design else None,
-        "monitor": design.monitor if design else None,
-        "baseline": design.baseline if design else None,
-        "closeout": design.closeout if design else None,
-        "governed_freeze": design.governed_freeze if design else None,
-        "rollback": design.rollback if design else None,
-        "smoke": design.smoke if design else None,
-        "payment_entry": design.payment_entry if design else None,
+        CANDIDATE_READY_FIELD: completed,
+        "monitored_payment_entry": payment_entry,
+        "monitored_payment_entry_docstatus": pe_docstatus,
+        "monitored_payment_entry_status": pe_status,
+        "monitored_voucher_gl_rows": voucher_rows,
+        "monitored_voucher_gl_net": voucher_net,
+        "monitored_reversal_gl_rows": reversal_rows,
+        "monitored_restored_invoice_amount": restored_amount,
+        "payment_entry_count_before": guard_before["payment_entry_count"],
+        "payment_entry_count_after": guard_after["payment_entry_count"],
+        "payment_entry_gl_count_before": guard_before["payment_entry_gl_count"],
+        "payment_entry_gl_count_after": guard_after["payment_entry_gl_count"],
+        "actual_payment_entry_created_count": actual_pe_created,
+        "actual_payment_entry_cancelled_count": actual_pe_cancelled,
+        "actual_gl_created_count": actual_gl_created,
+        "submitted_journal_entry_count_today": guard_after["submitted_journal_entry_count_today"],
+        "purchase_invoice_count_today": guard_after["purchase_invoice_count_today"],
         "target_policy_doctype": POLICY_DOCTYPE,
         "target_policy": design.target_policy if design else None,
         "target_policy_name": design.target_policy_name if design else None,
@@ -620,53 +652,34 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         "target_policy_enabled_after": policy_enabled_after,
         "target_policy_live_before": policy_live_before,
         "target_policy_live_after": policy_live_after,
-        "production_batch_enabled_policy_count_before": guard_before["production_batch_enabled_policy_count"],
-        "production_batch_enabled_policy_count_after": guard_after["production_batch_enabled_policy_count"],
-        "live_posting_allowed_policy_count_before": guard_before["live_posting_allowed_policy_count"],
-        "live_posting_allowed_policy_count_after": guard_after["live_posting_allowed_policy_count"],
-        "locked_payment_entry_count": int(design.locked_payment_entry_count or 0) if design else 0,
-        "locked_payment_entry_gl_count": int(design.locked_payment_entry_gl_count or 0) if design else 0,
-        "locked_policy_enabled_count": int(design.locked_policy_enabled_count or 0) if design else 0,
-        "locked_policy_live_allowed_count": int(design.locked_policy_live_allowed_count or 0) if design else 0,
-        "locked_live_posting": 0,
-        "locked_journal_entry_side_effect": 0,
-        "locked_purchase_invoice_side_effect": 0,
-        "payment_entry_count_before": guard_before["payment_entry_count"],
-        "payment_entry_count_after": guard_after["payment_entry_count"],
-        "payment_entry_gl_count_before": guard_before["payment_entry_gl_count"],
-        "payment_entry_gl_count_after": guard_after["payment_entry_gl_count"],
-        "actual_payment_entry_created_count": 0,
-        "actual_payment_entry_cancelled_count": 0,
-        "actual_gl_created_count": 0,
-        "submitted_journal_entry_count_today": guard_after["submitted_journal_entry_count_today"],
-        "purchase_invoice_count_today": guard_after["purchase_invoice_count_today"],
-        "candidate_score": score,
+        "actual_policy_mutation_count": policy_mutation_count,
+        "design": design.name if design else None,
+        "planning": design.planning if design else None,
+        "monitor": design.monitor if design else None,
+        "baseline": design.baseline if design else None,
+        "closeout": design.closeout if design else None,
+        "freeze": design.freeze if design else None,
+        "rollback": design.rollback if design else None,
+        "smoke": design.smoke if design else None,
+        "execution_gate": design.execution_gate if design else None,
+        "preview": design.preview if design else None,
+        "candidate_validation": design.candidate_validation if design else None,
+        "previous_candidate_selection": design.candidate_selection if design else None,
         **item_summary,
-        "selected_candidates": selected,
         "items": items,
-        "issues": issues,
-        "guardrails_before": guard_before,
-        "guardrails_after": guard_after,
+        "issues": post_issues,
         "required_acknowledgement": CANDIDATE_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 11F selects Sales Invoice candidates only. No Payment Entry, GL, Journal Entry, Purchase Invoice, or policy mutation occurs.",
+        "note": "Phase 12P approves candidate selection for the next governed limited-operation cycle only. No accounting movement occurs.",
     }
-
     if int(dry_run or 0):
-        result["status"] = "Needs Review"
-        result["candidate_selection_status"] = "Needs Review"
-        result["candidate_selection_approved"] = 0
-        result["candidate_selection_locked"] = 0
-        result["ready_for_next_governed_limited_operation_candidate_validation"] = 0
         return result
 
     doc = frappe.new_doc(CANDIDATE_DOCTYPE)
-    doc.candidate_id = make_candidate_id()
-
+    doc.candidate_selection_id = make_candidate_selection_id()
     for fieldname, value in result.items():
         if doc.meta.has_field(fieldname):
             setattr(doc, fieldname, value)
-
     doc.site_name = frappe.local.site
     doc.sandbox_config_enabled = config["sandbox_enabled"]
     doc.production_mode_detected = config["production_mode"]
@@ -677,373 +690,270 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
     doc.acknowledgement = acknowledgement
     doc.acknowledgement_ok = int(ack_ok)
     doc.summary_json = safe_json(result)
-    doc.candidate_json = safe_json(
-        {
-            "design": design,
-            "historical_payment_entry_context": context,
-            "selected_candidates": selected,
-            "guardrails_before": guard_before,
-            "guardrails_after": guard_after,
-            "issues": issues,
-            "config": config,
-        }
-    )
+    doc.candidate_json = safe_json(result)
     doc.notes = notes
     doc.insert(ignore_permissions=True)
-
     create_items(doc, items)
     frappe.db.commit()
-
     return {
         **result,
         "created": True,
-        "candidate": doc.name,
-        "candidate_id": doc.candidate_id,
+        "candidate_selection": doc.name,
+        "candidate_selection_id": doc.candidate_selection_id,
+        "monitored_payment_entry": payment_entry,
         "guardrails_after": guardrails(),
     }
 
 
 @frappe.whitelist()
-def cancel_next_governed_limited_operation_candidate_audit(candidate, reason=None):
-    assert_action("cancel_next_governed_limited_operation_candidate_audit")
-
-    if not frappe.db.exists(CANDIDATE_DOCTYPE, candidate):
-        frappe.throw(_("Governed limited operation candidate audit not found: {0}").format(candidate))
-
-    doc = frappe.get_doc(CANDIDATE_DOCTYPE, candidate)
-
+def cancel_next_governed_limited_operation_candidate_selection_audit(candidate_selection, reason=None):
+    assert_action("cancel_next_governed_limited_operation_candidate_selection_audit")
+    if not frappe.db.exists(CANDIDATE_DOCTYPE, candidate_selection):
+        frappe.throw(_("Next governed limited-operation candidate selection audit not found: {0}").format(candidate_selection))
+    doc = frappe.get_doc(CANDIDATE_DOCTYPE, candidate_selection)
     if doc.status == "Cancelled":
-        return {"candidate": candidate, "status": "Cancelled", "note": "Already cancelled."}
-
+        return {"candidate_selection": candidate_selection, "status": "Cancelled", "note": "Already cancelled."}
     if int(doc.candidate_selection_approved or 0):
-        frappe.throw(_("Cannot cancel an approved Phase 11F candidate selection record."))
-
+        frappe.throw(_("Cannot cancel an approved Phase 12P candidate selection record."))
     frappe.db.set_value(
         CANDIDATE_DOCTYPE,
-        candidate,
+        candidate_selection,
         {
             "status": "Cancelled",
-            "candidate_selection_status": "Cancelled",
+            "candidate_status": "Cancelled",
             "cancelled_on": now_datetime(),
             "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 11F no-ack candidate selection audit cancelled.",
+            "summary_json": reason or "Phase 12P no-ack candidate selection audit cancelled.",
         },
         update_modified=False,
     )
-
     frappe.db.sql(
         f"""
         UPDATE `tab{CANDIDATE_ITEM_DOCTYPE}`
-        SET status = 'Cancelled'
-        WHERE candidate = %(candidate)s
+        SET status='Cancelled'
+        WHERE candidate_selection=%(candidate_selection)s
         """,
-        {"candidate": candidate},
+        {"candidate_selection": candidate_selection},
     )
-
     frappe.db.commit()
-
     return {
-        "candidate": candidate,
+        "candidate_selection": candidate_selection,
         "status": "Cancelled",
-        "note": "No-ack candidate selection audit cancelled only. No accounting or policy movement occurred.",
+        "note": "No-ack candidate selection audit cancelled only. No accounting movement occurred.",
     }
 
 
 @frappe.whitelist()
-def quick_next_governed_limited_operation_candidate_summary(limit=20):
-    records = frappe.get_all(
-        CANDIDATE_DOCTYPE,
-        fields=[
-            "name",
-            "candidate_id",
-            "status",
-            "candidate_selection_status",
-            "candidate_selection_approved",
-            "phase11e_design_verified",
-            "candidate_selection_locked",
-            "selected_line_count",
-            "selected_total_amount",
-            "selected_customer",
-            "selected_company",
-            "selected_currency",
-            "ready_for_next_governed_limited_operation_candidate_validation",
-            "design",
-            "payment_entry",
-            "locked_payment_entry_count",
-            "locked_payment_entry_gl_count",
-            "payment_entry_count_before",
-            "payment_entry_count_after",
-            "payment_entry_gl_count_before",
-            "payment_entry_gl_count_after",
-            "submitted_journal_entry_count_today",
-            "purchase_invoice_count_today",
-            "candidate_score",
-            "checked_on",
-            "checked_by",
-        ],
-        order_by="creation desc",
-        limit=int(limit or 20),
-    )
-
-    items = frappe.get_all(
-        CANDIDATE_ITEM_DOCTYPE,
-        fields=[
-            "name",
-            "candidate",
-            "status",
-            "severity",
-            "category",
-            "check_key",
-            "check_label",
-            "line_no",
-            "reference_doctype",
-            "reference_name",
-            "customer",
-            "company",
-            "currency",
-            "outstanding_amount",
-            "allocated_amount",
-            "detail",
-        ],
-        order_by="creation desc",
-        limit=int(limit or 20),
-    )
-
+def quick_next_governed_limited_operation_candidate_selection_summary(limit=20):
     return {
-        "candidate_records": records,
-        "items": items,
+        "candidate_selection_records": frappe.get_all(
+            CANDIDATE_DOCTYPE,
+            fields=[
+                "name",
+                "candidate_selection_id",
+                "status",
+                "candidate_status",
+                "candidate_selection_approved",
+                "selected_source_doctype",
+                "selected_reference_doctype",
+                "selected_party_type",
+                "selected_invoice_names",
+                "selected_invoice_count",
+                "selected_total_amount",
+                "selected_payment_entry_count",
+                "selected_gl_entry_count",
+                "selected_live_posting_allowed",
+                "selected_journal_entry_side_effect_allowed",
+                "selected_purchase_invoice_side_effect_allowed",
+                CANDIDATE_READY_FIELD,
+                "monitored_payment_entry",
+                "monitored_payment_entry_docstatus",
+                "monitored_payment_entry_status",
+                "payment_entry_count_before",
+                "payment_entry_count_after",
+                "payment_entry_gl_count_before",
+                "payment_entry_gl_count_after",
+                "actual_payment_entry_created_count",
+                "actual_payment_entry_cancelled_count",
+                "actual_gl_created_count",
+                "submitted_journal_entry_count_today",
+                "purchase_invoice_count_today",
+                "checked_on",
+                "checked_by",
+            ],
+            order_by="creation desc",
+            limit=int(limit or 20),
+        ),
+        "items": frappe.get_all(
+            CANDIDATE_ITEM_DOCTYPE,
+            fields=[
+                "name",
+                "candidate_selection",
+                "status",
+                "severity",
+                "category",
+                "check_key",
+                "check_label",
+                "line_no",
+                "reference_doctype",
+                "reference_name",
+                "customer",
+                "company",
+                "currency",
+                "selected_amount",
+                "current_outstanding_amount",
+                "monitored_payment_entry",
+                "detail",
+            ],
+            order_by="creation desc",
+            limit=int(limit or 20),
+        ),
         "required_acknowledgement": CANDIDATE_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 11F next governed limited operation candidate selection summary.",
+        "note": "Phase 12P next governed limited-operation candidate selection summary.",
     }
 
 
-def execute_candidate_report(filters=None):
-    filters = frappe._dict(filters or {})
-    conditions = []
-    params = {"currency": currency()}
-
-    if filters.get("status"):
-        conditions.append("c.status = %(status)s")
-        params["status"] = filters.get("status")
-
-    columns = candidate_columns()
-
+def execute_candidate_selection_report(filters=None):
+    columns = [
+        {"fieldname": "candidate_selection", "label": _("Candidate Selection"), "fieldtype": "Link", "options": CANDIDATE_DOCTYPE, "width": 220},
+        {"fieldname": "candidate_selection_id", "label": _("Candidate Selection ID"), "fieldtype": "Data", "width": 470},
+        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 210},
+        {"fieldname": "candidate_status", "label": _("Candidate Status"), "fieldtype": "Data", "width": 390},
+        {"fieldname": "candidate_selection_approved", "label": _("Approved"), "fieldtype": "Check", "width": 90},
+        {"fieldname": "selected_source_doctype", "label": _("Source"), "fieldtype": "Data", "width": 120},
+        {"fieldname": "selected_reference_doctype", "label": _("Reference"), "fieldtype": "Data", "width": 120},
+        {"fieldname": "selected_party_type", "label": _("Party Type"), "fieldtype": "Data", "width": 100},
+        {"fieldname": "selected_invoice_names", "label": _("Invoices"), "fieldtype": "Small Text", "width": 420},
+        {"fieldname": "selected_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
+        {"fieldname": "selected_total_amount", "label": _("Amount"), "fieldtype": "Currency", "options": "currency", "width": 100},
+        {"fieldname": "selected_payment_entry_count", "label": _("Future PE"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "selected_gl_entry_count", "label": _("Future GL"), "fieldtype": "Int", "width": 90},
+        {"fieldname": CANDIDATE_READY_FIELD, "label": _("Validation Ready"), "fieldtype": "Check", "width": 130},
+        {"fieldname": "monitored_payment_entry", "label": _("Monitored PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 115},
+        {"fieldname": "payment_entry_gl_count_after", "label": _("PE GL After"), "fieldtype": "Int", "width": 115},
+        {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 130},
+        {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
+        {"fieldname": "currency", "label": _("Currency"), "fieldtype": "Link", "options": "Currency", "hidden": 1},
+    ]
     data = frappe.db.sql(
         f"""
         SELECT
-            c.name AS candidate,
-            c.candidate_id,
-            c.status,
-            c.candidate_selection_status,
-            c.candidate_selection_approved,
-            c.phase11e_design_verified,
-            c.design_shape_locked_verified,
-            c.candidate_selection_locked,
-            c.same_customer_verified,
-            c.same_company_verified,
-            c.same_currency_verified,
-            c.selected_customer,
-            c.selected_company,
-            c.selected_currency,
-            c.selected_line_count,
-            c.selected_total_amount,
-            c.selected_payment_entry_count,
-            c.ready_for_next_governed_limited_operation_candidate_validation,
-            c.design,
-            c.payment_entry,
-            c.locked_payment_entry_count,
-            c.locked_payment_entry_gl_count,
-            c.payment_entry_count_before,
-            c.payment_entry_count_after,
-            c.payment_entry_gl_count_before,
-            c.payment_entry_gl_count_after,
-            c.actual_payment_entry_created_count,
-            c.actual_payment_entry_cancelled_count,
-            c.actual_gl_created_count,
-            c.submitted_journal_entry_count_today,
-            c.purchase_invoice_count_today,
-            c.candidate_score,
-            c.checked_on,
+            name AS candidate_selection,
+            candidate_selection_id,
+            status,
+            candidate_status,
+            candidate_selection_approved,
+            selected_source_doctype,
+            selected_reference_doctype,
+            selected_party_type,
+            selected_invoice_names,
+            selected_invoice_count,
+            selected_total_amount,
+            selected_payment_entry_count,
+            selected_gl_entry_count,
+            `{CANDIDATE_READY_FIELD}` AS `{CANDIDATE_READY_FIELD}`,
+            monitored_payment_entry,
+            payment_entry_count_before,
+            payment_entry_count_after,
+            payment_entry_gl_count_before,
+            payment_entry_gl_count_after,
+            actual_gl_created_count,
+            checked_on,
             %(currency)s AS currency
-        FROM `tab{CANDIDATE_DOCTYPE}` c
-        {build_where(conditions)}
-        ORDER BY c.creation DESC
+        FROM `tab{CANDIDATE_DOCTYPE}`
+        ORDER BY creation DESC
         """,
-        params,
+        {"currency": currency()},
         as_dict=True,
     )
-
     chart = {
         "data": {
-            "labels": [row.candidate_id for row in data[:20]],
+            "labels": [row.candidate_selection_id for row in data[:20]],
             "datasets": [
-                {"name": "Approved", "values": [int(row.candidate_selection_approved or 0) for row in data[:20]]},
-                {"name": "Selected Lines", "values": [int(row.selected_line_count or 0) for row in data[:20]]},
+                {"name": "Candidate Approved", "values": [int(row.candidate_selection_approved or 0) for row in data[:20]]},
+                {"name": "Validation Ready", "values": [int(row.get(CANDIDATE_READY_FIELD) or 0) for row in data[:20]]},
             ],
         },
         "type": "bar",
     }
-
     summary = [
-        {"value": len(data), "indicator": "Blue", "label": _("Candidate Records"), "datatype": "Int"},
+        {"value": len(data), "indicator": "Blue", "label": _("Candidate Selection Records"), "datatype": "Int"},
         {"value": sum(int(row.candidate_selection_approved or 0) for row in data), "indicator": "Green", "label": _("Approved"), "datatype": "Int"},
-        {"value": sum(int(row.selected_line_count or 0) for row in data), "indicator": "Green", "label": _("Selected Lines"), "datatype": "Int"},
         {"value": sum(int(row.actual_gl_created_count or 0) for row in data), "indicator": "Red", "label": _("Actual GL Created"), "datatype": "Int"},
     ]
-
     return columns, data, None, chart, summary
 
 
-def candidate_columns():
-    return [
-        {"fieldname": "candidate", "label": _("Candidate"), "fieldtype": "Link", "options": CANDIDATE_DOCTYPE, "width": 220},
-        {"fieldname": "candidate_id", "label": _("Candidate ID"), "fieldtype": "Data", "width": 390},
-        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 160},
-        {"fieldname": "candidate_selection_status", "label": _("Candidate Status"), "fieldtype": "Data", "width": 390},
-        {"fieldname": "candidate_selection_approved", "label": _("Approved"), "fieldtype": "Check", "width": 90},
-        {"fieldname": "phase11e_design_verified", "label": _("11E Verified"), "fieldtype": "Check", "width": 100},
-        {"fieldname": "design_shape_locked_verified", "label": _("Design Locked"), "fieldtype": "Check", "width": 110},
-        {"fieldname": "candidate_selection_locked", "label": _("Selection Locked"), "fieldtype": "Check", "width": 120},
-        {"fieldname": "same_customer_verified", "label": _("Same Customer"), "fieldtype": "Check", "width": 115},
-        {"fieldname": "same_company_verified", "label": _("Same Company"), "fieldtype": "Check", "width": 115},
-        {"fieldname": "same_currency_verified", "label": _("Same Currency"), "fieldtype": "Check", "width": 115},
-        {"fieldname": "selected_customer", "label": _("Customer"), "fieldtype": "Link", "options": "Customer", "width": 170},
-        {"fieldname": "selected_company", "label": _("Company"), "fieldtype": "Link", "options": "Company", "width": 170},
-        {"fieldname": "selected_currency", "label": _("Currency"), "fieldtype": "Link", "options": "Currency", "width": 90},
-        {"fieldname": "selected_line_count", "label": _("Lines"), "fieldtype": "Int", "width": 70},
-        {"fieldname": "selected_total_amount", "label": _("Amount"), "fieldtype": "Currency", "options": "currency", "width": 100},
-        {"fieldname": "selected_payment_entry_count", "label": _("PE Count"), "fieldtype": "Int", "width": 90},
-        {"fieldname": "ready_for_next_governed_limited_operation_candidate_validation", "label": _("Validation Ready"), "fieldtype": "Check", "width": 130},
-        {"fieldname": "design", "label": _("Design"), "fieldtype": "Link", "options": DESIGN_DOCTYPE, "width": 220},
-        {"fieldname": "payment_entry", "label": _("Historical PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "locked_payment_entry_count", "label": _("Locked PE"), "fieldtype": "Int", "width": 90},
-        {"fieldname": "locked_payment_entry_gl_count", "label": _("Locked PE GL"), "fieldtype": "Int", "width": 110},
-        {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 85},
-        {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 85},
-        {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 110},
-        {"fieldname": "payment_entry_gl_count_after", "label": _("PE GL After"), "fieldtype": "Int", "width": 110},
-        {"fieldname": "actual_payment_entry_created_count", "label": _("Actual PE Created"), "fieldtype": "Int", "width": 125},
-        {"fieldname": "actual_payment_entry_cancelled_count", "label": _("Actual PE Cancelled"), "fieldtype": "Int", "width": 135},
-        {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 125},
-        {"fieldname": "submitted_journal_entry_count_today", "label": _("JE Today"), "fieldtype": "Int", "width": 90},
-        {"fieldname": "purchase_invoice_count_today", "label": _("PI Today"), "fieldtype": "Int", "width": 90},
-        {"fieldname": "candidate_score", "label": _("Score"), "fieldtype": "Percent", "width": 90},
-        {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
-        {"fieldname": "currency", "label": _("Currency"), "fieldtype": "Link", "options": "Currency", "hidden": 1},
-    ]
-
-
 def execute_item_report(filters=None):
-    filters = frappe._dict(filters or {})
-    conditions = []
-    params = {}
-
-    if filters.get("candidate"):
-        conditions.append("i.candidate = %(candidate)s")
-        params["candidate"] = filters.get("candidate")
-
-    if filters.get("status"):
-        conditions.append("i.status = %(status)s")
-        params["status"] = filters.get("status")
-
     columns = [
         {"fieldname": "item", "label": _("Item"), "fieldtype": "Link", "options": CANDIDATE_ITEM_DOCTYPE, "width": 220},
-        {"fieldname": "candidate", "label": _("Candidate"), "fieldtype": "Link", "options": CANDIDATE_DOCTYPE, "width": 220},
+        {"fieldname": "candidate_selection", "label": _("Candidate Selection"), "fieldtype": "Link", "options": CANDIDATE_DOCTYPE, "width": 220},
         {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 90},
-        {"fieldname": "severity", "label": _("Severity"), "fieldtype": "Data", "width": 100},
-        {"fieldname": "category", "label": _("Category"), "fieldtype": "Data", "width": 180},
+        {"fieldname": "category", "label": _("Category"), "fieldtype": "Data", "width": 190},
         {"fieldname": "line_no", "label": _("Line"), "fieldtype": "Int", "width": 60},
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
-        {"fieldname": "customer", "label": _("Customer"), "fieldtype": "Link", "options": "Customer", "width": 170},
-        {"fieldname": "company", "label": _("Company"), "fieldtype": "Link", "options": "Company", "width": 170},
-        {"fieldname": "currency", "label": _("Currency"), "fieldtype": "Link", "options": "Currency", "width": 90},
-        {"fieldname": "outstanding_amount", "label": _("Outstanding"), "fieldtype": "Currency", "width": 110},
-        {"fieldname": "allocated_amount", "label": _("Allocated"), "fieldtype": "Currency", "width": 100},
-        {"fieldname": "check_key", "label": _("Check Key"), "fieldtype": "Data", "width": 230},
-        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 330},
+        {"fieldname": "selected_amount", "label": _("Selected Amount"), "fieldtype": "Currency", "width": 130},
+        {"fieldname": "current_outstanding_amount", "label": _("Outstanding"), "fieldtype": "Currency", "width": 120},
+        {"fieldname": "monitored_payment_entry", "label": _("Monitored PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
-        {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
     ]
-
     data = frappe.db.sql(
         f"""
         SELECT
-            i.name AS item,
-            i.candidate,
-            i.status,
-            i.severity,
-            i.category,
-            i.line_no,
-            i.reference_doctype,
-            i.reference_name,
-            i.customer,
-            i.company,
-            i.currency,
-            i.outstanding_amount,
-            i.allocated_amount,
-            i.check_key,
-            i.check_label,
-            i.detail,
-            i.checked_on
-        FROM `tab{CANDIDATE_ITEM_DOCTYPE}` i
-        {build_where(conditions)}
-        ORDER BY
-            CASE i.status
-                WHEN 'Blocker' THEN 1
-                WHEN 'Warning' THEN 2
-                WHEN 'Pass' THEN 3
-                WHEN 'Info' THEN 4
-                ELSE 5
-            END,
-            i.line_no ASC,
-            i.creation DESC
+            name AS item,
+            candidate_selection,
+            status,
+            category,
+            line_no,
+            reference_doctype,
+            reference_name,
+            selected_amount,
+            current_outstanding_amount,
+            monitored_payment_entry,
+            check_label,
+            detail
+        FROM `tab{CANDIDATE_ITEM_DOCTYPE}`
+        ORDER BY creation DESC
         """,
-        params,
         as_dict=True,
     )
-
-    chart_map = {}
-    for row in data:
-        key = row.status or "Info"
-        chart_map[key] = chart_map.get(key, 0) + 1
-
     chart = {
         "data": {
-            "labels": list(chart_map.keys()),
-            "datasets": [{"name": "Items", "values": list(chart_map.values())}],
+            "labels": ["Pass", "Warning", "Blocker", "Info"],
+            "datasets": [
+                {
+                    "name": "Items",
+                    "values": [
+                        len([row for row in data if row.status == "Pass"]),
+                        len([row for row in data if row.status == "Warning"]),
+                        len([row for row in data if row.status == "Blocker"]),
+                        len([row for row in data if row.status == "Info"]),
+                    ],
+                }
+            ],
         },
         "type": "bar",
     }
-
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Items"), "datatype": "Int"},
-        {"value": len([row for row in data if row.status == "Pass"]), "indicator": "Green", "label": _("Pass"), "datatype": "Int"},
-        {"value": len([row for row in data if row.category == "Selected Candidate"]), "indicator": "Green", "label": _("Selected Candidates"), "datatype": "Int"},
-        {"value": sum(flt(row.allocated_amount or 0, 2) for row in data if row.category == "Selected Candidate"), "indicator": "Green", "label": _("Selected Amount"), "datatype": "Currency"},
-        {"value": len([row for row in data if row.status == "Blocker"]), "indicator": "Red", "label": _("Blockers"), "datatype": "Int"},
+        {"value": len([row for row in data if row.category == "Selected Reference"]), "indicator": "Green", "label": _("Selected References"), "datatype": "Int"},
     ]
-
     return columns, data, None, chart, summary
 
 
 def execute_guardrail_report(filters=None):
-    columns, data, message, chart, summary = execute_candidate_report(filters)
-
+    columns, data, message, chart, summary = execute_candidate_selection_report(filters)
     guard = guardrails()
-
     summary.append({"value": guard["payment_entry_count"], "indicator": "Blue", "label": _("Payment Entry Count"), "datatype": "Int"})
     summary.append({"value": guard["payment_entry_gl_count"], "indicator": "Blue", "label": _("Payment Entry GL Count"), "datatype": "Int"})
-    summary.append({"value": guard["production_batch_enabled_policy_count"], "indicator": "Green", "label": _("Enabled Policies"), "datatype": "Int"})
-    summary.append({"value": guard["live_posting_allowed_policy_count"], "indicator": "Red", "label": _("Live Policies"), "datatype": "Int"})
     summary.append({"value": guard["submitted_journal_entry_count_today"], "indicator": "Red", "label": _("Submitted JE Today"), "datatype": "Int"})
     summary.append({"value": guard["purchase_invoice_count_today"], "indicator": "Red", "label": _("Purchase Invoice Today"), "datatype": "Int"})
-
+    summary.append({"value": guard["production_batch_enabled_policy_count"], "indicator": "Green", "label": _("Enabled Policies"), "datatype": "Int"})
+    summary.append({"value": guard["live_posting_allowed_policy_count"], "indicator": "Red", "label": _("Live Policies"), "datatype": "Int"})
     return columns, data, message, chart, summary
-
-
-def build_where(conditions):
-    if not conditions:
-        return ""
-    return " WHERE " + " AND ".join(conditions)
