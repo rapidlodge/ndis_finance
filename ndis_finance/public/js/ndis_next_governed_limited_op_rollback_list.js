@@ -1,6 +1,7 @@
 frappe.listview_settings["NDIS Next Governed Limited Op Rollback"] = {
     get_indicator(doc) {
         if (doc.status === "Rollback Completed") return [__("Rollback Completed"), "green", "status,=,Rollback Completed"];
+        if (doc.status === "Rolled Back") return [__("Rolled Back"), "green", "status,=,Rolled Back"];
         if (doc.status === "Needs Review") return [__("Needs Review"), "orange", "status,=,Needs Review"];
         if (doc.status === "Blocked") return [__("Blocked"), "red", "status,=,Blocked"];
         if (doc.status === "Cancelled") return [__("Cancelled"), "gray", "status,=,Cancelled"];

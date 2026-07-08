@@ -17,20 +17,21 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Rollback", {
         }, __("Open"));
 
         if (frm.doc.smoke) {
-            frm.add_custom_button(__("Open Phase 12H Smoke"), () => {
+            frm.add_custom_button(__("Open Phase 12T Smoke"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Smoke", frm.doc.smoke);
             }, __("Evidence"));
         }
 
-        if (frm.doc.rolled_back_payment_entry) {
-            frm.add_custom_button(__("Open Rolled Back Payment Entry"), () => {
-                frappe.set_route("Form", "Payment Entry", frm.doc.rolled_back_payment_entry);
+        const rollback_payment_entry = frm.doc.rollback_payment_entry || frm.doc.rolled_back_payment_entry;
+        if (rollback_payment_entry) {
+            frm.add_custom_button(__("Open Rollback Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", rollback_payment_entry);
             }, __("Accounting"));
         }
 
         if (frm.doc.rollback_completed) {
             frm.dashboard.set_headline_alert(
-                __("Smoke Payment Entry rolled back. Rollback evidence freeze can proceed next."),
+                __("Smoke Payment Entry rolled back. Rollback freeze can proceed next."),
                 "green"
             );
         }

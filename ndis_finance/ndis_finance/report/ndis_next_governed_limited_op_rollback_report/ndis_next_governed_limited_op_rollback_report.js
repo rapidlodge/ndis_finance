@@ -4,7 +4,7 @@ frappe.query_reports["NDIS Next Governed Limited Op Rollback Report"] = {
             fieldname: "status",
             label: __("Status"),
             fieldtype: "Select",
-            options: "\nDraft\nNeeds Review\nRollback Completed\nBlocked\nCancelled"
+            options: "\nDraft\nNeeds Review\nRollback Completed\nRolled Back\nBlocked\nCancelled"
         }
     ]
 };
