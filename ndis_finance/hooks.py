@@ -2180,3 +2180,33 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 12S - Next governed limited-operation execution gate
+
+doctype_js.update({
+    "NDIS Next Governed Limited Op Execution Gate": "public/js/ndis_next_governed_limited_op_execution_gate.js",
+    "NDIS Next Governed Limited Op Execution Gate Item": "public/js/ndis_next_governed_limited_op_execution_gate_item.js",
+})
+
+doctype_list_js.update({
+    "NDIS Next Governed Limited Op Execution Gate": "public/js/ndis_next_governed_limited_op_execution_gate_list.js",
+    "NDIS Next Governed Limited Op Execution Gate Item": "public/js/ndis_next_governed_limited_op_execution_gate_item_list.js",
+})
+
+fixtures.extend([
+    {
+        "dt": "DocType",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Execution Gate",
+            "NDIS Next Governed Limited Op Execution Gate Item"
+        ]]]
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Execution Gate Report",
+            "NDIS Next Governed Limited Op Execution Gate Item Report",
+            "NDIS Next Governed Limited Op Execution Gate Guardrail Report"
+        ]]]
+    }
+])
