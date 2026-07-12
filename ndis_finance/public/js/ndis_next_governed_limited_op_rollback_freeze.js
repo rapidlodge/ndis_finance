@@ -17,20 +17,21 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Rollback Freeze", {
         }, __("Open"));
 
         if (frm.doc.rollback) {
-            frm.add_custom_button(__("Open Phase 12I Rollback"), () => {
+            frm.add_custom_button(__("Open Phase 12U Rollback"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Rollback", frm.doc.rollback);
             }, __("Evidence"));
         }
 
-        if (frm.doc.frozen_payment_entry) {
+        const frozen_payment_entry = frm.doc.frozen_rollback_payment_entry || frm.doc.frozen_payment_entry;
+        if (frozen_payment_entry) {
             frm.add_custom_button(__("Open Frozen Payment Entry"), () => {
-                frappe.set_route("Form", "Payment Entry", frm.doc.frozen_payment_entry);
+                frappe.set_route("Form", "Payment Entry", frozen_payment_entry);
             }, __("Accounting"));
         }
 
         if (frm.doc.freeze_completed) {
             frm.dashboard.set_headline_alert(
-                __("Governed limited-operation rollback evidence frozen. Closeout can proceed next."),
+                __("Next governed limited-operation rollback evidence frozen. Closeout can proceed next."),
                 "green"
             );
         }

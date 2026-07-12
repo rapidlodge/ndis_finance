@@ -2,26 +2,37 @@ import json
 
 import frappe
 from frappe import _
-from frappe.utils import flt, get_datetime, now_datetime, today
+from frappe.utils import flt, now_datetime, today
 
 from ndis_finance.services.permissions import assert_action
 
 
-FREEZE_ACK = "I_CONFIRM_PHASE11L_FREEZE_NEXT_GOVERNED_LIMITED_OPERATION_ROLLBACK_EVIDENCE_NO_POSTING"
+FREEZE_ACK = "I_CONFIRM_PHASE12V_FREEZE_NEXT_GOVERNED_LIMITED_OPERATION_ROLLBACK_EVIDENCE_NO_POSTING"
 
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
-ROLLBACK_DOCTYPE = "NDIS Governed Next Op Rollback"
-FREEZE_DOCTYPE = "NDIS Governed Next Op Rollback Freeze"
-FREEZE_ITEM_DOCTYPE = "NDIS Governed Next Op Rollback Freeze Item"
+ROLLBACK_DOCTYPE = "NDIS Next Governed Limited Op Rollback"
+ROLLBACK_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Rollback Item"
+FREEZE_DOCTYPE = "NDIS Next Governed Limited Op Rollback Freeze"
+FREEZE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Rollback Freeze Item"
+
+ROLLBACK_READY_FIELD = "ready_for_next_governed_limited_op_rollback_freeze"
+FREEZE_READY_FIELD = "ready_for_next_governed_limited_op_closeout"
+
+EXPECTED_ROLLBACK_PAYMENT_ENTRY = "ACC-PAY-2026-00013"
+EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
+
+EXPECTED_PAYMENT_ENTRY_COUNT = 12
+EXPECTED_PAYMENT_ENTRY_GL_COUNT = 78
+EXPECTED_TOTAL_AMOUNT = 3.00
+EXPECTED_INVOICE_COUNT = 3
+EXPECTED_VOUCHER_GL_ROWS = 8
+EXPECTED_VOUCHER_GL_NET = 0.00
+EXPECTED_REVERSAL_GL_ROWS = 4
 
 
 def make_freeze_id():
-    timestamp = get_datetime().strftime("%Y%m%d-%H%M%S")
-    return f"NDIS-GOVERNED-NEXT-OP-ROLLBACK-FREEZE-{timestamp}-{frappe.generate_hash(length=5).upper()}"
-
-
-def currency():
-    return frappe.defaults.get_global_default("currency") or "AUD"
+    timestamp = now_datetime().strftime("%Y%m%d-%H%M%S")
+    return f"NDIS-NEXT-GOVERNED-LIMITED-OP-ROLLBACK-FREEZE-{timestamp}-{frappe.generate_hash(length=5).upper()}"
 
 
 def safe_json(value):
@@ -73,55 +84,113 @@ def guardrails():
     }
 
 
+def payment_entry_state(payment_entry):
+    if not payment_entry or not frappe.db.exists("Payment Entry", payment_entry):
+        return frappe._dict({"docstatus": 0, "status": None})
+    pe = frappe.get_doc("Payment Entry", payment_entry)
+    return frappe._dict({"docstatus": int(pe.docstatus or 0), "status": pe.status})
+
+
+def payment_entry_gl_rows(payment_entry):
+    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
+
+
+def payment_entry_gl_net(payment_entry):
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
+        FROM `tabGL Entry`
+        WHERE voucher_type='Payment Entry'
+        AND voucher_no=%s
+        """,
+        payment_entry,
+    )[0][0]
+    return flt(value or 0, 2)
+
+
+def payment_entry_reversal_gl_rows(payment_entry):
+    return max(0, int(payment_entry_gl_rows(payment_entry) or 0) - 4)
+
+
+def outstanding_total(invoice_names):
+    if not invoice_names:
+        return 0
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(outstanding_amount), 0), 2)
+        FROM `tabSales Invoice`
+        WHERE name IN %(names)s
+        """,
+        {"names": tuple(invoice_names)},
+    )[0][0]
+    return flt(value or 0, 2)
+
+
 def latest_rollback():
+    filters = {
+        "status": "Rolled Back",
+        "rollback_status": "Next Governed Limited Operation Smoke Rolled Back",
+        "rollback_completed": 1,
+        "phase12t_smoke_verified": 1,
+        "smoke_completed_verified": 1,
+        "smoke_payment_entry_verified": 1,
+        "smoke_payment_entry_submitted_before_verified": 1,
+        "rollback_payment_entry_cancelled_verified": 1,
+        "rollback_gl_rows_verified": 1,
+        "invoice_outstanding_restored_verified": 1,
+        "policy_state_preserved_verified": 1,
+        "no_unplanned_accounting_movement_verified": 1,
+        "rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+        "rollback_payment_entry_docstatus_after": 2,
+        "rollback_payment_entry_status_after": "Cancelled",
+        "rollback_invoice_count": EXPECTED_INVOICE_COUNT,
+        "rollback_total_amount": EXPECTED_TOTAL_AMOUNT,
+        "rollback_voucher_gl_rows_after": EXPECTED_VOUCHER_GL_ROWS,
+        "rollback_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
+        "rollback_voucher_gl_net_after": EXPECTED_VOUCHER_GL_NET,
+        "restored_invoice_amount": EXPECTED_TOTAL_AMOUNT,
+        "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT,
+        "payment_entry_gl_count_after": EXPECTED_PAYMENT_ENTRY_GL_COUNT,
+        "actual_payment_entry_created_count": 0,
+        "actual_payment_entry_cancelled_count": 1,
+        "actual_gl_created_count": 4,
+        "submitted_journal_entry_count_today": 0,
+        "purchase_invoice_count_today": 0,
+        "target_policy_enabled_after": 1,
+        "target_policy_live_after": 0,
+        "actual_policy_mutation_count": 0,
+        "blocker_count": 0,
+        "warning_count": 0,
+    }
+
+    if has_column(ROLLBACK_DOCTYPE, ROLLBACK_READY_FIELD):
+        filters[ROLLBACK_READY_FIELD] = 1
+
     rows = frappe.get_all(
         ROLLBACK_DOCTYPE,
-        filters={
-            "status": "Rollback Completed",
-            "rollback_status": "Next Governed Limited Operation Smoke Rolled Back",
-            "rollback_completed": 1,
-            "phase11j_smoke_verified": 1,
-            "smoke_payment_entry_verified": 1,
-            "payment_entry_cancelled_verified": 1,
-            "reversal_gl_created_verified": 1,
-            "voucher_gl_net_zero_verified": 1,
-            "invoice_outstanding_restored_verified": 1,
-            "ready_for_next_governed_limited_operation_rollback_freeze": 1,
-            "payment_entry_docstatus_after": 2,
-            "payment_entry_status_after": "Cancelled",
-            "rolled_back_reference_count": 3,
-            "rolled_back_total_amount": 3.00,
-            "voucher_gl_rows_after": 8,
-            "reversal_gl_row_count": 4,
-            "voucher_gl_net_after": 0.00,
-            "voucher_gl_non_zero_account_count": 0,
-            "restored_invoice_amount": 3.00,
-            "payment_entry_count_after": 9,
-            "payment_entry_gl_count_after": 54,
-            "actual_payment_entry_created_count": 0,
-            "actual_payment_entry_cancelled_count": 1,
-            "actual_gl_created_count": 4,
-            "submitted_journal_entry_count_today": 0,
-            "purchase_invoice_count_today": 0,
-            "target_policy_enabled_after": 1,
-            "target_policy_live_after": 0,
-            "actual_policy_mutation_count": 0,
-        },
+        filters=filters,
         fields=[
             "name",
             "rollback_id",
-            "rolled_back_payment_entry",
-            "rolled_back_reference_count",
-            "rolled_back_total_amount",
+            "rollback_payment_entry",
+            "rollback_invoice_names",
+            "rollback_invoice_count",
+            "rollback_total_amount",
+            "rollback_voucher_gl_rows_after",
+            "rollback_reversal_gl_rows",
+            "rollback_voucher_gl_net_after",
             "restored_invoice_amount",
             "smoke",
             "execution_gate",
             "preview",
-            "validation",
-            "candidate",
+            "candidate_validation",
+            "candidate_selection",
             "design",
             "planning",
-            "target_policy_doctype",
+            "monitor",
+            "baseline",
+            "closeout",
+            "freeze",
             "target_policy",
             "target_policy_name",
         ],
@@ -139,119 +208,151 @@ def existing_completed_freeze(rollback):
             "status": "Frozen",
             "freeze_completed": 1,
         },
-        fields=["name", "freeze_id"],
+        fields=["name", "freeze_id", "frozen_rollback_payment_entry"],
         limit=1,
     )
     return rows[0] if rows else None
 
 
-def payment_entry_reference_rows(payment_entry):
-    if not payment_entry:
-        return []
-    return frappe.get_all(
-        "Payment Entry Reference",
-        filters={"parent": payment_entry, "reference_doctype": "Sales Invoice"},
+def rollback_rows(rollback):
+    rows = frappe.get_all(
+        ROLLBACK_ITEM_DOCTYPE,
+        filters={
+            "rollback": rollback,
+            "category": "Rollback Reference",
+            "status": "Pass",
+            "reference_doctype": "Sales Invoice",
+        },
         fields=[
-            "idx",
+            "line_no",
             "reference_doctype",
             "reference_name",
-            "total_amount",
-            "outstanding_amount",
-            "allocated_amount",
+            "customer",
+            "company",
+            "currency",
+            "rollback_amount",
+            "current_outstanding_amount",
+            "invoice_docstatus",
+            "outstanding_restored",
+            "rollback_payment_entry",
         ],
-        order_by="idx asc",
+        order_by="line_no asc, creation asc",
     )
 
+    result = []
+    for idx, row in enumerate(rows, start=1):
+        si = frappe.db.get_value(
+            "Sales Invoice",
+            row.reference_name,
+            ["docstatus", "customer", "company", "currency", "outstanding_amount"],
+            as_dict=True,
+        ) if frappe.db.exists("Sales Invoice", row.reference_name) else None
 
-def allocated_total(payment_entry):
-    rows = payment_entry_reference_rows(payment_entry)
-    return flt(sum(flt(row.allocated_amount or 0, 2) for row in rows), 2)
+        amount = flt(row.rollback_amount or 0, 2)
+        outstanding = flt((si.outstanding_amount if si else row.current_outstanding_amount) or 0, 2)
 
+        result.append(
+            frappe._dict(
+                {
+                    "idx": int(row.line_no or idx),
+                    "reference_doctype": row.reference_doctype,
+                    "reference_name": row.reference_name,
+                    "frozen_amount": amount,
+                    "current_outstanding_amount": outstanding,
+                    "customer": si.customer if si else row.customer,
+                    "company": si.company if si else row.company,
+                    "currency": si.currency if si else row.currency,
+                    "invoice_docstatus": int(si.docstatus or 0) if si else int(row.invoice_docstatus or 0),
+                    "outstanding_restored": int(outstanding >= amount and amount > 0),
+                    "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+                }
+            )
+        )
 
-def voucher_gl_rows(payment_entry):
-    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
-
-
-def voucher_gl_net(payment_entry):
-    if not payment_entry:
-        return 0
-    value = frappe.db.sql(
-        """
-        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
-        FROM `tabGL Entry`
-        WHERE voucher_type='Payment Entry'
-        AND voucher_no=%s
-        """,
-        payment_entry,
-    )[0][0]
-    return flt(value or 0, 2)
-
-
-def voucher_gl_non_zero_accounts(payment_entry):
-    if not payment_entry:
-        return 0
-    rows = frappe.db.sql(
-        """
-        SELECT account, ROUND(COALESCE(SUM(debit-credit), 0), 2) AS net
-        FROM `tabGL Entry`
-        WHERE voucher_type='Payment Entry'
-        AND voucher_no=%s
-        GROUP BY account
-        HAVING ROUND(COALESCE(SUM(debit-credit), 0), 2) != 0
-        """,
-        payment_entry,
-        as_dict=True,
-    )
-    return len(rows)
+    return result
 
 
-def validate_source(rollback, payment_entry, references, guard, config, policy_enabled, policy_live):
+def reference_names(rows):
+    return [row.reference_name for row in rows]
+
+
+def frozen_total(rows):
+    return flt(sum(flt(row.frozen_amount or 0, 2) for row in rows), 2)
+
+
+def unique_value(rows, fieldname):
+    values = sorted(set([getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)]))
+    return values[0] if len(values) == 1 else None
+
+
+def same_value_verified(rows, fieldname):
+    values = set([getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)])
+    return int(len(rows) == EXPECTED_INVOICE_COUNT and len(values) == 1)
+
+
+def validate_source(rollback, rows, guard, config, policy_enabled, policy_live):
     issues = []
 
     if not rollback:
-        issues.append("No completed Phase 11K rollback found.")
+        issues.append("No completed Phase 12U rollback found for freeze.")
         return issues
 
     existing = existing_completed_freeze(rollback.name)
     if existing:
-        issues.append(f"Completed Phase 11L freeze already exists for this rollback: {existing.freeze_id}")
+        issues.append(f"Completed Phase 12V rollback freeze already exists for this rollback: {existing.freeze_id} / {existing.frozen_rollback_payment_entry}")
 
-    if not payment_entry:
-        issues.append("Phase 11K rollback does not identify a rolled back Payment Entry.")
-        return issues
+    pe_state = payment_entry_state(EXPECTED_ROLLBACK_PAYMENT_ENTRY)
 
-    if not frappe.db.exists("Payment Entry", payment_entry):
-        issues.append(f"Rolled back Payment Entry does not exist: {payment_entry}")
-        return issues
+    if rollback.rollback_payment_entry != EXPECTED_ROLLBACK_PAYMENT_ENTRY:
+        issues.append(f"Rollback Payment Entry must be {EXPECTED_ROLLBACK_PAYMENT_ENTRY}.")
 
-    pe = frappe.get_doc("Payment Entry", payment_entry)
+    if pe_state.docstatus != 2:
+        issues.append(f"Rollback Payment Entry must remain cancelled. docstatus={pe_state.docstatus}")
 
-    if pe.docstatus != 2:
-        issues.append(f"Payment Entry must remain cancelled before freeze. docstatus={pe.docstatus}")
+    if pe_state.status != "Cancelled":
+        issues.append(f"Rollback Payment Entry status must remain Cancelled. status={pe_state.status}")
 
-    if pe.status != "Cancelled":
-        issues.append(f"Payment Entry status must remain Cancelled before freeze. status={pe.status}")
+    if reference_names(rows) != EXPECTED_INVOICES:
+        issues.append(f"Frozen invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
 
-    if len(references) != 3:
-        issues.append(f"Payment Entry must still have 3 Sales Invoice references. Found {len(references)}.")
+    if len(rows) != EXPECTED_INVOICE_COUNT:
+        issues.append(f"Frozen invoice count must be {EXPECTED_INVOICE_COUNT}. Found {len(rows)}.")
 
-    if allocated_total(payment_entry) != 3:
-        issues.append(f"Payment Entry allocated total must remain 3.00. Found {allocated_total(payment_entry)}.")
+    if frozen_total(rows) != EXPECTED_TOTAL_AMOUNT:
+        issues.append(f"Frozen total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {frozen_total(rows)}.")
 
-    if voucher_gl_rows(payment_entry) != 8:
-        issues.append(f"Voucher GL rows must remain 8. Found {voucher_gl_rows(payment_entry)}.")
+    if not same_value_verified(rows, "customer"):
+        issues.append("Frozen Sales Invoices must share the same customer.")
 
-    if voucher_gl_net(payment_entry) != 0:
-        issues.append(f"Voucher GL net must remain 0.00. Found {voucher_gl_net(payment_entry)}.")
+    if not same_value_verified(rows, "company"):
+        issues.append("Frozen Sales Invoices must share the same company.")
 
-    if voucher_gl_non_zero_accounts(payment_entry) != 0:
-        issues.append(f"Voucher non-zero account count must remain 0. Found {voucher_gl_non_zero_accounts(payment_entry)}.")
+    if not same_value_verified(rows, "currency"):
+        issues.append("Frozen Sales Invoices must share the same currency.")
 
-    if guard["payment_entry_count"] != 9:
-        issues.append("Payment Entry count must remain 9 before Phase 11L freeze.")
+    if not all(int(row.invoice_docstatus or 0) == 1 for row in rows):
+        issues.append("All frozen Sales Invoices must remain submitted.")
 
-    if guard["payment_entry_gl_count"] != 54:
-        issues.append("Payment Entry GL count must remain 54 before Phase 11L freeze.")
+    if not all(int(row.outstanding_restored or 0) == 1 for row in rows):
+        issues.append("All frozen Sales Invoices must remain restored.")
+
+    if payment_entry_gl_rows(EXPECTED_ROLLBACK_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_ROWS:
+        issues.append(f"Rollback Payment Entry voucher GL rows must remain {EXPECTED_VOUCHER_GL_ROWS}.")
+
+    if payment_entry_reversal_gl_rows(EXPECTED_ROLLBACK_PAYMENT_ENTRY) != EXPECTED_REVERSAL_GL_ROWS:
+        issues.append(f"Rollback Payment Entry reversal GL rows must remain {EXPECTED_REVERSAL_GL_ROWS}.")
+
+    if payment_entry_gl_net(EXPECTED_ROLLBACK_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_NET:
+        issues.append("Rollback Payment Entry GL net must remain 0.00.")
+
+    if outstanding_total(EXPECTED_INVOICES) != EXPECTED_TOTAL_AMOUNT:
+        issues.append(f"Restored invoice outstanding must remain {EXPECTED_TOTAL_AMOUNT}.")
+
+    if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT:
+        issues.append("Payment Entry count must remain 12 before freeze.")
+
+    if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT:
+        issues.append("Payment Entry GL count must remain 78 before freeze.")
 
     if guard["submitted_journal_entry_count_today"] != 0:
         issues.append("Submitted Journal Entry today must remain 0 before freeze.")
@@ -283,112 +384,80 @@ def validate_source(rollback, payment_entry, references, guard, config, policy_e
     return issues
 
 
-def add_item(items, status, severity, category, check_key, check_label, detail, reference=None, rolled_back_payment_entry=None):
-    item = {
-        "status": status,
-        "severity": severity,
-        "category": category,
-        "check_key": check_key,
-        "check_label": check_label,
-        "detail": detail,
-        "rolled_back_payment_entry": rolled_back_payment_entry,
-    }
-
-    if reference:
-        item.update({
-            "line_no": int(reference.idx or 0),
-            "reference_doctype": reference.reference_doctype,
-            "reference_name": reference.reference_name,
-            "allocated_amount": flt(reference.allocated_amount or 0, 2),
-            "source_doctype": reference.reference_doctype,
-            "source_name": reference.reference_name,
-        })
-
-    items.append(item)
-
-
-def build_items(rollback, references, issues, ack_ok, rolled_back_payment_entry=None):
+def build_items(rows, issues, ack_ok, completed=0):
     items = []
 
-    if rollback:
-        add_item(
-            items,
-            "Pass",
-            "Low",
-            "Evidence",
-            "phase11k_rollback_exists",
-            "Phase 11K rollback exists",
-            f"Rollback found: {rollback.rollback_id}.",
-            rolled_back_payment_entry=rolled_back_payment_entry,
-        )
-    else:
-        add_item(items, "Blocker", "Critical", "Evidence", "phase11k_rollback_exists", "Phase 11K rollback exists", "No completed Phase 11K rollback found.")
-
     if not issues:
-        add_item(
-            items,
-            "Pass",
-            "Critical",
-            "Freeze Source",
-            "freeze_source_valid",
-            "Freeze source valid",
-            "Rollback evidence is stable and ready to freeze.",
-            rolled_back_payment_entry=rolled_back_payment_entry,
-        )
+        items.append({
+            "status": "Pass",
+            "severity": "Critical",
+            "category": "Freeze Source",
+            "check_key": "freeze_source_valid",
+            "check_label": "Rollback freeze source valid",
+            "detail": f"Phase 12U rollback evidence for {EXPECTED_ROLLBACK_PAYMENT_ENTRY} is stable and can be frozen.",
+            "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+        })
     else:
         for issue in issues:
-            add_item(
-                items,
-                "Blocker",
-                "Critical",
-                "Freeze Source",
-                "freeze_source_valid",
-                "Freeze source valid",
-                issue,
-                rolled_back_payment_entry=rolled_back_payment_entry,
-            )
+            items.append({
+                "status": "Blocker",
+                "severity": "Critical",
+                "category": "Freeze Source",
+                "check_key": "freeze_source_valid",
+                "check_label": "Rollback freeze source valid",
+                "detail": issue,
+                "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+            })
 
-    for ref in references:
-        add_item(
-            items,
-            "Pass",
-            "High",
-            "Frozen Reference",
-            "frozen_sales_invoice_reference",
-            f"Frozen Sales Invoice {ref.idx}",
-            f"{ref.reference_name} rollback allocation evidence frozen at {flt(ref.allocated_amount or 0, 2)}.",
-            reference=ref,
-            rolled_back_payment_entry=rolled_back_payment_entry,
-        )
+    for row in rows:
+        items.append({
+            "status": "Pass" if int(row.outstanding_restored or 0) == 1 else "Blocker",
+            "severity": "High",
+            "category": "Frozen Reference",
+            "check_key": "frozen_sales_invoice_reference",
+            "check_label": f"Frozen Sales Invoice {row.idx}",
+            "detail": f"{row.reference_name} frozen amount={row.frozen_amount}, current outstanding={row.current_outstanding_amount}, restored={row.outstanding_restored}.",
+            "line_no": row.idx,
+            "reference_doctype": row.reference_doctype,
+            "reference_name": row.reference_name,
+            "customer": row.customer,
+            "company": row.company,
+            "currency": row.currency,
+            "frozen_amount": row.frozen_amount,
+            "current_outstanding_amount": row.current_outstanding_amount,
+            "invoice_docstatus": row.invoice_docstatus,
+            "outstanding_restored": row.outstanding_restored,
+            "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+        })
 
     checks = [
-        ("payment_entry_cancelled_still", "Payment Entry still cancelled", rolled_back_payment_entry),
-        ("voucher_gl_rows", "Voucher GL rows remain 8", 8),
-        ("voucher_gl_net_zero", "Voucher GL net remains 0.00", "0.00"),
-        ("invoice_outstanding_restored", "Invoice outstanding restoration remains frozen", "3.00"),
-        ("no_pe_movement", "No Payment Entry movement in freeze", "0 / 0"),
-        ("no_gl_movement", "No GL movement in freeze", 0),
-        ("no_je_pi", "No JE / PI side effects", "0 / 0"),
-        ("policy_state", "Policy state preserved at 1 / 0", "1 / 0"),
-        ("ready_for_closeout", "Ready for final closeout", 1),
+        ("rollback_payment_entry_cancelled", "Rollback Payment Entry remains cancelled", completed),
+        ("voucher_gl_rows", "Voucher GL rows remain 8", EXPECTED_VOUCHER_GL_ROWS),
+        ("reversal_gl_rows", "Reversal GL rows remain 4", EXPECTED_REVERSAL_GL_ROWS),
+        ("restored_invoice_amount", "Restored invoice amount remains 3.00", EXPECTED_TOTAL_AMOUNT),
+        ("closeout_ready", "Ready for next governed closeout", completed),
     ]
 
     for key, label, value in checks:
-        add_item(
-            items,
-            "Pass",
-            "High",
-            "Freeze Evidence",
-            key,
-            label,
-            f"value={value}",
-            rolled_back_payment_entry=rolled_back_payment_entry,
-        )
+        items.append({
+            "status": "Pass",
+            "severity": "High",
+            "category": "Freeze Evidence",
+            "check_key": key,
+            "check_label": label,
+            "detail": f"value={value}",
+            "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+        })
 
-    if ack_ok:
-        add_item(items, "Pass", "Low", "Acknowledgement", "ack_ok", "Acknowledgement supplied", "Exact acknowledgement supplied.", rolled_back_payment_entry=rolled_back_payment_entry)
-    else:
-        add_item(items, "Warning", "Medium", "Acknowledgement", "ack_ok", "Acknowledgement supplied", f"Required acknowledgement not supplied: {FREEZE_ACK}")
+    items.append({
+        "status": "Pass" if ack_ok else "Warning",
+        "severity": "Low" if ack_ok else "Medium",
+        "category": "Acknowledgement",
+        "check_key": "ack_ok",
+        "check_label": "Acknowledgement supplied",
+        "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {FREEZE_ACK}",
+        "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+    })
 
     return items
 
@@ -403,22 +472,13 @@ def summarise_items(items):
     }
 
 
-def calculate_score(blockers, warnings):
-    score = 100
-    score -= int(blockers or 0) * 25
-    score -= int(warnings or 0) * 5
-    return max(0, round(score, 2))
-
-
 def create_items(doc, items):
     for item in items:
         row = frappe.new_doc(FREEZE_ITEM_DOCTYPE)
         row.freeze = doc.name
-
         for fieldname, value in item.items():
             if row.meta.has_field(fieldname):
                 setattr(row, fieldname, value)
-
         row.checked_on = doc.checked_on
         row.insert(ignore_permissions=True)
 
@@ -428,8 +488,7 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
     assert_action("run_next_governed_limited_operation_rollback_freeze")
 
     rollback = latest_rollback()
-    payment_entry = rollback.rolled_back_payment_entry if rollback else None
-    references = payment_entry_reference_rows(payment_entry) if payment_entry else []
+    rows = rollback_rows(rollback.name) if rollback else []
 
     guard_before = guardrails()
     ack_ok = acknowledgement == FREEZE_ACK
@@ -443,11 +502,18 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
     policy_enabled_before = get_flag(POLICY_DOCTYPE, rollback.target_policy, "production_batch_enabled") if rollback else 0
     policy_live_before = get_flag(POLICY_DOCTYPE, rollback.target_policy, "live_posting_allowed") if rollback else 0
 
-    issues = validate_source(rollback, payment_entry, references, guard_before, config, policy_enabled_before, policy_live_before)
+    source_issues = validate_source(rollback, rows, guard_before, config, policy_enabled_before, policy_live_before)
 
     guard_after = guardrails()
+
     policy_enabled_after = get_flag(POLICY_DOCTYPE, rollback.target_policy, "production_batch_enabled") if rollback else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, rollback.target_policy, "live_posting_allowed") if rollback else 0
+
+    pe_state = payment_entry_state(EXPECTED_ROLLBACK_PAYMENT_ENTRY)
+    voucher_rows = payment_entry_gl_rows(EXPECTED_ROLLBACK_PAYMENT_ENTRY)
+    voucher_net = payment_entry_gl_net(EXPECTED_ROLLBACK_PAYMENT_ENTRY)
+    reversal_rows = payment_entry_reversal_gl_rows(EXPECTED_ROLLBACK_PAYMENT_ENTRY)
+    restored_amount = outstanding_total(EXPECTED_INVOICES)
 
     actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
     actual_pe_cancelled = 0
@@ -460,74 +526,34 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
         or guard_before["live_posting_allowed_policy_count"] != guard_after["live_posting_allowed_policy_count"]
     )
 
-    pe_docstatus = 0
-    pe_status = None
-    frozen_total = 0
-    voucher_rows = 0
-    voucher_net = 0
-    non_zero_accounts = 0
-
-    if payment_entry and frappe.db.exists("Payment Entry", payment_entry):
-        pe = frappe.get_doc("Payment Entry", payment_entry)
-        pe_docstatus = int(pe.docstatus or 0)
-        pe_status = pe.status
-        frozen_total = flt(pe.paid_amount or pe.received_amount or allocated_total(payment_entry), 2)
-        voucher_rows = voucher_gl_rows(payment_entry)
-        voucher_net = voucher_gl_net(payment_entry)
-        non_zero_accounts = voucher_gl_non_zero_accounts(payment_entry)
-
-    post_issues = list(issues)
+    post_issues = list(source_issues)
 
     if actual_pe_created != 0:
-        post_issues.append(f"Freeze must not create Payment Entries. Created {actual_pe_created}.")
-
+        post_issues.append(f"Freeze must create 0 Payment Entries. Created {actual_pe_created}.")
     if actual_pe_cancelled != 0:
-        post_issues.append(f"Freeze must not cancel Payment Entries. Cancelled {actual_pe_cancelled}.")
-
+        post_issues.append(f"Freeze must cancel 0 Payment Entries. Cancelled {actual_pe_cancelled}.")
     if actual_gl_created != 0:
-        post_issues.append(f"Freeze must not create GL rows. Created {actual_gl_created}.")
-
-    if guard_after["payment_entry_count"] != 9:
-        post_issues.append("Payment Entry count must remain 9 after freeze.")
-
-    if guard_after["payment_entry_gl_count"] != 54:
-        post_issues.append("Payment Entry GL count must remain 54 after freeze.")
-
-    if guard_after["submitted_journal_entry_count_today"] != 0:
-        post_issues.append("Submitted Journal Entry count today must remain 0 after freeze.")
-
-    if guard_after["purchase_invoice_count_today"] != 0:
-        post_issues.append("Purchase Invoice count today must remain 0 after freeze.")
-
+        post_issues.append(f"Freeze must create 0 GL rows. Created {actual_gl_created}.")
     if policy_mutation_count != 0:
         post_issues.append("Policy state changed during freeze. This is not allowed.")
 
-    items = build_items(
-        rollback,
-        references,
-        post_issues,
-        ack_ok,
-        rolled_back_payment_entry=payment_entry,
-    )
-    item_summary = summarise_items(items)
-    score = calculate_score(item_summary["blocker_count"], item_summary["warning_count"])
-
     completed = int(
-        ack_ok
+        not int(dry_run or 0)
+        and ack_ok
         and rollback
-        and payment_entry
-        and item_summary["blocker_count"] == 0
-        and pe_docstatus == 2
-        and pe_status == "Cancelled"
-        and len(references) == 3
-        and frozen_total == 3
-        and voucher_rows == 8
-        and voucher_net == 0
-        and non_zero_accounts == 0
-        and guard_before["payment_entry_count"] == 9
-        and guard_after["payment_entry_count"] == 9
-        and guard_before["payment_entry_gl_count"] == 54
-        and guard_after["payment_entry_gl_count"] == 54
+        and not post_issues
+        and pe_state.docstatus == 2
+        and pe_state.status == "Cancelled"
+        and reference_names(rows) == EXPECTED_INVOICES
+        and frozen_total(rows) == EXPECTED_TOTAL_AMOUNT
+        and voucher_rows == EXPECTED_VOUCHER_GL_ROWS
+        and voucher_net == EXPECTED_VOUCHER_GL_NET
+        and reversal_rows == EXPECTED_REVERSAL_GL_ROWS
+        and restored_amount == EXPECTED_TOTAL_AMOUNT
+        and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
+        and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
+        and guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT
+        and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT
         and actual_pe_created == 0
         and actual_pe_cancelled == 0
         and actual_gl_created == 0
@@ -536,50 +562,39 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
         and policy_mutation_count == 0
     )
 
+    items = build_items(rows, post_issues, ack_ok, completed=completed)
+    item_summary = summarise_items(items)
+
     result = {
         "dry_run": bool(int(dry_run or 0)),
         "status": "Frozen" if completed else "Needs Review",
         "freeze_status": "Next Governed Limited Operation Rollback Evidence Frozen" if completed else "Needs Review",
         "freeze_completed": completed,
-        "phase11k_rollback_verified": 1 if rollback else 0,
-        "rolled_back_payment_entry_verified": 1 if payment_entry else 0,
-        "payment_entry_cancelled_still_verified": int(pe_docstatus == 2 and pe_status == "Cancelled"),
-        "voucher_gl_rows_verified": int(voucher_rows == 8),
-        "voucher_gl_net_zero_verified": int(voucher_net == 0 and non_zero_accounts == 0),
-        "invoice_outstanding_restored_still_verified": int(frozen_total == 3),
-        "ready_for_next_governed_limited_operation_closeout": completed,
-        "no_new_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 0 and actual_gl_created == 0),
+
+        "phase12u_rollback_verified": 1 if rollback else 0,
+        "rollback_completed_verified": 1 if rollback else 0,
+        "rollback_payment_entry_verified": int(rollback and rollback.rollback_payment_entry == EXPECTED_ROLLBACK_PAYMENT_ENTRY),
+        "rollback_payment_entry_cancelled_still_verified": int(pe_state.docstatus == 2 and pe_state.status == "Cancelled"),
+        "rollback_gl_rows_verified": int(voucher_rows == EXPECTED_VOUCHER_GL_ROWS),
+        "rollback_reversal_gl_rows_verified": int(reversal_rows == EXPECTED_REVERSAL_GL_ROWS),
+        "rollback_gl_net_zero_verified": int(voucher_net == EXPECTED_VOUCHER_GL_NET),
+        "invoice_outstanding_restored_verified": int(restored_amount == EXPECTED_TOTAL_AMOUNT),
+        "payment_entry_count_stable_verified": int(guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT),
+        "payment_entry_gl_count_stable_verified": int(guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT),
         "policy_state_preserved_verified": int(policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0),
-        "policy_mutation_performed": 0,
-        "actual_policy_mutation_count": policy_mutation_count,
-        "rolled_back_payment_entry": payment_entry,
-        "payment_entry_docstatus_frozen": pe_docstatus,
-        "payment_entry_status_frozen": pe_status,
-        "frozen_reference_count": len(references),
-        "frozen_total_amount": frozen_total,
+        "no_new_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 0 and actual_gl_created == 0),
+
+        "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
+        "frozen_rollback_payment_entry_docstatus": pe_state.docstatus,
+        "frozen_rollback_payment_entry_status": pe_state.status,
+        "frozen_invoice_names": ", ".join(EXPECTED_INVOICES),
+        "frozen_invoice_count": EXPECTED_INVOICE_COUNT,
+        "frozen_total_amount": EXPECTED_TOTAL_AMOUNT,
         "frozen_voucher_gl_rows": voucher_rows,
         "frozen_voucher_gl_net": voucher_net,
-        "frozen_voucher_gl_non_zero_account_count": non_zero_accounts,
-        "frozen_restored_invoice_amount": frozen_total if frozen_total == 3 else 0,
-        "rollback": rollback.name if rollback else None,
-        "smoke": rollback.smoke if rollback else None,
-        "execution_gate": rollback.execution_gate if rollback else None,
-        "preview": rollback.preview if rollback else None,
-        "validation": rollback.validation if rollback else None,
-        "candidate": rollback.candidate if rollback else None,
-        "design": rollback.design if rollback else None,
-        "planning": rollback.planning if rollback else None,
-        "target_policy_doctype": POLICY_DOCTYPE,
-        "target_policy": rollback.target_policy if rollback else None,
-        "target_policy_name": rollback.target_policy_name if rollback else None,
-        "target_policy_enabled_before": policy_enabled_before,
-        "target_policy_enabled_after": policy_enabled_after,
-        "target_policy_live_before": policy_live_before,
-        "target_policy_live_after": policy_live_after,
-        "production_batch_enabled_policy_count_before": guard_before["production_batch_enabled_policy_count"],
-        "production_batch_enabled_policy_count_after": guard_after["production_batch_enabled_policy_count"],
-        "live_posting_allowed_policy_count_before": guard_before["live_posting_allowed_policy_count"],
-        "live_posting_allowed_policy_count_after": guard_after["live_posting_allowed_policy_count"],
+        "frozen_reversal_gl_rows": reversal_rows,
+        "frozen_restored_invoice_amount": restored_amount,
+
         "payment_entry_count_before": guard_before["payment_entry_count"],
         "payment_entry_count_after": guard_after["payment_entry_count"],
         "payment_entry_gl_count_before": guard_before["payment_entry_gl_count"],
@@ -587,25 +602,43 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
         "actual_payment_entry_created_count": actual_pe_created,
         "actual_payment_entry_cancelled_count": actual_pe_cancelled,
         "actual_gl_created_count": actual_gl_created,
+
         "submitted_journal_entry_count_today": guard_after["submitted_journal_entry_count_today"],
         "purchase_invoice_count_today": guard_after["purchase_invoice_count_today"],
-        "freeze_score": score,
+
+        "target_policy_doctype": POLICY_DOCTYPE,
+        "target_policy": rollback.target_policy if rollback else None,
+        "target_policy_name": rollback.target_policy_name if rollback else None,
+        "target_policy_enabled_before": policy_enabled_before,
+        "target_policy_enabled_after": policy_enabled_after,
+        "target_policy_live_before": policy_live_before,
+        "target_policy_live_after": policy_live_after,
+        "actual_policy_mutation_count": policy_mutation_count,
+
+        FREEZE_READY_FIELD: completed,
+
+        "rollback": rollback.name if rollback else None,
+        "smoke": rollback.smoke if rollback else None,
+        "execution_gate": rollback.execution_gate if rollback else None,
+        "preview": rollback.preview if rollback else None,
+        "candidate_validation": rollback.candidate_validation if rollback else None,
+        "candidate_selection": rollback.candidate_selection if rollback else None,
+        "design": rollback.design if rollback else None,
+        "planning": rollback.planning if rollback else None,
+        "monitor": rollback.monitor if rollback else None,
+        "baseline": rollback.baseline if rollback else None,
+        "closeout": rollback.closeout if rollback else None,
+        "previous_freeze": rollback.freeze if rollback else None,
+
         **item_summary,
         "items": items,
-        "references": [dict(row) for row in references],
         "issues": post_issues,
-        "guardrails_before": guard_before,
-        "guardrails_after": guard_after,
         "required_acknowledgement": FREEZE_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 11L freezes rollback evidence only. It creates no accounting movement and prepares for closeout.",
+        "note": "Phase 12V freezes the Phase 12U rollback evidence only. No accounting movement occurs.",
     }
 
     if int(dry_run or 0):
-        result["status"] = "Needs Review"
-        result["freeze_status"] = "Needs Review"
-        result["freeze_completed"] = 0
-        result["ready_for_next_governed_limited_operation_closeout"] = 0
         return result
 
     doc = frappe.new_doc(FREEZE_DOCTYPE)
@@ -625,22 +658,7 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
     doc.acknowledgement = acknowledgement
     doc.acknowledgement_ok = int(ack_ok)
     doc.summary_json = safe_json(result)
-    doc.freeze_json = safe_json(
-        {
-            "rollback": rollback,
-            "rolled_back_payment_entry": payment_entry,
-            "references": [dict(row) for row in references],
-            "guardrails_before": guard_before,
-            "guardrails_after": guard_after,
-            "voucher": {
-                "rows": voucher_rows,
-                "net": voucher_net,
-                "non_zero_accounts": non_zero_accounts,
-            },
-            "issues": post_issues,
-            "config": config,
-        }
-    )
+    doc.freeze_json = safe_json(result)
     doc.notes = notes
     doc.insert(ignore_permissions=True)
 
@@ -652,6 +670,7 @@ def run_next_governed_limited_operation_rollback_freeze(dry_run=1, acknowledgeme
         "created": True,
         "freeze": doc.name,
         "freeze_id": doc.freeze_id,
+        "frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY,
         "guardrails_after": guardrails(),
     }
 
@@ -661,7 +680,7 @@ def cancel_next_governed_limited_operation_rollback_freeze_audit(freeze, reason=
     assert_action("cancel_next_governed_limited_operation_rollback_freeze_audit")
 
     if not frappe.db.exists(FREEZE_DOCTYPE, freeze):
-        frappe.throw(_("Governed next operation rollback freeze audit not found: {0}").format(freeze))
+        frappe.throw(_("Next governed limited-operation rollback freeze audit not found: {0}").format(freeze))
 
     doc = frappe.get_doc(FREEZE_DOCTYPE, freeze)
 
@@ -669,7 +688,7 @@ def cancel_next_governed_limited_operation_rollback_freeze_audit(freeze, reason=
         return {"freeze": freeze, "status": "Cancelled", "note": "Already cancelled."}
 
     if int(doc.freeze_completed or 0):
-        frappe.throw(_("Cannot cancel a completed Phase 11L freeze record."))
+        frappe.throw(_("Cannot cancel a completed Phase 12V rollback freeze record."))
 
     frappe.db.set_value(
         FREEZE_DOCTYPE,
@@ -679,7 +698,7 @@ def cancel_next_governed_limited_operation_rollback_freeze_audit(freeze, reason=
             "freeze_status": "Cancelled",
             "cancelled_on": now_datetime(),
             "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 11L no-ack freeze audit cancelled.",
+            "summary_json": reason or "Phase 12V no-ack rollback freeze audit cancelled.",
         },
         update_modified=False,
     )
@@ -687,8 +706,8 @@ def cancel_next_governed_limited_operation_rollback_freeze_audit(freeze, reason=
     frappe.db.sql(
         f"""
         UPDATE `tab{FREEZE_ITEM_DOCTYPE}`
-        SET status = 'Cancelled'
-        WHERE freeze = %(freeze)s
+        SET status='Cancelled'
+        WHERE freeze=%(freeze)s
         """,
         {"freeze": freeze},
     )
@@ -698,127 +717,132 @@ def cancel_next_governed_limited_operation_rollback_freeze_audit(freeze, reason=
     return {
         "freeze": freeze,
         "status": "Cancelled",
-        "note": "No-ack freeze audit cancelled only. No accounting or policy movement occurred.",
+        "note": "No-ack rollback freeze audit cancelled only. No accounting movement occurred.",
     }
 
 
 @frappe.whitelist()
 def quick_next_governed_limited_operation_rollback_freeze_summary(limit=20):
-    records = frappe.get_all(
-        FREEZE_DOCTYPE,
-        fields=[
-            "name",
-            "freeze_id",
-            "status",
-            "freeze_status",
-            "freeze_completed",
-            "rolled_back_payment_entry",
-            "payment_entry_docstatus_frozen",
-            "payment_entry_status_frozen",
-            "frozen_reference_count",
-            "frozen_total_amount",
-            "frozen_voucher_gl_rows",
-            "frozen_voucher_gl_net",
-            "frozen_restored_invoice_amount",
-            "rollback",
-            "payment_entry_count_before",
-            "payment_entry_count_after",
-            "payment_entry_gl_count_before",
-            "payment_entry_gl_count_after",
-            "actual_payment_entry_created_count",
-            "actual_payment_entry_cancelled_count",
-            "actual_gl_created_count",
-            "submitted_journal_entry_count_today",
-            "purchase_invoice_count_today",
-            "freeze_score",
-            "checked_on",
-            "checked_by",
-        ],
-        order_by="creation desc",
-        limit=int(limit or 20),
-    )
-
-    items = frappe.get_all(
-        FREEZE_ITEM_DOCTYPE,
-        fields=[
-            "name",
-            "freeze",
-            "status",
-            "severity",
-            "category",
-            "check_key",
-            "check_label",
-            "line_no",
-            "reference_doctype",
-            "reference_name",
-            "allocated_amount",
-            "rolled_back_payment_entry",
-            "detail",
-        ],
-        order_by="creation desc",
-        limit=int(limit or 20),
-    )
-
     return {
-        "freeze_records": records,
-        "items": items,
+        "freeze_records": frappe.get_all(
+            FREEZE_DOCTYPE,
+            filters={"frozen_rollback_payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY},
+            fields=[
+                "name",
+                "freeze_id",
+                "status",
+                "freeze_status",
+                "freeze_completed",
+                "frozen_rollback_payment_entry",
+                "frozen_rollback_payment_entry_docstatus",
+                "frozen_rollback_payment_entry_status",
+                "frozen_invoice_names",
+                "frozen_invoice_count",
+                "frozen_total_amount",
+                "frozen_voucher_gl_rows",
+                "frozen_voucher_gl_net",
+                "frozen_reversal_gl_rows",
+                "frozen_restored_invoice_amount",
+                "payment_entry_count_before",
+                "payment_entry_count_after",
+                "payment_entry_gl_count_before",
+                "payment_entry_gl_count_after",
+                "actual_payment_entry_created_count",
+                "actual_payment_entry_cancelled_count",
+                "actual_gl_created_count",
+                "submitted_journal_entry_count_today",
+                "purchase_invoice_count_today",
+                FREEZE_READY_FIELD,
+                "checked_on",
+                "checked_by",
+            ],
+            order_by="creation desc",
+            limit=int(limit or 20),
+        ),
+        "items": frappe.get_all(
+            FREEZE_ITEM_DOCTYPE,
+            fields=[
+                "name",
+                "freeze",
+                "status",
+                "severity",
+                "category",
+                "check_key",
+                "check_label",
+                "line_no",
+                "reference_doctype",
+                "reference_name",
+                "customer",
+                "company",
+                "currency",
+                "frozen_amount",
+                "current_outstanding_amount",
+                "invoice_docstatus",
+                "outstanding_restored",
+                "frozen_rollback_payment_entry",
+                "detail",
+            ],
+            order_by="creation desc",
+            limit=int(limit or 20),
+        ),
         "required_acknowledgement": FREEZE_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 11L governed next operation rollback freeze summary.",
+        "note": "Phase 12V next governed limited-operation rollback freeze summary.",
     }
 
 
 def execute_freeze_report(filters=None):
-    filters = frappe._dict(filters or {})
-    conditions = []
-    params = {"currency": currency()}
-
-    if filters.get("status"):
-        conditions.append("f.status = %(status)s")
-        params["status"] = filters.get("status")
-
-    columns = freeze_columns()
+    columns = [
+        {"fieldname": "freeze", "label": _("Freeze"), "fieldtype": "Link", "options": FREEZE_DOCTYPE, "width": 220},
+        {"fieldname": "freeze_id", "label": _("Freeze ID"), "fieldtype": "Data", "width": 500},
+        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 120},
+        {"fieldname": "freeze_status", "label": _("Freeze Status"), "fieldtype": "Data", "width": 380},
+        {"fieldname": "freeze_completed", "label": _("Frozen"), "fieldtype": "Check", "width": 80},
+        {"fieldname": "frozen_rollback_payment_entry", "label": _("Frozen PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "frozen_rollback_payment_entry_docstatus", "label": _("PE Docstatus"), "fieldtype": "Int", "width": 110},
+        {"fieldname": "frozen_rollback_payment_entry_status", "label": _("PE Status"), "fieldtype": "Data", "width": 120},
+        {"fieldname": "frozen_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
+        {"fieldname": "frozen_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": "frozen_voucher_gl_rows", "label": _("Voucher GL"), "fieldtype": "Int", "width": 95},
+        {"fieldname": "frozen_reversal_gl_rows", "label": _("Reversal GL"), "fieldtype": "Int", "width": 105},
+        {"fieldname": "frozen_restored_invoice_amount", "label": _("Restored"), "fieldtype": "Currency", "width": 105},
+        {"fieldname": FREEZE_READY_FIELD, "label": _("Closeout Ready"), "fieldtype": "Check", "width": 120},
+        {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 115},
+        {"fieldname": "payment_entry_gl_count_after", "label": _("PE GL After"), "fieldtype": "Int", "width": 115},
+        {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 135},
+        {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
+    ]
 
     data = frappe.db.sql(
         f"""
         SELECT
-            f.name AS freeze,
-            f.freeze_id,
-            f.status,
-            f.freeze_status,
-            f.freeze_completed,
-            f.phase11k_rollback_verified,
-            f.payment_entry_cancelled_still_verified,
-            f.voucher_gl_rows_verified,
-            f.voucher_gl_net_zero_verified,
-            f.invoice_outstanding_restored_still_verified,
-            f.ready_for_next_governed_limited_operation_closeout,
-            f.rolled_back_payment_entry,
-            f.payment_entry_docstatus_frozen,
-            f.payment_entry_status_frozen,
-            f.frozen_reference_count,
-            f.frozen_total_amount,
-            f.frozen_voucher_gl_rows,
-            f.frozen_voucher_gl_net,
-            f.frozen_restored_invoice_amount,
-            f.rollback,
-            f.payment_entry_count_before,
-            f.payment_entry_count_after,
-            f.payment_entry_gl_count_before,
-            f.payment_entry_gl_count_after,
-            f.actual_payment_entry_created_count,
-            f.actual_payment_entry_cancelled_count,
-            f.actual_gl_created_count,
-            f.submitted_journal_entry_count_today,
-            f.purchase_invoice_count_today,
-            f.freeze_score,
-            f.checked_on,
-            %(currency)s AS currency
-        FROM `tab{FREEZE_DOCTYPE}` f
-        {build_where(conditions)}
-        ORDER BY f.creation DESC
+            name AS freeze,
+            freeze_id,
+            status,
+            freeze_status,
+            freeze_completed,
+            frozen_rollback_payment_entry,
+            frozen_rollback_payment_entry_docstatus,
+            frozen_rollback_payment_entry_status,
+            frozen_invoice_count,
+            frozen_total_amount,
+            frozen_voucher_gl_rows,
+            frozen_reversal_gl_rows,
+            frozen_restored_invoice_amount,
+            `{FREEZE_READY_FIELD}` AS `{FREEZE_READY_FIELD}`,
+            payment_entry_count_before,
+            payment_entry_count_after,
+            payment_entry_gl_count_before,
+            payment_entry_gl_count_after,
+            actual_gl_created_count,
+            checked_on
+        FROM `tab{FREEZE_DOCTYPE}`
+        WHERE frozen_rollback_payment_entry=%(payment_entry)s
+        ORDER BY creation DESC
         """,
-        params,
+        {"payment_entry": EXPECTED_ROLLBACK_PAYMENT_ENTRY},
         as_dict=True,
     )
 
@@ -827,7 +851,7 @@ def execute_freeze_report(filters=None):
             "labels": [row.freeze_id for row in data[:20]],
             "datasets": [
                 {"name": "Frozen", "values": [int(row.freeze_completed or 0) for row in data[:20]]},
-                {"name": "Closeout Ready", "values": [int(row.ready_for_next_governed_limited_operation_closeout or 0) for row in data[:20]]},
+                {"name": "Closeout Ready", "values": [int(row.get(FREEZE_READY_FIELD) or 0) for row in data[:20]]},
             ],
         },
         "type": "bar",
@@ -836,130 +860,73 @@ def execute_freeze_report(filters=None):
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Freeze Records"), "datatype": "Int"},
         {"value": sum(int(row.freeze_completed or 0) for row in data), "indicator": "Green", "label": _("Frozen"), "datatype": "Int"},
-        {"value": sum(int(row.actual_payment_entry_created_count or 0) for row in data), "indicator": "Red", "label": _("Actual PE Created"), "datatype": "Int"},
         {"value": sum(int(row.actual_gl_created_count or 0) for row in data), "indicator": "Red", "label": _("Actual GL Created"), "datatype": "Int"},
     ]
 
     return columns, data, None, chart, summary
 
 
-def freeze_columns():
-    return [
-        {"fieldname": "freeze", "label": _("Freeze"), "fieldtype": "Link", "options": FREEZE_DOCTYPE, "width": 220},
-        {"fieldname": "freeze_id", "label": _("Freeze ID"), "fieldtype": "Data", "width": 390},
-        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 120},
-        {"fieldname": "freeze_status", "label": _("Freeze Status"), "fieldtype": "Data", "width": 360},
-        {"fieldname": "freeze_completed", "label": _("Frozen"), "fieldtype": "Check", "width": 80},
-        {"fieldname": "phase11k_rollback_verified", "label": _("11K Verified"), "fieldtype": "Check", "width": 100},
-        {"fieldname": "payment_entry_cancelled_still_verified", "label": _("PE Cancelled"), "fieldtype": "Check", "width": 110},
-        {"fieldname": "voucher_gl_rows_verified", "label": _("GL Rows OK"), "fieldtype": "Check", "width": 95},
-        {"fieldname": "voucher_gl_net_zero_verified", "label": _("GL Net Zero"), "fieldtype": "Check", "width": 105},
-        {"fieldname": "invoice_outstanding_restored_still_verified", "label": _("Restored"), "fieldtype": "Check", "width": 90},
-        {"fieldname": "ready_for_next_governed_limited_operation_closeout", "label": _("Closeout Ready"), "fieldtype": "Check", "width": 120},
-        {"fieldname": "rolled_back_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "payment_entry_docstatus_frozen", "label": _("PE Docstatus"), "fieldtype": "Int", "width": 100},
-        {"fieldname": "payment_entry_status_frozen", "label": _("PE Status"), "fieldtype": "Data", "width": 110},
-        {"fieldname": "frozen_reference_count", "label": _("Refs"), "fieldtype": "Int", "width": 70},
-        {"fieldname": "frozen_total_amount", "label": _("Amount"), "fieldtype": "Currency", "options": "currency", "width": 100},
-        {"fieldname": "frozen_voucher_gl_rows", "label": _("Voucher GL Rows"), "fieldtype": "Int", "width": 120},
-        {"fieldname": "frozen_voucher_gl_net", "label": _("Voucher Net"), "fieldtype": "Currency", "options": "currency", "width": 100},
-        {"fieldname": "frozen_restored_invoice_amount", "label": _("Restored Amount"), "fieldtype": "Currency", "options": "currency", "width": 120},
-        {"fieldname": "rollback", "label": _("Rollback"), "fieldtype": "Link", "options": ROLLBACK_DOCTYPE, "width": 220},
-        {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 85},
-        {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 85},
-        {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 110},
-        {"fieldname": "payment_entry_gl_count_after", "label": _("PE GL After"), "fieldtype": "Int", "width": 110},
-        {"fieldname": "actual_payment_entry_created_count", "label": _("Actual PE Created"), "fieldtype": "Int", "width": 125},
-        {"fieldname": "actual_payment_entry_cancelled_count", "label": _("Actual PE Cancelled"), "fieldtype": "Int", "width": 135},
-        {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 125},
-        {"fieldname": "submitted_journal_entry_count_today", "label": _("JE Today"), "fieldtype": "Int", "width": 90},
-        {"fieldname": "purchase_invoice_count_today", "label": _("PI Today"), "fieldtype": "Int", "width": 90},
-        {"fieldname": "freeze_score", "label": _("Score"), "fieldtype": "Percent", "width": 90},
-        {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
-        {"fieldname": "currency", "label": _("Currency"), "fieldtype": "Link", "options": "Currency", "hidden": 1},
-    ]
-
-
 def execute_item_report(filters=None):
-    filters = frappe._dict(filters or {})
-    conditions = []
-    params = {}
-
-    if filters.get("freeze"):
-        conditions.append("i.freeze = %(freeze)s")
-        params["freeze"] = filters.get("freeze")
-
-    if filters.get("status"):
-        conditions.append("i.status = %(status)s")
-        params["status"] = filters.get("status")
-
     columns = [
         {"fieldname": "item", "label": _("Item"), "fieldtype": "Link", "options": FREEZE_ITEM_DOCTYPE, "width": 220},
         {"fieldname": "freeze", "label": _("Freeze"), "fieldtype": "Link", "options": FREEZE_DOCTYPE, "width": 220},
         {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 90},
-        {"fieldname": "severity", "label": _("Severity"), "fieldtype": "Data", "width": 100},
         {"fieldname": "category", "label": _("Category"), "fieldtype": "Data", "width": 190},
         {"fieldname": "line_no", "label": _("Line"), "fieldtype": "Int", "width": 60},
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
-        {"fieldname": "allocated_amount", "label": _("Allocated"), "fieldtype": "Currency", "width": 100},
-        {"fieldname": "rolled_back_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "check_key", "label": _("Check Key"), "fieldtype": "Data", "width": 230},
-        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 330},
+        {"fieldname": "frozen_amount", "label": _("Frozen Amount"), "fieldtype": "Currency", "width": 130},
+        {"fieldname": "current_outstanding_amount", "label": _("Current Outstanding"), "fieldtype": "Currency", "width": 145},
+        {"fieldname": "invoice_docstatus", "label": _("Invoice Docstatus"), "fieldtype": "Int", "width": 120},
+        {"fieldname": "outstanding_restored", "label": _("Outstanding Restored"), "fieldtype": "Check", "width": 145},
+        {"fieldname": "frozen_rollback_payment_entry", "label": _("Frozen PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
-        {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
     ]
 
     data = frappe.db.sql(
         f"""
         SELECT
-            i.name AS item,
-            i.freeze,
-            i.status,
-            i.severity,
-            i.category,
-            i.line_no,
-            i.reference_doctype,
-            i.reference_name,
-            i.allocated_amount,
-            i.rolled_back_payment_entry,
-            i.check_key,
-            i.check_label,
-            i.detail,
-            i.checked_on
-        FROM `tab{FREEZE_ITEM_DOCTYPE}` i
-        {build_where(conditions)}
-        ORDER BY
-            CASE i.status
-                WHEN 'Blocker' THEN 1
-                WHEN 'Warning' THEN 2
-                WHEN 'Pass' THEN 3
-                WHEN 'Info' THEN 4
-                ELSE 5
-            END,
-            i.line_no ASC,
-            i.creation DESC
+            name AS item,
+            freeze,
+            status,
+            category,
+            line_no,
+            reference_doctype,
+            reference_name,
+            frozen_amount,
+            current_outstanding_amount,
+            invoice_docstatus,
+            outstanding_restored,
+            frozen_rollback_payment_entry,
+            check_label,
+            detail
+        FROM `tab{FREEZE_ITEM_DOCTYPE}`
+        ORDER BY creation DESC
         """,
-        params,
         as_dict=True,
     )
 
-    chart_map = {}
-    for row in data:
-        key = row.status or "Info"
-        chart_map[key] = chart_map.get(key, 0) + 1
-
     chart = {
-        "data": {"labels": list(chart_map.keys()), "datasets": [{"name": "Items", "values": list(chart_map.values())}]},
+        "data": {
+            "labels": ["Pass", "Warning", "Blocker", "Info"],
+            "datasets": [{
+                "name": "Items",
+                "values": [
+                    len([row for row in data if row.status == "Pass"]),
+                    len([row for row in data if row.status == "Warning"]),
+                    len([row for row in data if row.status == "Blocker"]),
+                    len([row for row in data if row.status == "Info"]),
+                ],
+            }],
+        },
         "type": "bar",
     }
 
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Items"), "datatype": "Int"},
-        {"value": len([row for row in data if row.status == "Pass"]), "indicator": "Green", "label": _("Pass"), "datatype": "Int"},
         {"value": len([row for row in data if row.category == "Frozen Reference"]), "indicator": "Green", "label": _("Frozen References"), "datatype": "Int"},
-        {"value": sum(flt(row.allocated_amount or 0, 2) for row in data if row.category == "Frozen Reference"), "indicator": "Green", "label": _("Frozen Amount"), "datatype": "Currency"},
-        {"value": len([row for row in data if row.status == "Blocker"]), "indicator": "Red", "label": _("Blockers"), "datatype": "Int"},
+        {"value": len([row for row in data if int(row.outstanding_restored or 0) == 1]), "indicator": "Green", "label": _("Outstanding Restored"), "datatype": "Int"},
     ]
 
     return columns, data, None, chart, summary
@@ -968,18 +935,10 @@ def execute_item_report(filters=None):
 def execute_guardrail_report(filters=None):
     columns, data, message, chart, summary = execute_freeze_report(filters)
     guard = guardrails()
-
     summary.append({"value": guard["payment_entry_count"], "indicator": "Blue", "label": _("Payment Entry Count"), "datatype": "Int"})
     summary.append({"value": guard["payment_entry_gl_count"], "indicator": "Blue", "label": _("Payment Entry GL Count"), "datatype": "Int"})
-    summary.append({"value": guard["production_batch_enabled_policy_count"], "indicator": "Green", "label": _("Enabled Policies"), "datatype": "Int"})
-    summary.append({"value": guard["live_posting_allowed_policy_count"], "indicator": "Red", "label": _("Live Policies"), "datatype": "Int"})
     summary.append({"value": guard["submitted_journal_entry_count_today"], "indicator": "Red", "label": _("Submitted JE Today"), "datatype": "Int"})
     summary.append({"value": guard["purchase_invoice_count_today"], "indicator": "Red", "label": _("Purchase Invoice Today"), "datatype": "Int"})
-
+    summary.append({"value": guard["production_batch_enabled_policy_count"], "indicator": "Green", "label": _("Enabled Policies"), "datatype": "Int"})
+    summary.append({"value": guard["live_posting_allowed_policy_count"], "indicator": "Red", "label": _("Live Policies"), "datatype": "Int"})
     return columns, data, message, chart, summary
-
-
-def build_where(conditions):
-    if not conditions:
-        return ""
-    return " WHERE " + " AND ".join(conditions)
