@@ -17,7 +17,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Runtime Monitor", {
         }, __("Open"));
 
         if (frm.doc.baseline) {
-            frm.add_custom_button(__("Open Phase 12L Baseline"), () => {
+            frm.add_custom_button(__("Open Phase 12X Steady Baseline"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Steady Baseline", frm.doc.baseline);
             }, __("Evidence"));
         }
