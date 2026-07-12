@@ -17,7 +17,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout", {
         }, __("Open"));
 
         if (frm.doc.freeze) {
-            frm.add_custom_button(__("Open Phase 12J Freeze"), () => {
+            frm.add_custom_button(__("Open Phase 12V Rollback Freeze"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Rollback Freeze", frm.doc.freeze);
             }, __("Evidence"));
         }
@@ -30,7 +30,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout", {
 
         if (frm.doc.closeout_approved) {
             frm.dashboard.set_headline_alert(
-                __("Governed limited-operation smoke cycle closed. Steady-state baseline can proceed next."),
+                __("Next governed limited-operation cycle closed. Steady-state baseline can proceed next."),
                 "green"
             );
         }
