@@ -15,7 +15,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Steady Baseline", {
         }, __("Open"));
 
         if (frm.doc.closeout) {
-            frm.add_custom_button(__("Open Phase 12K Closeout"), () => {
+            frm.add_custom_button(__("Open Phase 12W Closeout"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Closeout", frm.doc.closeout);
             }, __("Evidence"));
         }
