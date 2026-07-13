@@ -4,7 +4,7 @@ frappe.query_reports["NDIS Next Governed Limited Op Rollback Freeze Guardrail Re
             fieldname: "status",
             label: __("Status"),
             fieldtype: "Select",
-            options: "\nDraft\nNeeds Review\nFrozen\nBlocked\nCancelled"
+            options: "\nDraft\nNeeds Review\nFreeze Completed\nBlocked\nCancelled"
         }
     ]
 };
