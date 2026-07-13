@@ -17,7 +17,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Execution Gate", {
         }, __("Open"));
 
         if (frm.doc.preview) {
-            frm.add_custom_button(__("Open Phase 12R Preview"), () => {
+            frm.add_custom_button(__("Open Phase 13D Preview"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Preview", frm.doc.preview);
             }, __("Evidence"));
         }
