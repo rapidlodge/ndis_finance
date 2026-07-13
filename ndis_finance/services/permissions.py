@@ -201,6 +201,17 @@ ACTION_ROLE_MAP = {
         "NDIS Finance Manager",
     ],
 
+    # Phase 13A next governed limited-operation design gate controls
+    "run_next_governed_limited_operation_design_gate": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_governed_limited_operation_design_gate_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 12Z next governed limited-operation planning gate controls
     "run_next_governed_limited_operation_planning_gate": [
         "System Manager",
