@@ -7,22 +7,22 @@ from frappe.utils import flt, now_datetime, today
 from ndis_finance.services.permissions import assert_action
 
 
-CANDIDATE_ACK = "I_CONFIRM_PHASE12P_APPROVE_NEXT_GOVERNED_LIMITED_OPERATION_CANDIDATE_SELECTION_NO_POSTING"
+CANDIDATE_SELECTION_ACK = "I_CONFIRM_PHASE13B_APPROVE_NEXT_GOVERNED_LIMITED_OPERATION_CANDIDATE_SELECTION_NO_POSTING"
 
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
 DESIGN_DOCTYPE = "NDIS Next Governed Limited Op Design"
 DESIGN_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Design Item"
-CANDIDATE_DOCTYPE = "NDIS Next Governed Limited Op Candidate Selection"
-CANDIDATE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Candidate Selection Item"
+CANDIDATE_SELECTION_DOCTYPE = "NDIS Next Governed Limited Op Candidate Selection"
+CANDIDATE_SELECTION_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Candidate Selection Item"
 
 DESIGN_READY_FIELD = "ready_for_next_governed_limited_op_candidate_selection_gate"
-CANDIDATE_READY_FIELD = "ready_for_next_governed_limited_op_candidate_validation_gate"
+CANDIDATE_SELECTION_READY_FIELD = "ready_for_next_governed_limited_op_candidate_validation_gate"
 
-EXPECTED_PAYMENT_ENTRY = "ACC-PAY-2026-00012"
+EXPECTED_MONITORED_PAYMENT_ENTRY = "ACC-PAY-2026-00013"
 EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
 
-EXPECTED_PAYMENT_ENTRY_COUNT = 11
-EXPECTED_PAYMENT_ENTRY_GL_COUNT = 70
+EXPECTED_PAYMENT_ENTRY_COUNT = 12
+EXPECTED_PAYMENT_ENTRY_GL_COUNT = 78
 EXPECTED_TOTAL_AMOUNT = 3.00
 EXPECTED_INVOICE_COUNT = 3
 EXPECTED_VOUCHER_GL_ROWS = 8
@@ -38,7 +38,7 @@ SELECTED_GL_ENTRY_COUNT = 0
 
 def make_candidate_selection_id():
     timestamp = now_datetime().strftime("%Y%m%d-%H%M%S")
-    return f"NDIS-NEXT-GOVERNED-LIMITED-OP-CANDIDATE-{timestamp}-{frappe.generate_hash(length=5).upper()}"
+    return f"NDIS-NEXT-GOVERNED-LIMITED-OP-CANDIDATE-SELECTION-{timestamp}-{frappe.generate_hash(length=5).upper()}"
 
 
 def safe_json(value):
@@ -46,10 +46,6 @@ def safe_json(value):
         return json.dumps(value, indent=2, default=str)
     except Exception:
         return str(value)
-
-
-def currency():
-    return frappe.defaults.get_global_default("currency") or "AUD"
 
 
 def count_dt(doctype, filters=None):
@@ -94,38 +90,87 @@ def guardrails():
     }
 
 
+def payment_entry_state(payment_entry):
+    if not payment_entry or not frappe.db.exists("Payment Entry", payment_entry):
+        return frappe._dict({"docstatus": 0, "status": None})
+    pe = frappe.get_doc("Payment Entry", payment_entry)
+    return frappe._dict({"docstatus": int(pe.docstatus or 0), "status": pe.status})
+
+
+def payment_entry_gl_rows(payment_entry):
+    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
+
+
+def payment_entry_gl_net(payment_entry):
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
+        FROM `tabGL Entry`
+        WHERE voucher_type='Payment Entry'
+        AND voucher_no=%s
+        """,
+        payment_entry,
+    )[0][0]
+    return flt(value or 0, 2)
+
+
+def payment_entry_reversal_gl_rows(payment_entry):
+    return max(0, int(payment_entry_gl_rows(payment_entry) or 0) - 4)
+
+
+def outstanding_total(invoice_names):
+    if not invoice_names:
+        return 0
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(outstanding_amount), 0), 2)
+        FROM `tabSales Invoice`
+        WHERE name IN %(names)s
+        """,
+        {"names": tuple(invoice_names)},
+    )[0][0]
+    return flt(value or 0, 2)
+
+
 def latest_design():
     filters = {
         "status": "Design Approved",
         "design_status": "Next Governed Limited Operation Design Approved",
         "design_approved": 1,
-        "phase12n_planning_verified": 1,
+        "phase12z_planning_verified": 1,
         "planning_approved_verified": 1,
-        "planned_source_verified": 1,
-        "planned_reference_verified": 1,
-        "planned_party_type_verified": 1,
-        "planned_shape_verified": 1,
-        "planned_side_effects_blocked_verified": 1,
+        "planning_source_verified": 1,
+        "planning_reference_verified": 1,
+        "planning_party_type_verified": 1,
+        "planning_reference_set_locked_verified": 1,
+        "planning_reference_set_verified": 1,
+        "planning_shape_verified": 1,
+        "planning_side_effects_blocked_verified": 1,
+        "invoice_submission_verified": 1,
+        "invoice_outstanding_verified": 1,
         "design_source_locked": 1,
         "design_shape_locked": 1,
         "design_reference_set_locked": 1,
         "design_reference_set_verified": 1,
-        "candidate_selection_not_started": 1,
         "policy_state_preserved_verified": 1,
         "no_new_accounting_movement_verified": 1,
-        "design_source_doctype": SELECTED_SOURCE_DOCTYPE,
-        "design_reference_doctype": SELECTED_REFERENCE_DOCTYPE,
-        "design_party_type": SELECTED_PARTY_TYPE,
-        "design_invoice_count": EXPECTED_INVOICE_COUNT,
-        "design_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "design_payment_entry_count": SELECTED_PAYMENT_ENTRY_COUNT,
-        "design_gl_entry_count": SELECTED_GL_ENTRY_COUNT,
-        "design_live_posting_allowed": 0,
-        "design_journal_entry_side_effect_allowed": 0,
-        "design_purchase_invoice_side_effect_allowed": 0,
-        "monitored_payment_entry": EXPECTED_PAYMENT_ENTRY,
+        "designed_source_doctype": SELECTED_SOURCE_DOCTYPE,
+        "designed_reference_doctype": SELECTED_REFERENCE_DOCTYPE,
+        "designed_party_type": SELECTED_PARTY_TYPE,
+        "designed_invoice_count": EXPECTED_INVOICE_COUNT,
+        "designed_total_amount": EXPECTED_TOTAL_AMOUNT,
+        "designed_payment_entry_count": SELECTED_PAYMENT_ENTRY_COUNT,
+        "designed_gl_entry_count": SELECTED_GL_ENTRY_COUNT,
+        "designed_live_posting_allowed": 0,
+        "designed_journal_entry_side_effect_allowed": 0,
+        "designed_purchase_invoice_side_effect_allowed": 0,
+        "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
         "monitored_payment_entry_docstatus": 2,
         "monitored_payment_entry_status": "Cancelled",
+        "monitored_voucher_gl_rows": EXPECTED_VOUCHER_GL_ROWS,
+        "monitored_voucher_gl_net": EXPECTED_VOUCHER_GL_NET,
+        "monitored_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
+        "monitored_restored_invoice_amount": EXPECTED_TOTAL_AMOUNT,
         "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT,
         "payment_entry_gl_count_after": EXPECTED_PAYMENT_ENTRY_GL_COUNT,
         "actual_payment_entry_created_count": 0,
@@ -136,7 +181,10 @@ def latest_design():
         "target_policy_enabled_after": 1,
         "target_policy_live_after": 0,
         "actual_policy_mutation_count": 0,
+        "blocker_count": 0,
+        "warning_count": 0,
     }
+
     if has_column(DESIGN_DOCTYPE, DESIGN_READY_FIELD):
         filters[DESIGN_READY_FIELD] = 1
 
@@ -146,28 +194,22 @@ def latest_design():
         fields=[
             "name",
             "design_id",
-            "design_source_doctype",
-            "design_reference_doctype",
-            "design_party_type",
-            "design_customer",
-            "design_company",
-            "design_currency",
-            "design_invoice_names",
-            "design_invoice_count",
-            "design_total_amount",
-            "design_payment_entry_count",
-            "design_gl_entry_count",
-            "design_live_posting_allowed",
-            "design_journal_entry_side_effect_allowed",
-            "design_purchase_invoice_side_effect_allowed",
+            "designed_source_doctype",
+            "designed_reference_doctype",
+            "designed_party_type",
+            "designed_customer",
+            "designed_company",
+            "designed_currency",
+            "designed_invoice_names",
+            "designed_invoice_count",
+            "designed_total_amount",
+            "designed_payment_entry_count",
+            "designed_gl_entry_count",
+            "designed_live_posting_allowed",
+            "designed_journal_entry_side_effect_allowed",
+            "designed_purchase_invoice_side_effect_allowed",
             "design_reference_set_locked",
             "monitored_payment_entry",
-            "monitored_payment_entry_docstatus",
-            "monitored_payment_entry_status",
-            "monitored_voucher_gl_rows",
-            "monitored_voucher_gl_net",
-            "monitored_reversal_gl_rows",
-            "monitored_restored_invoice_amount",
             "planning",
             "monitor",
             "baseline",
@@ -179,7 +221,6 @@ def latest_design():
             "preview",
             "candidate_validation",
             "candidate_selection",
-            "target_policy_doctype",
             "target_policy",
             "target_policy_name",
         ],
@@ -191,7 +232,7 @@ def latest_design():
 
 def existing_approved_candidate_selection(design):
     rows = frappe.get_all(
-        CANDIDATE_DOCTYPE,
+        CANDIDATE_SELECTION_DOCTYPE,
         filters={
             "design": design,
             "status": "Candidate Selection Approved",
@@ -219,40 +260,45 @@ def design_rows(design):
             "customer",
             "company",
             "currency",
-            "design_amount",
+            "designed_amount",
             "current_outstanding_amount",
+            "invoice_docstatus",
+            "outstanding_sufficient",
             "monitored_payment_entry",
         ],
         order_by="line_no asc, creation asc",
     )
+
     result = []
     for idx, row in enumerate(rows, start=1):
-        si = (
-            frappe.db.get_value(
-                "Sales Invoice",
-                row.reference_name,
-                ["docstatus", "customer", "company", "currency", "outstanding_amount"],
-                as_dict=True,
-            )
-            if frappe.db.exists("Sales Invoice", row.reference_name)
-            else None
-        )
+        si = frappe.db.get_value(
+            "Sales Invoice",
+            row.reference_name,
+            ["docstatus", "customer", "company", "currency", "outstanding_amount"],
+            as_dict=True,
+        ) if frappe.db.exists("Sales Invoice", row.reference_name) else None
+
+        amount = flt(row.designed_amount or 0, 2)
+        outstanding = flt((si.outstanding_amount if si else row.current_outstanding_amount) or 0, 2)
+
         result.append(
             frappe._dict(
                 {
                     "idx": int(row.line_no or idx),
                     "reference_doctype": row.reference_doctype,
                     "reference_name": row.reference_name,
-                    "selected_amount": flt(row.design_amount or 0, 2),
-                    "current_outstanding_amount": flt((si.outstanding_amount if si else 0) or 0, 2),
+                    "selected_amount": amount,
+                    "current_outstanding_amount": outstanding,
                     "customer": si.customer if si else row.customer,
                     "company": si.company if si else row.company,
                     "currency": si.currency if si else row.currency,
-                    "docstatus": int(si.docstatus or 0) if si else None,
-                    "monitored_payment_entry": row.monitored_payment_entry,
+                    "invoice_docstatus": int(si.docstatus or 0) if si else int(row.invoice_docstatus or 0),
+                    "outstanding_sufficient": int(outstanding >= amount and amount > 0),
+                    "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
                 }
             )
         )
+
     return result
 
 
@@ -265,218 +311,215 @@ def selected_total(rows):
 
 
 def unique_value(rows, fieldname):
-    values = sorted({getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)})
+    values = sorted(set([getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)]))
     return values[0] if len(values) == 1 else None
 
 
 def same_value_verified(rows, fieldname):
-    values = {getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)}
+    values = set([getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)])
     return int(len(rows) == EXPECTED_INVOICE_COUNT and len(values) == 1)
 
 
-def outstanding_total(invoice_names):
-    if not invoice_names:
-        return 0
-    value = frappe.db.sql(
-        """
-        SELECT ROUND(COALESCE(SUM(outstanding_amount), 0), 2)
-        FROM `tabSales Invoice`
-        WHERE name IN %(names)s
-        """,
-        {"names": tuple(invoice_names)},
-    )[0][0]
-    return flt(value or 0, 2)
+def invoices_submitted(rows):
+    return int(len(rows) == EXPECTED_INVOICE_COUNT and all(int(row.invoice_docstatus or 0) == 1 for row in rows))
 
 
-def voucher_gl_rows(payment_entry):
-    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
-
-
-def voucher_gl_net(payment_entry):
-    value = frappe.db.sql(
-        """
-        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
-        FROM `tabGL Entry`
-        WHERE voucher_type='Payment Entry'
-        AND voucher_no=%s
-        """,
-        payment_entry,
-    )[0][0]
-    return flt(value or 0, 2)
-
-
-def reversal_gl_rows(payment_entry):
-    rows = voucher_gl_rows(payment_entry)
-    return max(0, int(rows or 0) - 4)
+def invoices_outstanding_sufficient(rows):
+    return int(len(rows) == EXPECTED_INVOICE_COUNT and all(int(row.outstanding_sufficient or 0) == 1 for row in rows))
 
 
 def validate_source(design, rows, guard, config, policy_enabled, policy_live):
     issues = []
+
     if not design:
-        issues.append("No approved Phase 12O next governed limited-operation design found.")
+        issues.append("No approved Phase 13A design found for candidate selection gate.")
         return issues
 
     existing = existing_approved_candidate_selection(design.name)
     if existing:
-        issues.append(
-            f"Approved Phase 12P candidate selection already exists for this design: {existing.candidate_selection_id} / {existing.selected_invoice_names}"
-        )
+        issues.append(f"Approved Phase 13B candidate selection already exists for this design: {existing.candidate_selection_id} / {existing.selected_invoice_names}")
 
-    payment_entry = design.monitored_payment_entry
-    if payment_entry != EXPECTED_PAYMENT_ENTRY:
-        issues.append(f"Expected monitored Payment Entry {EXPECTED_PAYMENT_ENTRY}. Found {payment_entry}.")
-    if not frappe.db.exists("Payment Entry", payment_entry):
-        issues.append(f"Monitored Payment Entry does not exist: {payment_entry}")
-        return issues
+    pe_state = payment_entry_state(EXPECTED_MONITORED_PAYMENT_ENTRY)
 
-    pe = frappe.get_doc("Payment Entry", payment_entry)
-    if pe.docstatus != 2:
-        issues.append(f"Monitored Payment Entry must remain cancelled. docstatus={pe.docstatus}")
-    if pe.status != "Cancelled":
-        issues.append(f"Monitored Payment Entry status must remain Cancelled. status={pe.status}")
-    if design.design_source_doctype != SELECTED_SOURCE_DOCTYPE:
+    if design.monitored_payment_entry != EXPECTED_MONITORED_PAYMENT_ENTRY:
+        issues.append(f"Monitored Payment Entry must be {EXPECTED_MONITORED_PAYMENT_ENTRY}.")
+
+    if pe_state.docstatus != 2:
+        issues.append(f"Monitored Payment Entry must remain cancelled. docstatus={pe_state.docstatus}")
+
+    if pe_state.status != "Cancelled":
+        issues.append(f"Monitored Payment Entry status must remain Cancelled. status={pe_state.status}")
+
+    if design.designed_source_doctype != SELECTED_SOURCE_DOCTYPE:
         issues.append("Design source DocType changed.")
-    if design.design_reference_doctype != SELECTED_REFERENCE_DOCTYPE:
+
+    if design.designed_reference_doctype != SELECTED_REFERENCE_DOCTYPE:
         issues.append("Design reference DocType changed.")
-    if design.design_party_type != SELECTED_PARTY_TYPE:
+
+    if design.designed_party_type != SELECTED_PARTY_TYPE:
         issues.append("Design party type changed.")
-    if int(design.design_payment_entry_count or 0) != SELECTED_PAYMENT_ENTRY_COUNT:
-        issues.append("Design Payment Entry count must be 1.")
-    if int(design.design_gl_entry_count or 0) != SELECTED_GL_ENTRY_COUNT:
-        issues.append("Design GL count must be 0 before execution.")
-    if int(design.design_live_posting_allowed or 0) != 0:
-        issues.append("Design live posting allowed must remain 0.")
-    if int(design.design_journal_entry_side_effect_allowed or 0) != 0:
-        issues.append("Design Journal Entry side effect allowed must remain 0.")
-    if int(design.design_purchase_invoice_side_effect_allowed or 0) != 0:
-        issues.append("Design Purchase Invoice side effect allowed must remain 0.")
+
     if reference_names(rows) != EXPECTED_INVOICES:
-        issues.append(f"Candidate invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
+        issues.append(f"Selected invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
+
     if len(rows) != EXPECTED_INVOICE_COUNT:
-        issues.append(f"Candidate invoice count must be {EXPECTED_INVOICE_COUNT}. Found {len(rows)}.")
+        issues.append(f"Selected invoice count must be {EXPECTED_INVOICE_COUNT}. Found {len(rows)}.")
+
     if selected_total(rows) != EXPECTED_TOTAL_AMOUNT:
-        issues.append(f"Candidate total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {selected_total(rows)}.")
+        issues.append(f"Selected total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {selected_total(rows)}.")
+
+    if int(design.designed_payment_entry_count or 0) != SELECTED_PAYMENT_ENTRY_COUNT:
+        issues.append("Selected future Payment Entry count must remain 1.")
+
+    if int(design.designed_gl_entry_count or 0) != SELECTED_GL_ENTRY_COUNT:
+        issues.append("Selected future GL Entry count must remain 0.")
+
+    if int(design.designed_live_posting_allowed or 0) != 0:
+        issues.append("Selected live posting allowed must remain 0.")
+
+    if int(design.designed_journal_entry_side_effect_allowed or 0) != 0:
+        issues.append("Selected Journal Entry side effect allowed must remain 0.")
+
+    if int(design.designed_purchase_invoice_side_effect_allowed or 0) != 0:
+        issues.append("Selected Purchase Invoice side effect allowed must remain 0.")
+
     if not same_value_verified(rows, "customer"):
         issues.append("Selected Sales Invoices must share the same customer.")
+
     if not same_value_verified(rows, "company"):
         issues.append("Selected Sales Invoices must share the same company.")
+
     if not same_value_verified(rows, "currency"):
         issues.append("Selected Sales Invoices must share the same currency.")
-    if voucher_gl_rows(payment_entry) != EXPECTED_VOUCHER_GL_ROWS:
-        issues.append(f"Voucher GL rows must remain {EXPECTED_VOUCHER_GL_ROWS}. Found {voucher_gl_rows(payment_entry)}.")
-    if voucher_gl_net(payment_entry) != EXPECTED_VOUCHER_GL_NET:
-        issues.append(f"Voucher GL net must remain 0.00. Found {voucher_gl_net(payment_entry)}.")
-    if reversal_gl_rows(payment_entry) != EXPECTED_REVERSAL_GL_ROWS:
-        issues.append(f"Reversal GL rows must remain {EXPECTED_REVERSAL_GL_ROWS}. Found {reversal_gl_rows(payment_entry)}.")
-    restored = outstanding_total(EXPECTED_INVOICES)
-    if restored != EXPECTED_TOTAL_AMOUNT:
-        issues.append(f"Restored invoice amount must remain {EXPECTED_TOTAL_AMOUNT}. Found {restored}.")
+
+    if not invoices_submitted(rows):
+        issues.append("All selected Sales Invoices must remain submitted.")
+
+    if not invoices_outstanding_sufficient(rows):
+        issues.append("All selected Sales Invoices must have sufficient outstanding amount.")
+
+    if payment_entry_gl_rows(EXPECTED_MONITORED_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_ROWS:
+        issues.append(f"Monitored Payment Entry voucher GL rows must remain {EXPECTED_VOUCHER_GL_ROWS}.")
+
+    if payment_entry_reversal_gl_rows(EXPECTED_MONITORED_PAYMENT_ENTRY) != EXPECTED_REVERSAL_GL_ROWS:
+        issues.append(f"Monitored Payment Entry reversal GL rows must remain {EXPECTED_REVERSAL_GL_ROWS}.")
+
+    if payment_entry_gl_net(EXPECTED_MONITORED_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_NET:
+        issues.append("Monitored Payment Entry GL net must remain 0.00.")
+
+    if outstanding_total(EXPECTED_INVOICES) != EXPECTED_TOTAL_AMOUNT:
+        issues.append(f"Restored invoice outstanding must remain {EXPECTED_TOTAL_AMOUNT}.")
+
     if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT:
-        issues.append("Payment Entry count must remain 11 before candidate selection.")
+        issues.append("Payment Entry count must remain 12 before candidate selection.")
+
     if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT:
-        issues.append("Payment Entry GL count must remain 70 before candidate selection.")
+        issues.append("Payment Entry GL count must remain 78 before candidate selection.")
+
     if guard["submitted_journal_entry_count_today"] != 0:
         issues.append("Submitted Journal Entry today must remain 0 before candidate selection.")
+
     if guard["purchase_invoice_count_today"] != 0:
         issues.append("Purchase Invoice today must remain 0 before candidate selection.")
+
     if guard["production_batch_enabled_policy_count"] != 1:
         issues.append("Exactly one controlled production batch policy must remain enabled.")
+
     if guard["live_posting_allowed_policy_count"] != 0:
         issues.append("Controlled production live allowed policy count must remain 0.")
+
     if policy_enabled != 1:
         issues.append("Target policy production_batch_enabled must remain 1.")
+
     if policy_live != 0:
         issues.append("Target policy live_posting_allowed must remain 0.")
+
     if config["sandbox_enabled"] != 1:
         issues.append("Sandbox config must be enabled.")
+
     if config["production_mode"] != 0:
         issues.append("Production mode config must remain 0.")
+
     if config["live_pe_enabled"] != 0:
         issues.append("Live Payment Entry posting config must remain 0.")
+
     return issues
 
 
-def build_items(rows, issues, ack_ok, payment_entry=None):
+def build_items(rows, issues, ack_ok, completed=0):
     items = []
+
     if not issues:
-        items.append(
-            {
-                "status": "Pass",
-                "severity": "Critical",
-                "category": "Candidate Source",
-                "check_key": "candidate_selection_source_valid",
-                "check_label": "Candidate selection source valid",
-                "detail": "The Phase 12O design gate is stable and exact candidate invoices can be selected.",
-                "monitored_payment_entry": payment_entry,
-            }
-        )
+        items.append({
+            "status": "Pass",
+            "severity": "Critical",
+            "category": "Candidate Selection Source",
+            "check_key": "candidate_selection_source_valid",
+            "check_label": "Candidate selection source valid",
+            "detail": f"Phase 13A design for {EXPECTED_MONITORED_PAYMENT_ENTRY} is stable and can open candidate validation.",
+            "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
+        })
     else:
         for issue in issues:
-            items.append(
-                {
-                    "status": "Blocker",
-                    "severity": "Critical",
-                    "category": "Candidate Source",
-                    "check_key": "candidate_selection_source_valid",
-                    "check_label": "Candidate selection source valid",
-                    "detail": issue,
-                    "monitored_payment_entry": payment_entry,
-                }
-            )
+            items.append({
+                "status": "Blocker",
+                "severity": "Critical",
+                "category": "Candidate Selection Source",
+                "check_key": "candidate_selection_source_valid",
+                "check_label": "Candidate selection source valid",
+                "detail": issue,
+                "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
+            })
 
     for row in rows:
-        items.append(
-            {
-                "status": "Pass",
-                "severity": "High",
-                "category": "Selected Reference",
-                "check_key": "selected_sales_invoice_reference",
-                "check_label": f"Selected Sales Invoice {row.idx}",
-                "detail": f"{row.reference_name} selected amount={row.selected_amount}, outstanding={row.current_outstanding_amount}.",
-                "line_no": row.idx,
-                "reference_doctype": row.reference_doctype,
-                "reference_name": row.reference_name,
-                "customer": row.customer,
-                "company": row.company,
-                "currency": row.currency,
-                "selected_amount": row.selected_amount,
-                "current_outstanding_amount": row.current_outstanding_amount,
-                "monitored_payment_entry": payment_entry,
-            }
-        )
+        items.append({
+            "status": "Pass" if int(row.outstanding_sufficient or 0) == 1 else "Blocker",
+            "severity": "High",
+            "category": "Selected Reference",
+            "check_key": "selected_sales_invoice_reference",
+            "check_label": f"Selected Sales Invoice {row.idx}",
+            "detail": f"{row.reference_name} selected amount={row.selected_amount}, current outstanding={row.current_outstanding_amount}, sufficient={row.outstanding_sufficient}.",
+            "line_no": row.idx,
+            "reference_doctype": row.reference_doctype,
+            "reference_name": row.reference_name,
+            "customer": row.customer,
+            "company": row.company,
+            "currency": row.currency,
+            "selected_amount": row.selected_amount,
+            "current_outstanding_amount": row.current_outstanding_amount,
+            "invoice_docstatus": row.invoice_docstatus,
+            "outstanding_sufficient": row.outstanding_sufficient,
+            "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
+        })
 
     checks = [
-        ("design_approved", "Design approved", 1),
-        ("candidate_selection_locked", "Candidate selection locked", 1),
-        ("selected_reference_set_locked", "Selected reference set locked", ", ".join(EXPECTED_INVOICES)),
-        ("selected_shape", "Selected shape", f"{EXPECTED_INVOICE_COUNT} / {EXPECTED_TOTAL_AMOUNT} / {SELECTED_PAYMENT_ENTRY_COUNT} / {SELECTED_GL_ENTRY_COUNT}"),
-        ("selected_side_effects", "Selected live/JE/PI side effects", "0 / 0 / 0"),
-        ("candidate_validation_gate_ready", "Ready for next governed limited-operation candidate validation gate", 1),
+        ("candidate_selection_source", "Candidate source/reference/party", f"{SELECTED_SOURCE_DOCTYPE} / {SELECTED_REFERENCE_DOCTYPE} / {SELECTED_PARTY_TYPE}"),
+        ("candidate_selection_shape", "Candidate selection shape", f"{EXPECTED_INVOICE_COUNT} / {EXPECTED_TOTAL_AMOUNT} / {SELECTED_PAYMENT_ENTRY_COUNT} / {SELECTED_GL_ENTRY_COUNT}"),
+        ("candidate_selection_side_effects", "Candidate selection live/JE/PI side effects", "0 / 0 / 0"),
+        ("candidate_validation_ready", "Ready for next governed candidate validation gate", completed),
     ]
-    for key, label, value in checks:
-        items.append(
-            {
-                "status": "Pass",
-                "severity": "High",
-                "category": "Candidate Evidence",
-                "check_key": key,
-                "check_label": label,
-                "detail": f"value={value}",
-                "monitored_payment_entry": payment_entry,
-            }
-        )
 
-    items.append(
-        {
-            "status": "Pass" if ack_ok else "Warning",
-            "severity": "Low" if ack_ok else "Medium",
-            "category": "Acknowledgement",
-            "check_key": "ack_ok",
-            "check_label": "Acknowledgement supplied",
-            "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {CANDIDATE_ACK}",
-            "monitored_payment_entry": payment_entry,
-        }
-    )
+    for key, label, value in checks:
+        items.append({
+            "status": "Pass",
+            "severity": "High",
+            "category": "Candidate Selection Evidence",
+            "check_key": key,
+            "check_label": label,
+            "detail": f"value={value}",
+            "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
+        })
+
+    items.append({
+        "status": "Pass" if ack_ok else "Warning",
+        "severity": "Low" if ack_ok else "Medium",
+        "category": "Acknowledgement",
+        "check_key": "ack_ok",
+        "check_label": "Acknowledgement supplied",
+        "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {CANDIDATE_SELECTION_ACK}",
+        "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
+    })
+
     return items
 
 
@@ -492,7 +535,9 @@ def summarise_items(items):
 
 def create_items(doc, items):
     for item in items:
-        row = frappe.new_doc(CANDIDATE_ITEM_DOCTYPE)
+        if item.get("category") != "Selected Reference":
+            continue
+        row = frappe.new_doc(CANDIDATE_SELECTION_ITEM_DOCTYPE)
         row.candidate_selection = doc.name
         for fieldname, value in item.items():
             if row.meta.has_field(fieldname):
@@ -502,28 +547,41 @@ def create_items(doc, items):
 
 
 @frappe.whitelist()
-def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowledgement=None, notes=None):
-    assert_action("run_next_governed_limited_operation_candidate_selection")
+def run_next_governed_limited_operation_candidate_selection_gate(dry_run=1, acknowledgement=None, notes=None):
+    assert_action("run_next_governed_limited_operation_candidate_selection_gate")
 
     design = latest_design()
     rows = design_rows(design.name) if design else []
-    payment_entry = design.monitored_payment_entry if design else None
+
     guard_before = guardrails()
-    ack_ok = acknowledgement == CANDIDATE_ACK
+    ack_ok = acknowledgement == CANDIDATE_SELECTION_ACK
+
     config = {
         "sandbox_enabled": int(frappe.conf.get("ndis_finance_sandbox_posting_enabled") or 0),
         "production_mode": int(frappe.conf.get("ndis_finance_production_mode") or 0),
         "live_pe_enabled": int(frappe.conf.get("ndis_finance_live_payment_entry_posting_enabled") or 0),
     }
+
     policy_enabled_before = get_flag(POLICY_DOCTYPE, design.target_policy, "production_batch_enabled") if design else 0
     policy_live_before = get_flag(POLICY_DOCTYPE, design.target_policy, "live_posting_allowed") if design else 0
+
     source_issues = validate_source(design, rows, guard_before, config, policy_enabled_before, policy_live_before)
+
     guard_after = guardrails()
+
     policy_enabled_after = get_flag(POLICY_DOCTYPE, design.target_policy, "production_batch_enabled") if design else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, design.target_policy, "live_posting_allowed") if design else 0
+
+    pe_state = payment_entry_state(EXPECTED_MONITORED_PAYMENT_ENTRY)
+    voucher_rows = payment_entry_gl_rows(EXPECTED_MONITORED_PAYMENT_ENTRY)
+    voucher_net = payment_entry_gl_net(EXPECTED_MONITORED_PAYMENT_ENTRY)
+    reversal_rows = payment_entry_reversal_gl_rows(EXPECTED_MONITORED_PAYMENT_ENTRY)
+    restored_amount = outstanding_total(EXPECTED_INVOICES)
+
     actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
     actual_pe_cancelled = 0
     actual_gl_created = guard_after["payment_entry_gl_count"] - guard_before["payment_entry_gl_count"]
+
     policy_mutation_count = int(
         policy_enabled_before != policy_enabled_after
         or policy_live_before != policy_live_after
@@ -531,42 +589,30 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         or guard_before["live_posting_allowed_policy_count"] != guard_after["live_posting_allowed_policy_count"]
     )
 
-    pe_docstatus = 0
-    pe_status = None
-    voucher_rows = 0
-    voucher_net = 0
-    reversal_rows = 0
-    restored_amount = outstanding_total(EXPECTED_INVOICES)
-    if payment_entry and frappe.db.exists("Payment Entry", payment_entry):
-        pe = frappe.get_doc("Payment Entry", payment_entry)
-        pe_docstatus = int(pe.docstatus or 0)
-        pe_status = pe.status
-        voucher_rows = voucher_gl_rows(payment_entry)
-        voucher_net = voucher_gl_net(payment_entry)
-        reversal_rows = reversal_gl_rows(payment_entry)
-
     post_issues = list(source_issues)
+
     if actual_pe_created != 0:
-        post_issues.append(f"Candidate selection must create 0 Payment Entries. Created {actual_pe_created}.")
+        post_issues.append(f"Candidate selection gate must create 0 Payment Entries. Created {actual_pe_created}.")
     if actual_pe_cancelled != 0:
-        post_issues.append(f"Candidate selection must cancel 0 Payment Entries. Cancelled {actual_pe_cancelled}.")
+        post_issues.append(f"Candidate selection gate must cancel 0 Payment Entries. Cancelled {actual_pe_cancelled}.")
     if actual_gl_created != 0:
-        post_issues.append(f"Candidate selection must create 0 GL rows. Created {actual_gl_created}.")
+        post_issues.append(f"Candidate selection gate must create 0 GL rows. Created {actual_gl_created}.")
     if policy_mutation_count != 0:
-        post_issues.append("Policy state changed during candidate selection. This is not allowed.")
+        post_issues.append("Policy state changed during candidate selection gate. This is not allowed.")
 
     completed = int(
         not int(dry_run or 0)
         and ack_ok
         and design
-        and payment_entry
         and not post_issues
-        and pe_docstatus == 2
-        and pe_status == "Cancelled"
+        and pe_state.docstatus == 2
+        and pe_state.status == "Cancelled"
         and reference_names(rows) == EXPECTED_INVOICES
         and selected_total(rows) == EXPECTED_TOTAL_AMOUNT
+        and invoices_submitted(rows) == 1
+        and invoices_outstanding_sufficient(rows) == 1
         and voucher_rows == EXPECTED_VOUCHER_GL_ROWS
-        and voucher_net == 0
+        and voucher_net == EXPECTED_VOUCHER_GL_NET
         and reversal_rows == EXPECTED_REVERSAL_GL_ROWS
         and restored_amount == EXPECTED_TOTAL_AMOUNT
         and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
@@ -581,39 +627,44 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         and policy_mutation_count == 0
     )
 
-    design_source_ok = int(design and design.design_source_doctype == SELECTED_SOURCE_DOCTYPE)
-    design_reference_ok = int(design and design.design_reference_doctype == SELECTED_REFERENCE_DOCTYPE)
-    design_party_ok = int(design and design.design_party_type == SELECTED_PARTY_TYPE)
-    design_shape_ok = int(
-        design
-        and int(design.design_invoice_count or 0) == EXPECTED_INVOICE_COUNT
-        and flt(design.design_total_amount or 0, 2) == EXPECTED_TOTAL_AMOUNT
-        and int(design.design_payment_entry_count or 0) == SELECTED_PAYMENT_ENTRY_COUNT
-        and int(design.design_gl_entry_count or 0) == SELECTED_GL_ENTRY_COUNT
-    )
-
-    items = build_items(rows, post_issues, ack_ok, payment_entry=payment_entry)
+    items = build_items(rows, post_issues, ack_ok, completed=completed)
     item_summary = summarise_items(items)
+
     result = {
         "dry_run": bool(int(dry_run or 0)),
         "status": "Candidate Selection Approved" if completed else "Needs Review",
-        "candidate_status": "Next Governed Limited Operation Candidate Selection Approved" if completed else "Needs Review",
+        "candidate_selection_status": "Next Governed Limited Operation Candidate Selection Approved" if completed else "Needs Review",
         "candidate_selection_approved": completed,
-        "phase12o_design_verified": 1 if design else 0,
+
+        "phase13a_design_verified": 1 if design else 0,
         "design_approved_verified": 1 if design else 0,
-        "design_source_verified": design_source_ok,
-        "design_reference_verified": design_reference_ok,
-        "design_party_type_verified": design_party_ok,
-        "design_shape_verified": design_shape_ok,
-        "design_reference_set_locked_verified": int(design and int(design.design_reference_set_locked or 0) == 1),
+        "design_source_verified": int(design and design.designed_source_doctype == SELECTED_SOURCE_DOCTYPE),
+        "design_reference_verified": int(design and design.designed_reference_doctype == SELECTED_REFERENCE_DOCTYPE),
+        "design_party_type_verified": int(design and design.designed_party_type == SELECTED_PARTY_TYPE),
+        "design_reference_set_locked_verified": int(design and int(design.design_reference_set_locked or 0) == 1) if design and has_column(DESIGN_DOCTYPE, "design_reference_set_locked") else int(reference_names(rows) == EXPECTED_INVOICES),
         "design_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
-        "candidate_selection_locked": completed,
-        "selected_reference_set_locked": completed,
-        "selected_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
-        "policy_state_preserved_verified": int(
-            policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0
+        "design_shape_verified": int(
+            len(rows) == EXPECTED_INVOICE_COUNT
+            and selected_total(rows) == EXPECTED_TOTAL_AMOUNT
+            and design
+            and int(design.designed_payment_entry_count or 0) == SELECTED_PAYMENT_ENTRY_COUNT
+            and int(design.designed_gl_entry_count or 0) == SELECTED_GL_ENTRY_COUNT
         ),
+        "design_side_effects_blocked_verified": int(
+            design
+            and int(design.designed_live_posting_allowed or 0) == 0
+            and int(design.designed_journal_entry_side_effect_allowed or 0) == 0
+            and int(design.designed_purchase_invoice_side_effect_allowed or 0) == 0
+        ),
+        "invoice_submission_verified": invoices_submitted(rows),
+        "invoice_outstanding_verified": invoices_outstanding_sufficient(rows),
+        "candidate_selection_source_locked": completed,
+        "candidate_selection_shape_locked": completed,
+        "candidate_selection_reference_set_locked": completed,
+        "candidate_selection_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
+        "policy_state_preserved_verified": int(policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0),
         "no_new_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 0 and actual_gl_created == 0),
+
         "selected_source_doctype": SELECTED_SOURCE_DOCTYPE,
         "selected_reference_doctype": SELECTED_REFERENCE_DOCTYPE,
         "selected_party_type": SELECTED_PARTY_TYPE,
@@ -628,14 +679,15 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         "selected_live_posting_allowed": 0,
         "selected_journal_entry_side_effect_allowed": 0,
         "selected_purchase_invoice_side_effect_allowed": 0,
-        CANDIDATE_READY_FIELD: completed,
-        "monitored_payment_entry": payment_entry,
-        "monitored_payment_entry_docstatus": pe_docstatus,
-        "monitored_payment_entry_status": pe_status,
+
+        "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
+        "monitored_payment_entry_docstatus": pe_state.docstatus,
+        "monitored_payment_entry_status": pe_state.status,
         "monitored_voucher_gl_rows": voucher_rows,
         "monitored_voucher_gl_net": voucher_net,
         "monitored_reversal_gl_rows": reversal_rows,
         "monitored_restored_invoice_amount": restored_amount,
+
         "payment_entry_count_before": guard_before["payment_entry_count"],
         "payment_entry_count_after": guard_after["payment_entry_count"],
         "payment_entry_gl_count_before": guard_before["payment_entry_gl_count"],
@@ -643,8 +695,10 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         "actual_payment_entry_created_count": actual_pe_created,
         "actual_payment_entry_cancelled_count": actual_pe_cancelled,
         "actual_gl_created_count": actual_gl_created,
+
         "submitted_journal_entry_count_today": guard_after["submitted_journal_entry_count_today"],
         "purchase_invoice_count_today": guard_after["purchase_invoice_count_today"],
+
         "target_policy_doctype": POLICY_DOCTYPE,
         "target_policy": design.target_policy if design else None,
         "target_policy_name": design.target_policy_name if design else None,
@@ -653,6 +707,9 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         "target_policy_live_before": policy_live_before,
         "target_policy_live_after": policy_live_after,
         "actual_policy_mutation_count": policy_mutation_count,
+
+        CANDIDATE_SELECTION_READY_FIELD: completed,
+
         "design": design.name if design else None,
         "planning": design.planning if design else None,
         "monitor": design.monitor if design else None,
@@ -665,77 +722,91 @@ def run_next_governed_limited_operation_candidate_selection(dry_run=1, acknowled
         "preview": design.preview if design else None,
         "candidate_validation": design.candidate_validation if design else None,
         "previous_candidate_selection": design.candidate_selection if design else None,
+
         **item_summary,
         "items": items,
         "issues": post_issues,
-        "required_acknowledgement": CANDIDATE_ACK,
+        "required_acknowledgement": CANDIDATE_SELECTION_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 12P approves candidate selection for the next governed limited-operation cycle only. No accounting movement occurs.",
+        "note": "Phase 13B approves the next governed limited-operation candidate selection gate only. No accounting movement occurs.",
     }
+
     if int(dry_run or 0):
         return result
 
-    doc = frappe.new_doc(CANDIDATE_DOCTYPE)
+    doc = frappe.new_doc(CANDIDATE_SELECTION_DOCTYPE)
     doc.candidate_selection_id = make_candidate_selection_id()
+
     for fieldname, value in result.items():
         if doc.meta.has_field(fieldname):
             setattr(doc, fieldname, value)
+
     doc.site_name = frappe.local.site
     doc.sandbox_config_enabled = config["sandbox_enabled"]
     doc.production_mode_detected = config["production_mode"]
     doc.live_payment_entry_posting_config = config["live_pe_enabled"]
     doc.checked_on = now_datetime()
     doc.checked_by = frappe.session.user
-    doc.required_acknowledgement = CANDIDATE_ACK
+    doc.required_acknowledgement = CANDIDATE_SELECTION_ACK
     doc.acknowledgement = acknowledgement
     doc.acknowledgement_ok = int(ack_ok)
     doc.summary_json = safe_json(result)
-    doc.candidate_json = safe_json(result)
+    doc.candidate_selection_json = safe_json(result)
     doc.notes = notes
     doc.insert(ignore_permissions=True)
+
     create_items(doc, items)
     frappe.db.commit()
+
     return {
         **result,
         "created": True,
         "candidate_selection": doc.name,
         "candidate_selection_id": doc.candidate_selection_id,
-        "monitored_payment_entry": payment_entry,
+        "monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY,
         "guardrails_after": guardrails(),
     }
 
 
 @frappe.whitelist()
-def cancel_next_governed_limited_operation_candidate_selection_audit(candidate_selection, reason=None):
-    assert_action("cancel_next_governed_limited_operation_candidate_selection_audit")
-    if not frappe.db.exists(CANDIDATE_DOCTYPE, candidate_selection):
+def cancel_next_governed_limited_operation_candidate_selection_gate_audit(candidate_selection, reason=None):
+    assert_action("cancel_next_governed_limited_operation_candidate_selection_gate_audit")
+
+    if not frappe.db.exists(CANDIDATE_SELECTION_DOCTYPE, candidate_selection):
         frappe.throw(_("Next governed limited-operation candidate selection audit not found: {0}").format(candidate_selection))
-    doc = frappe.get_doc(CANDIDATE_DOCTYPE, candidate_selection)
+
+    doc = frappe.get_doc(CANDIDATE_SELECTION_DOCTYPE, candidate_selection)
+
     if doc.status == "Cancelled":
         return {"candidate_selection": candidate_selection, "status": "Cancelled", "note": "Already cancelled."}
+
     if int(doc.candidate_selection_approved or 0):
-        frappe.throw(_("Cannot cancel an approved Phase 12P candidate selection record."))
+        frappe.throw(_("Cannot cancel an approved Phase 13B candidate selection record."))
+
     frappe.db.set_value(
-        CANDIDATE_DOCTYPE,
+        CANDIDATE_SELECTION_DOCTYPE,
         candidate_selection,
         {
             "status": "Cancelled",
-            "candidate_status": "Cancelled",
+            "candidate_selection_status": "Cancelled",
             "cancelled_on": now_datetime(),
             "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 12P no-ack candidate selection audit cancelled.",
+            "summary_json": reason or "Phase 13B no-ack candidate selection audit cancelled.",
         },
         update_modified=False,
     )
+
     frappe.db.sql(
         f"""
-        UPDATE `tab{CANDIDATE_ITEM_DOCTYPE}`
+        UPDATE `tab{CANDIDATE_SELECTION_ITEM_DOCTYPE}`
         SET status='Cancelled'
         WHERE candidate_selection=%(candidate_selection)s
         """,
         {"candidate_selection": candidate_selection},
     )
+
     frappe.db.commit()
+
     return {
         "candidate_selection": candidate_selection,
         "status": "Cancelled",
@@ -747,12 +818,13 @@ def cancel_next_governed_limited_operation_candidate_selection_audit(candidate_s
 def quick_next_governed_limited_operation_candidate_selection_summary(limit=20):
     return {
         "candidate_selection_records": frappe.get_all(
-            CANDIDATE_DOCTYPE,
+            CANDIDATE_SELECTION_DOCTYPE,
+            filters={"monitored_payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY},
             fields=[
                 "name",
                 "candidate_selection_id",
                 "status",
-                "candidate_status",
+                "candidate_selection_status",
                 "candidate_selection_approved",
                 "selected_source_doctype",
                 "selected_reference_doctype",
@@ -765,10 +837,13 @@ def quick_next_governed_limited_operation_candidate_selection_summary(limit=20):
                 "selected_live_posting_allowed",
                 "selected_journal_entry_side_effect_allowed",
                 "selected_purchase_invoice_side_effect_allowed",
-                CANDIDATE_READY_FIELD,
                 "monitored_payment_entry",
                 "monitored_payment_entry_docstatus",
                 "monitored_payment_entry_status",
+                "monitored_voucher_gl_rows",
+                "monitored_voucher_gl_net",
+                "monitored_reversal_gl_rows",
+                "monitored_restored_invoice_amount",
                 "payment_entry_count_before",
                 "payment_entry_count_after",
                 "payment_entry_gl_count_before",
@@ -778,6 +853,7 @@ def quick_next_governed_limited_operation_candidate_selection_summary(limit=20):
                 "actual_gl_created_count",
                 "submitted_journal_entry_count_today",
                 "purchase_invoice_count_today",
+                CANDIDATE_SELECTION_READY_FIELD,
                 "checked_on",
                 "checked_by",
             ],
@@ -785,7 +861,7 @@ def quick_next_governed_limited_operation_candidate_selection_summary(limit=20):
             limit=int(limit or 20),
         ),
         "items": frappe.get_all(
-            CANDIDATE_ITEM_DOCTYPE,
+            CANDIDATE_SELECTION_ITEM_DOCTYPE,
             fields=[
                 "name",
                 "candidate_selection",
@@ -802,50 +878,52 @@ def quick_next_governed_limited_operation_candidate_selection_summary(limit=20):
                 "currency",
                 "selected_amount",
                 "current_outstanding_amount",
+                "invoice_docstatus",
+                "outstanding_sufficient",
                 "monitored_payment_entry",
                 "detail",
             ],
             order_by="creation desc",
             limit=int(limit or 20),
         ),
-        "required_acknowledgement": CANDIDATE_ACK,
+        "required_acknowledgement": CANDIDATE_SELECTION_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 12P next governed limited-operation candidate selection summary.",
+        "note": "Phase 13B next governed limited-operation candidate selection summary.",
     }
 
 
 def execute_candidate_selection_report(filters=None):
     columns = [
-        {"fieldname": "candidate_selection", "label": _("Candidate Selection"), "fieldtype": "Link", "options": CANDIDATE_DOCTYPE, "width": 220},
-        {"fieldname": "candidate_selection_id", "label": _("Candidate Selection ID"), "fieldtype": "Data", "width": 470},
-        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 210},
-        {"fieldname": "candidate_status", "label": _("Candidate Status"), "fieldtype": "Data", "width": 390},
+        {"fieldname": "candidate_selection", "label": _("Candidate Selection"), "fieldtype": "Link", "options": CANDIDATE_SELECTION_DOCTYPE, "width": 220},
+        {"fieldname": "candidate_selection_id", "label": _("Candidate Selection ID"), "fieldtype": "Data", "width": 540},
+        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 190},
+        {"fieldname": "candidate_selection_status", "label": _("Selection Status"), "fieldtype": "Data", "width": 440},
         {"fieldname": "candidate_selection_approved", "label": _("Approved"), "fieldtype": "Check", "width": 90},
         {"fieldname": "selected_source_doctype", "label": _("Source"), "fieldtype": "Data", "width": 120},
         {"fieldname": "selected_reference_doctype", "label": _("Reference"), "fieldtype": "Data", "width": 120},
         {"fieldname": "selected_party_type", "label": _("Party Type"), "fieldtype": "Data", "width": 100},
         {"fieldname": "selected_invoice_names", "label": _("Invoices"), "fieldtype": "Small Text", "width": 420},
         {"fieldname": "selected_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
-        {"fieldname": "selected_total_amount", "label": _("Amount"), "fieldtype": "Currency", "options": "currency", "width": 100},
+        {"fieldname": "selected_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
         {"fieldname": "selected_payment_entry_count", "label": _("Future PE"), "fieldtype": "Int", "width": 90},
         {"fieldname": "selected_gl_entry_count", "label": _("Future GL"), "fieldtype": "Int", "width": 90},
-        {"fieldname": CANDIDATE_READY_FIELD, "label": _("Validation Ready"), "fieldtype": "Check", "width": 130},
+        {"fieldname": CANDIDATE_SELECTION_READY_FIELD, "label": _("Validation Ready"), "fieldtype": "Check", "width": 125},
         {"fieldname": "monitored_payment_entry", "label": _("Monitored PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
         {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 115},
         {"fieldname": "payment_entry_gl_count_after", "label": _("PE GL After"), "fieldtype": "Int", "width": 115},
-        {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 130},
+        {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 135},
         {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
-        {"fieldname": "currency", "label": _("Currency"), "fieldtype": "Link", "options": "Currency", "hidden": 1},
     ]
+
     data = frappe.db.sql(
         f"""
         SELECT
             name AS candidate_selection,
             candidate_selection_id,
             status,
-            candidate_status,
+            candidate_selection_status,
             candidate_selection_approved,
             selected_source_doctype,
             selected_reference_doctype,
@@ -855,54 +933,60 @@ def execute_candidate_selection_report(filters=None):
             selected_total_amount,
             selected_payment_entry_count,
             selected_gl_entry_count,
-            `{CANDIDATE_READY_FIELD}` AS `{CANDIDATE_READY_FIELD}`,
+            `{CANDIDATE_SELECTION_READY_FIELD}` AS `{CANDIDATE_SELECTION_READY_FIELD}`,
             monitored_payment_entry,
             payment_entry_count_before,
             payment_entry_count_after,
             payment_entry_gl_count_before,
             payment_entry_gl_count_after,
             actual_gl_created_count,
-            checked_on,
-            %(currency)s AS currency
-        FROM `tab{CANDIDATE_DOCTYPE}`
+            checked_on
+        FROM `tab{CANDIDATE_SELECTION_DOCTYPE}`
+        WHERE monitored_payment_entry=%(payment_entry)s
         ORDER BY creation DESC
         """,
-        {"currency": currency()},
+        {"payment_entry": EXPECTED_MONITORED_PAYMENT_ENTRY},
         as_dict=True,
     )
+
     chart = {
         "data": {
             "labels": [row.candidate_selection_id for row in data[:20]],
             "datasets": [
-                {"name": "Candidate Approved", "values": [int(row.candidate_selection_approved or 0) for row in data[:20]]},
-                {"name": "Validation Ready", "values": [int(row.get(CANDIDATE_READY_FIELD) or 0) for row in data[:20]]},
+                {"name": "Candidate Selection Approved", "values": [int(row.candidate_selection_approved or 0) for row in data[:20]]},
+                {"name": "Validation Ready", "values": [int(row.get(CANDIDATE_SELECTION_READY_FIELD) or 0) for row in data[:20]]},
             ],
         },
         "type": "bar",
     }
+
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Candidate Selection Records"), "datatype": "Int"},
         {"value": sum(int(row.candidate_selection_approved or 0) for row in data), "indicator": "Green", "label": _("Approved"), "datatype": "Int"},
         {"value": sum(int(row.actual_gl_created_count or 0) for row in data), "indicator": "Red", "label": _("Actual GL Created"), "datatype": "Int"},
     ]
+
     return columns, data, None, chart, summary
 
 
 def execute_item_report(filters=None):
     columns = [
-        {"fieldname": "item", "label": _("Item"), "fieldtype": "Link", "options": CANDIDATE_ITEM_DOCTYPE, "width": 220},
-        {"fieldname": "candidate_selection", "label": _("Candidate Selection"), "fieldtype": "Link", "options": CANDIDATE_DOCTYPE, "width": 220},
+        {"fieldname": "item", "label": _("Item"), "fieldtype": "Link", "options": CANDIDATE_SELECTION_ITEM_DOCTYPE, "width": 220},
+        {"fieldname": "candidate_selection", "label": _("Candidate Selection"), "fieldtype": "Link", "options": CANDIDATE_SELECTION_DOCTYPE, "width": 220},
         {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 90},
-        {"fieldname": "category", "label": _("Category"), "fieldtype": "Data", "width": 190},
+        {"fieldname": "category", "label": _("Category"), "fieldtype": "Data", "width": 220},
         {"fieldname": "line_no", "label": _("Line"), "fieldtype": "Int", "width": 60},
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
         {"fieldname": "selected_amount", "label": _("Selected Amount"), "fieldtype": "Currency", "width": 130},
-        {"fieldname": "current_outstanding_amount", "label": _("Outstanding"), "fieldtype": "Currency", "width": 120},
+        {"fieldname": "current_outstanding_amount", "label": _("Current Outstanding"), "fieldtype": "Currency", "width": 145},
+        {"fieldname": "invoice_docstatus", "label": _("Invoice Docstatus"), "fieldtype": "Int", "width": 120},
+        {"fieldname": "outstanding_sufficient", "label": _("Outstanding OK"), "fieldtype": "Check", "width": 120},
         {"fieldname": "monitored_payment_entry", "label": _("Monitored PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
         {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
     ]
+
     data = frappe.db.sql(
         f"""
         SELECT
@@ -915,35 +999,39 @@ def execute_item_report(filters=None):
             reference_name,
             selected_amount,
             current_outstanding_amount,
+            invoice_docstatus,
+            outstanding_sufficient,
             monitored_payment_entry,
             check_label,
             detail
-        FROM `tab{CANDIDATE_ITEM_DOCTYPE}`
+        FROM `tab{CANDIDATE_SELECTION_ITEM_DOCTYPE}`
         ORDER BY creation DESC
         """,
         as_dict=True,
     )
+
     chart = {
         "data": {
             "labels": ["Pass", "Warning", "Blocker", "Info"],
-            "datasets": [
-                {
-                    "name": "Items",
-                    "values": [
-                        len([row for row in data if row.status == "Pass"]),
-                        len([row for row in data if row.status == "Warning"]),
-                        len([row for row in data if row.status == "Blocker"]),
-                        len([row for row in data if row.status == "Info"]),
-                    ],
-                }
-            ],
+            "datasets": [{
+                "name": "Items",
+                "values": [
+                    len([row for row in data if row.status == "Pass"]),
+                    len([row for row in data if row.status == "Warning"]),
+                    len([row for row in data if row.status == "Blocker"]),
+                    len([row for row in data if row.status == "Info"]),
+                ],
+            }],
         },
         "type": "bar",
     }
+
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Items"), "datatype": "Int"},
         {"value": len([row for row in data if row.category == "Selected Reference"]), "indicator": "Green", "label": _("Selected References"), "datatype": "Int"},
+        {"value": len([row for row in data if int(row.outstanding_sufficient or 0) == 1]), "indicator": "Green", "label": _("Outstanding OK"), "datatype": "Int"},
     ]
+
     return columns, data, None, chart, summary
 
 

@@ -17,7 +17,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Candidate Selection", {
         }, __("Open"));
 
         if (frm.doc.design) {
-            frm.add_custom_button(__("Open Phase 12O Design"), () => {
+            frm.add_custom_button(__("Open Phase 13A Design"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Design", frm.doc.design);
             }, __("Evidence"));
         }
