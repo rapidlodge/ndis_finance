@@ -7,37 +7,39 @@ from frappe.utils import flt, now_datetime, today
 from ndis_finance.services.permissions import assert_action
 
 
-ROLLBACK_ACK = "I_CONFIRM_PHASE12U_ROLLBACK_NEXT_GOVERNED_LIMITED_OPERATION_SMOKE_CANCEL_ONE_PAYMENT_ENTRY"
+ROLLBACK_ACK = "I_CONFIRM_PHASE13G_ROLLBACK_NEXT_GOVERNED_LIMITED_OPERATION_SMOKE_CANCEL_ONE_PAYMENT_ENTRY"
 
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
 SMOKE_DOCTYPE = "NDIS Next Governed Limited Op Smoke"
 SMOKE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Smoke Item"
-ROLLBACK_DOCTYPE = "NDIS Next Governed Limited Op Rollback"
-ROLLBACK_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Rollback Item"
+ROLLBACK_DOCTYPE = "NDIS Next Governed Limited Op Smoke Rollback"
+ROLLBACK_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Smoke Rollback Item"
 
 SMOKE_READY_FIELD = "ready_for_next_governed_limited_op_smoke_rollback"
 ROLLBACK_READY_FIELD = "ready_for_next_governed_limited_op_rollback_freeze"
 
-EXPECTED_SMOKE_PAYMENT_ENTRY = "ACC-PAY-2026-00013"
-SOURCE_MONITORED_PAYMENT_ENTRY = "ACC-PAY-2026-00012"
+ROLLBACK_PAYMENT_ENTRY = "ACC-PAY-2026-00014"
 EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
 
-EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE = 12
-EXPECTED_PAYMENT_ENTRY_COUNT_AFTER = 12
-EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE = 74
-EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER = 78
-
+EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE = 13
+EXPECTED_PAYMENT_ENTRY_COUNT_AFTER = 13
+EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE = 82
+EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER = 86
 EXPECTED_TOTAL_AMOUNT = 3.00
 EXPECTED_INVOICE_COUNT = 3
 EXPECTED_GL_ROWS_BEFORE = 4
 EXPECTED_GL_ROWS_AFTER = 8
 EXPECTED_REVERSAL_GL_ROWS = 4
-EXPECTED_GL_NET_AFTER = 0.00
+EXPECTED_GL_NET = 0.00
+
+ROLLBACK_SOURCE_DOCTYPE = "Sales Invoice"
+ROLLBACK_REFERENCE_DOCTYPE = "Sales Invoice"
+ROLLBACK_PARTY_TYPE = "Customer"
 
 
 def make_rollback_id():
     timestamp = now_datetime().strftime("%Y%m%d-%H%M%S")
-    return f"NDIS-NEXT-GOVERNED-LIMITED-OP-ROLLBACK-{timestamp}-{frappe.generate_hash(length=5).upper()}"
+    return f"NDIS-NEXT-GOVERNED-LIMITED-OP-SMOKE-ROLLBACK-{timestamp}-{frappe.generate_hash(length=5).upper()}"
 
 
 def safe_json(value):
@@ -58,6 +60,13 @@ def has_column(doctype, fieldname):
         return bool(frappe.db.has_column(doctype, fieldname))
     except Exception:
         return False
+
+
+def row_get(row, fieldname, default=None):
+    try:
+        return row.get(fieldname, default)
+    except Exception:
+        return getattr(row, fieldname, default)
 
 
 def get_flag(doctype, name, fieldname, default=0):
@@ -113,6 +122,10 @@ def payment_entry_gl_net(payment_entry):
     return flt(value or 0, 2)
 
 
+def reversal_gl_rows(payment_entry):
+    return max(0, int(payment_entry_gl_rows(payment_entry) or 0) - EXPECTED_GL_ROWS_BEFORE)
+
+
 def outstanding_total(invoice_names):
     if not invoice_names:
         return 0
@@ -132,16 +145,31 @@ def latest_smoke():
         "status": "Completed",
         "smoke_status": "Next Governed Limited Operation Smoke Completed",
         "smoke_completed": 1,
-        "phase12s_execution_gate_verified": 1,
+        "phase13e_execution_gate_verified": 1,
         "execution_gate_approved_verified": 1,
-        "smoke_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
-        "smoke_payment_entry_docstatus": 1,
-        "smoke_payment_entry_gl_rows": EXPECTED_GL_ROWS_BEFORE,
+        "execution_gate_source_verified": 1,
+        "execution_gate_reference_verified": 1,
+        "execution_gate_party_type_verified": 1,
+        "execution_gate_reference_set_verified": 1,
+        "execution_gate_shape_verified": 1,
+        "execution_gate_smoke_allowed_verified": 1,
+        "invoice_submission_verified": 1,
+        "invoice_outstanding_verified": 1,
+        "policy_state_preserved_verified": 1,
+        "accounting_movement_verified": 1,
+        "smoke_source_doctype": ROLLBACK_SOURCE_DOCTYPE,
+        "smoke_reference_doctype": ROLLBACK_REFERENCE_DOCTYPE,
+        "smoke_party_type": ROLLBACK_PARTY_TYPE,
         "smoke_invoice_count": EXPECTED_INVOICE_COUNT,
         "smoke_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "payment_entry_count_before": 11,
+        "smoke_payment_entry": ROLLBACK_PAYMENT_ENTRY,
+        "smoke_payment_entry_docstatus": 1,
+        "smoke_payment_entry_status": "Submitted",
+        "smoke_gl_rows": EXPECTED_GL_ROWS_BEFORE,
+        "smoke_gl_net": EXPECTED_GL_NET,
+        "payment_entry_count_before": 12,
         "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE,
-        "payment_entry_gl_count_before": 70,
+        "payment_entry_gl_count_before": 78,
         "payment_entry_gl_count_after": EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE,
         "actual_payment_entry_created_count": 1,
         "actual_payment_entry_cancelled_count": 0,
@@ -164,10 +192,20 @@ def latest_smoke():
         fields=[
             "name",
             "smoke_id",
-            "smoke_payment_entry",
+            "smoke_source_doctype",
+            "smoke_reference_doctype",
+            "smoke_party_type",
+            "smoke_customer",
+            "smoke_company",
+            "smoke_currency",
             "smoke_invoice_names",
             "smoke_invoice_count",
             "smoke_total_amount",
+            "smoke_payment_entry",
+            "smoke_payment_entry_docstatus",
+            "smoke_payment_entry_status",
+            "smoke_gl_rows",
+            "smoke_gl_net",
             "execution_gate",
             "preview",
             "candidate_validation",
@@ -193,7 +231,6 @@ def existing_completed_rollback(smoke):
         ROLLBACK_DOCTYPE,
         filters={
             "smoke": smoke,
-            "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
             "status": "Rolled Back",
             "rollback_completed": 1,
         },
@@ -220,9 +257,10 @@ def smoke_rows(smoke):
             "company",
             "currency",
             "smoke_amount",
-            "current_outstanding_amount",
+            "allocated_amount",
             "invoice_docstatus",
-            "outstanding_sufficient",
+            "outstanding_before",
+            "outstanding_after",
             "smoke_payment_entry",
         ],
         order_by="line_no asc, creation asc",
@@ -237,23 +275,20 @@ def smoke_rows(smoke):
             as_dict=True,
         ) if frappe.db.exists("Sales Invoice", row.reference_name) else None
 
-        amount = flt(row.smoke_amount or 0, 2)
-        outstanding = flt((si.outstanding_amount if si else 0) or 0, 2)
-
         result.append(
             frappe._dict(
                 {
                     "idx": int(row.line_no or idx),
                     "reference_doctype": row.reference_doctype,
                     "reference_name": row.reference_name,
-                    "rollback_amount": amount,
-                    "current_outstanding_amount": outstanding,
+                    "rollback_amount": flt(row.smoke_amount or row.allocated_amount or 0, 2),
                     "customer": si.customer if si else row.customer,
                     "company": si.company if si else row.company,
                     "currency": si.currency if si else row.currency,
                     "invoice_docstatus": int(si.docstatus or 0) if si else int(row.invoice_docstatus or 0),
-                    "outstanding_restored": int(outstanding >= amount and amount > 0),
-                    "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
+                    "outstanding_before": flt((si.outstanding_amount if si else row.outstanding_after) or 0, 2),
+                    "smoke_outstanding_before": flt(row.outstanding_before or 0, 2),
+                    "smoke_payment_entry": row.smoke_payment_entry,
                 }
             )
         )
@@ -274,33 +309,24 @@ def unique_value(rows, fieldname):
     return values[0] if len(values) == 1 else None
 
 
-def same_value_verified(rows, fieldname):
-    values = set([getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)])
-    return int(len(rows) == EXPECTED_INVOICE_COUNT and len(values) == 1)
-
-
-def validate_source(smoke, rows, guard, config, policy_enabled, policy_live, pe_state_before, gl_rows_before, outstanding_before):
+def validate_source(smoke, rows, guard, config, policy_enabled, policy_live):
     issues = []
 
     if not smoke:
-        issues.append("No completed Phase 12T smoke found for rollback.")
+        issues.append("No completed Phase 13F smoke found for rollback.")
         return issues
 
     existing = existing_completed_rollback(smoke.name)
     if existing:
-        issues.append(f"Completed Phase 12U rollback already exists for this smoke: {existing.rollback_id} / {existing.rollback_payment_entry}")
+        issues.append(f"Completed Phase 13G rollback already exists for this smoke: {existing.rollback_id} / {existing.rollback_payment_entry}")
 
-    if smoke.smoke_payment_entry != EXPECTED_SMOKE_PAYMENT_ENTRY:
-        issues.append(f"Smoke Payment Entry must be {EXPECTED_SMOKE_PAYMENT_ENTRY}.")
+    state = payment_entry_state(ROLLBACK_PAYMENT_ENTRY)
 
-    if not frappe.db.exists("Payment Entry", EXPECTED_SMOKE_PAYMENT_ENTRY):
-        issues.append(f"Smoke Payment Entry does not exist: {EXPECTED_SMOKE_PAYMENT_ENTRY}")
+    if not frappe.db.exists("Payment Entry", ROLLBACK_PAYMENT_ENTRY):
+        issues.append(f"Rollback Payment Entry does not exist: {ROLLBACK_PAYMENT_ENTRY}")
 
-    if pe_state_before.docstatus != 1:
-        issues.append(f"Smoke Payment Entry must be submitted before rollback. docstatus={pe_state_before.docstatus}")
-
-    if pe_state_before.status != "Submitted":
-        issues.append(f"Smoke Payment Entry status must be Submitted before rollback. status={pe_state_before.status}")
+    if state.docstatus != 1 or state.status != "Submitted":
+        issues.append(f"Rollback Payment Entry must be submitted before rollback. Found {state.docstatus} / {state.status}")
 
     if reference_names(rows) != EXPECTED_INVOICES:
         issues.append(f"Rollback invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
@@ -311,29 +337,20 @@ def validate_source(smoke, rows, guard, config, policy_enabled, policy_live, pe_
     if rollback_total(rows) != EXPECTED_TOTAL_AMOUNT:
         issues.append(f"Rollback total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {rollback_total(rows)}.")
 
-    if not same_value_verified(rows, "customer"):
-        issues.append("Rollback Sales Invoices must share the same customer.")
+    if payment_entry_gl_rows(ROLLBACK_PAYMENT_ENTRY) != EXPECTED_GL_ROWS_BEFORE:
+        issues.append(f"Rollback Payment Entry must have {EXPECTED_GL_ROWS_BEFORE} GL rows before rollback.")
 
-    if not same_value_verified(rows, "company"):
-        issues.append("Rollback Sales Invoices must share the same company.")
+    if payment_entry_gl_net(ROLLBACK_PAYMENT_ENTRY) != EXPECTED_GL_NET:
+        issues.append("Rollback Payment Entry GL net must be 0.00 before rollback.")
 
-    if not same_value_verified(rows, "currency"):
-        issues.append("Rollback Sales Invoices must share the same currency.")
-
-    if gl_rows_before != EXPECTED_GL_ROWS_BEFORE:
-        issues.append(f"Smoke Payment Entry must have 4 GL rows before rollback. Found {gl_rows_before}.")
-
-    if payment_entry_gl_net(EXPECTED_SMOKE_PAYMENT_ENTRY) != 0:
-        issues.append("Smoke Payment Entry GL net must be 0.00 before rollback.")
-
-    if outstanding_before != 0:
-        issues.append(f"Invoice outstanding before rollback should be 0.00 after smoke payment. Found {outstanding_before}.")
+    if outstanding_total(EXPECTED_INVOICES) != 0:
+        issues.append("Invoice outstanding total must be 0.00 before rollback.")
 
     if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE:
-        issues.append("Payment Entry count must be 12 before rollback.")
+        issues.append("Payment Entry count must be 13 before rollback.")
 
     if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE:
-        issues.append("Payment Entry GL count must be 74 before rollback.")
+        issues.append("Payment Entry GL count must be 82 before rollback.")
 
     if guard["submitted_journal_entry_count_today"] != 0:
         issues.append("Submitted Journal Entry today must remain 0 before rollback.")
@@ -342,10 +359,10 @@ def validate_source(smoke, rows, guard, config, policy_enabled, policy_live, pe_
         issues.append("Purchase Invoice today must remain 0 before rollback.")
 
     if guard["production_batch_enabled_policy_count"] != 1:
-        issues.append("Exactly one controlled production batch policy must remain enabled.")
+        issues.append("Exactly one controlled production batch policy must remain enabled before rollback.")
 
     if guard["live_posting_allowed_policy_count"] != 0:
-        issues.append("Controlled production live allowed policy count must remain 0.")
+        issues.append("Controlled production live allowed policy count must remain 0 before rollback.")
 
     if policy_enabled != 1:
         issues.append("Target policy production_batch_enabled must remain 1.")
@@ -354,23 +371,23 @@ def validate_source(smoke, rows, guard, config, policy_enabled, policy_live, pe_
         issues.append("Target policy live_posting_allowed must remain 0.")
 
     if config["sandbox_enabled"] != 1:
-        issues.append("Sandbox config must be enabled.")
+        issues.append("Sandbox config must be enabled for governed rollback.")
 
     if config["production_mode"] != 0:
-        issues.append("Production mode config must remain 0.")
+        issues.append("Production mode config must remain 0 for governed rollback.")
 
     if config["live_pe_enabled"] != 0:
-        issues.append("Live Payment Entry posting config must remain 0.")
+        issues.append("Live Payment Entry posting config must remain 0 for governed rollback.")
 
     return issues
 
 
-def cancel_smoke_payment_entry(payment_entry):
-    pe = frappe.get_doc("Payment Entry", payment_entry)
-    pe.flags.ignore_permissions = True
-    pe.flags.ignore_account_permission = True
+def cancel_payment_entry():
+    pe = frappe.get_doc("Payment Entry", ROLLBACK_PAYMENT_ENTRY)
+    if int(pe.docstatus or 0) != 1:
+        frappe.throw(_("Payment Entry must be submitted before rollback: {0}").format(ROLLBACK_PAYMENT_ENTRY))
     pe.cancel()
-    frappe.db.commit()
+    return pe
 
 
 def build_items(rows, issues, ack_ok, completed=0):
@@ -383,8 +400,8 @@ def build_items(rows, issues, ack_ok, completed=0):
             "category": "Rollback Source",
             "check_key": "rollback_source_valid",
             "check_label": "Rollback source valid",
-            "detail": f"Phase 12T smoke Payment Entry {EXPECTED_SMOKE_PAYMENT_ENTRY} is eligible for governed rollback.",
-            "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
+            "detail": f"Phase 13F smoke Payment Entry {ROLLBACK_PAYMENT_ENTRY} can be rolled back.",
+            "rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY,
         })
     else:
         for issue in issues:
@@ -395,18 +412,18 @@ def build_items(rows, issues, ack_ok, completed=0):
                 "check_key": "rollback_source_valid",
                 "check_label": "Rollback source valid",
                 "detail": issue,
-                "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
+                "rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY,
             })
 
     for row in rows:
-        row_status = "Pass" if (not completed or int(row.outstanding_restored or 0) == 1) else "Blocker"
+        outstanding_after = frappe.db.get_value("Sales Invoice", row.reference_name, "outstanding_amount") if completed else row.outstanding_before
         items.append({
-            "status": row_status,
+            "status": "Pass",
             "severity": "High",
             "category": "Rollback Reference",
             "check_key": "rollback_sales_invoice_reference",
             "check_label": f"Rollback Sales Invoice {row.idx}",
-            "detail": f"{row.reference_name} rollback amount={row.rollback_amount}, docstatus={row.invoice_docstatus}, current outstanding={row.current_outstanding_amount}, restored={row.outstanding_restored}.",
+            "detail": f"{row.reference_name} rollback amount={row.rollback_amount}, before={row.outstanding_before}, after={flt(outstanding_after or 0, 2)}.",
             "line_no": row.idx,
             "reference_doctype": row.reference_doctype,
             "reference_name": row.reference_name,
@@ -414,28 +431,9 @@ def build_items(rows, issues, ack_ok, completed=0):
             "company": row.company,
             "currency": row.currency,
             "rollback_amount": row.rollback_amount,
-            "current_outstanding_amount": row.current_outstanding_amount,
-            "invoice_docstatus": row.invoice_docstatus,
-            "outstanding_restored": row.outstanding_restored,
-            "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
-        })
-
-    checks = [
-        ("smoke_payment_entry_cancelled", "Smoke Payment Entry cancelled", completed),
-        ("rollback_shape", "Rollback shape", f"{EXPECTED_INVOICE_COUNT} / {EXPECTED_TOTAL_AMOUNT} / 0 / 1 / 4"),
-        ("rollback_gl_rows", "Rollback reversal GL rows", EXPECTED_REVERSAL_GL_ROWS if completed else 0),
-        ("rollback_freeze_ready", "Ready for next governed rollback freeze", completed),
-    ]
-
-    for key, label, value in checks:
-        items.append({
-            "status": "Pass",
-            "severity": "High",
-            "category": "Rollback Evidence",
-            "check_key": key,
-            "check_label": label,
-            "detail": f"value={value}",
-            "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
+            "outstanding_before": row.outstanding_before,
+            "outstanding_after": flt(outstanding_after or 0, 2),
+            "rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY,
         })
 
     items.append({
@@ -445,7 +443,7 @@ def build_items(rows, issues, ack_ok, completed=0):
         "check_key": "ack_ok",
         "check_label": "Acknowledgement supplied",
         "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {ROLLBACK_ACK}",
-        "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
+        "rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY,
     })
 
     return items
@@ -477,7 +475,7 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
     assert_action("run_next_governed_limited_operation_smoke_rollback")
 
     smoke = latest_smoke()
-    rows_before = smoke_rows(smoke.name) if smoke else []
+    rows = smoke_rows(smoke.name) if smoke else []
 
     guard_before = guardrails()
     ack_ok = acknowledgement == ROLLBACK_ACK
@@ -491,40 +489,28 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
     policy_enabled_before = get_flag(POLICY_DOCTYPE, smoke.target_policy, "production_batch_enabled") if smoke else 0
     policy_live_before = get_flag(POLICY_DOCTYPE, smoke.target_policy, "live_posting_allowed") if smoke else 0
 
-    pe_state_before = payment_entry_state(EXPECTED_SMOKE_PAYMENT_ENTRY)
-    gl_rows_before = payment_entry_gl_rows(EXPECTED_SMOKE_PAYMENT_ENTRY)
-    gl_net_before = payment_entry_gl_net(EXPECTED_SMOKE_PAYMENT_ENTRY)
-    outstanding_before = outstanding_total(EXPECTED_INVOICES)
+    state_before = payment_entry_state(ROLLBACK_PAYMENT_ENTRY)
+    gl_rows_before = payment_entry_gl_rows(ROLLBACK_PAYMENT_ENTRY)
+    gl_net_before = payment_entry_gl_net(ROLLBACK_PAYMENT_ENTRY)
 
-    source_issues = validate_source(
-        smoke,
-        rows_before,
-        guard_before,
-        config,
-        policy_enabled_before,
-        policy_live_before,
-        pe_state_before,
-        gl_rows_before,
-        outstanding_before,
-    )
+    source_issues = validate_source(smoke, rows, guard_before, config, policy_enabled_before, policy_live_before)
 
     if not int(dry_run or 0) and ack_ok and not source_issues:
-        cancel_smoke_payment_entry(EXPECTED_SMOKE_PAYMENT_ENTRY)
+        cancel_payment_entry()
 
     guard_after = guardrails()
-    rows_after = smoke_rows(smoke.name) if smoke else []
 
     policy_enabled_after = get_flag(POLICY_DOCTYPE, smoke.target_policy, "production_batch_enabled") if smoke else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, smoke.target_policy, "live_posting_allowed") if smoke else 0
 
-    pe_state_after = payment_entry_state(EXPECTED_SMOKE_PAYMENT_ENTRY)
-    gl_rows_after = payment_entry_gl_rows(EXPECTED_SMOKE_PAYMENT_ENTRY)
-    gl_net_after = payment_entry_gl_net(EXPECTED_SMOKE_PAYMENT_ENTRY)
-    reversal_gl_rows = max(0, int(gl_rows_after or 0) - EXPECTED_GL_ROWS_BEFORE)
+    state_after = payment_entry_state(ROLLBACK_PAYMENT_ENTRY)
+    gl_rows_after = payment_entry_gl_rows(ROLLBACK_PAYMENT_ENTRY)
+    gl_net_after = payment_entry_gl_net(ROLLBACK_PAYMENT_ENTRY)
+    reversal_rows = reversal_gl_rows(ROLLBACK_PAYMENT_ENTRY)
     restored_amount = outstanding_total(EXPECTED_INVOICES)
 
     actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
-    actual_pe_cancelled = int(pe_state_before.docstatus == 1 and pe_state_after.docstatus == 2)
+    actual_pe_cancelled = int(state_before.docstatus == 1 and state_after.docstatus == 2)
     actual_gl_created = guard_after["payment_entry_gl_count"] - guard_before["payment_entry_gl_count"]
 
     policy_mutation_count = int(
@@ -534,17 +520,36 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
         or guard_before["live_posting_allowed_policy_count"] != guard_after["live_posting_allowed_policy_count"]
     )
 
-    expected_cancelled = 0 if int(dry_run or 0) or not ack_ok else 1
-    expected_gl_created = 0 if int(dry_run or 0) or not ack_ok else 4
-
     post_issues = list(source_issues)
 
-    if actual_pe_created != 0:
-        post_issues.append(f"Rollback must create 0 Payment Entries. Created {actual_pe_created}.")
-    if actual_pe_cancelled != expected_cancelled:
-        post_issues.append(f"Rollback cancelled count mismatch. Expected {expected_cancelled}. Found {actual_pe_cancelled}.")
-    if actual_gl_created != expected_gl_created:
-        post_issues.append(f"Rollback GL created count mismatch. Expected {expected_gl_created}. Found {actual_gl_created}.")
+    if not int(dry_run or 0) and ack_ok and not source_issues:
+        if state_after.docstatus != 2:
+            post_issues.append("Rollback Payment Entry must be cancelled after rollback.")
+        if state_after.status != "Cancelled":
+            post_issues.append("Rollback Payment Entry status must be Cancelled after rollback.")
+        if gl_rows_after != EXPECTED_GL_ROWS_AFTER:
+            post_issues.append(f"Voucher GL rows after rollback must be {EXPECTED_GL_ROWS_AFTER}. Found {gl_rows_after}.")
+        if reversal_rows != EXPECTED_REVERSAL_GL_ROWS:
+            post_issues.append(f"Reversal GL rows must be {EXPECTED_REVERSAL_GL_ROWS}. Found {reversal_rows}.")
+        if gl_net_after != EXPECTED_GL_NET:
+            post_issues.append(f"Voucher GL net after rollback must be {EXPECTED_GL_NET}. Found {gl_net_after}.")
+        if restored_amount != EXPECTED_TOTAL_AMOUNT:
+            post_issues.append(f"Restored invoice amount must be {EXPECTED_TOTAL_AMOUNT}. Found {restored_amount}.")
+        if actual_pe_created != 0:
+            post_issues.append(f"Rollback must create 0 Payment Entries. Created {actual_pe_created}.")
+        if actual_pe_cancelled != 1:
+            post_issues.append(f"Rollback must cancel exactly 1 Payment Entry. Cancelled {actual_pe_cancelled}.")
+        if actual_gl_created != 4:
+            post_issues.append(f"Rollback must create exactly 4 reversal GL rows. Created {actual_gl_created}.")
+        if guard_after["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT_AFTER:
+            post_issues.append("Payment Entry count must remain 13 after rollback.")
+        if guard_after["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER:
+            post_issues.append("Payment Entry GL count must be 86 after rollback.")
+
+    if guard_after["submitted_journal_entry_count_today"] != 0:
+        post_issues.append("Submitted Journal Entry today must remain 0 after rollback.")
+    if guard_after["purchase_invoice_count_today"] != 0:
+        post_issues.append("Purchase Invoice today must remain 0 after rollback.")
     if policy_mutation_count != 0:
         post_issues.append("Policy state changed during rollback. This is not allowed.")
 
@@ -553,27 +558,27 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
         and ack_ok
         and smoke
         and not post_issues
-        and pe_state_before.docstatus == 1
-        and pe_state_after.docstatus == 2
-        and pe_state_after.status == "Cancelled"
+        and state_before.docstatus == 1
+        and state_after.docstatus == 2
+        and state_after.status == "Cancelled"
         and gl_rows_before == EXPECTED_GL_ROWS_BEFORE
         and gl_rows_after == EXPECTED_GL_ROWS_AFTER
-        and reversal_gl_rows == EXPECTED_REVERSAL_GL_ROWS
-        and gl_net_after == EXPECTED_GL_NET_AFTER
+        and reversal_rows == EXPECTED_REVERSAL_GL_ROWS
+        and gl_net_after == EXPECTED_GL_NET
         and restored_amount == EXPECTED_TOTAL_AMOUNT
+        and actual_pe_created == 0
+        and actual_pe_cancelled == 1
+        and actual_gl_created == 4
         and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE
         and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT_AFTER
         and guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE
         and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER
-        and actual_pe_created == 0
-        and actual_pe_cancelled == 1
-        and actual_gl_created == 4
         and guard_after["submitted_journal_entry_count_today"] == 0
         and guard_after["purchase_invoice_count_today"] == 0
         and policy_mutation_count == 0
     )
 
-    items = build_items(rows_after if completed else rows_before, post_issues, ack_ok, completed=completed)
+    items = build_items(rows, post_issues, ack_ok, completed=completed)
     item_summary = summarise_items(items)
 
     result = {
@@ -582,30 +587,40 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
         "rollback_status": "Next Governed Limited Operation Smoke Rolled Back" if completed else "Needs Review",
         "rollback_completed": completed,
 
-        "phase12t_smoke_verified": 1 if smoke else 0,
+        "phase13f_smoke_verified": 1 if smoke else 0,
         "smoke_completed_verified": 1 if smoke else 0,
-        "smoke_payment_entry_verified": int(smoke and smoke.smoke_payment_entry == EXPECTED_SMOKE_PAYMENT_ENTRY),
-        "smoke_payment_entry_submitted_before_verified": int(pe_state_before.docstatus == 1 and pe_state_before.status == "Submitted"),
-        "rollback_payment_entry_cancelled_verified": int(pe_state_after.docstatus == 2 and pe_state_after.status == "Cancelled"),
-        "rollback_gl_rows_verified": int(gl_rows_before == EXPECTED_GL_ROWS_BEFORE and gl_rows_after == EXPECTED_GL_ROWS_AFTER and reversal_gl_rows == EXPECTED_REVERSAL_GL_ROWS),
+        "smoke_payment_entry_verified": int(smoke and smoke.smoke_payment_entry == ROLLBACK_PAYMENT_ENTRY),
+        "smoke_payment_entry_submitted_before_verified": int(state_before.docstatus == 1 and state_before.status == "Submitted"),
+        "smoke_payment_entry_cancelled_after_verified": int(state_after.docstatus == 2 and state_after.status == "Cancelled"),
+        "smoke_gl_rows_before_verified": int(gl_rows_before == EXPECTED_GL_ROWS_BEFORE and gl_net_before == EXPECTED_GL_NET),
+        "rollback_gl_rows_verified": int(actual_gl_created == 4),
+        "voucher_gl_rows_verified": int(gl_rows_after == EXPECTED_GL_ROWS_AFTER),
+        "voucher_gl_net_zero_verified": int(gl_net_after == EXPECTED_GL_NET),
         "invoice_outstanding_restored_verified": int(restored_amount == EXPECTED_TOTAL_AMOUNT),
         "policy_state_preserved_verified": int(policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0),
-        "no_unplanned_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == expected_cancelled and actual_gl_created == expected_gl_created),
+        "accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 1 and actual_gl_created == 4),
 
-        "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
-        "rollback_payment_entry_docstatus_before": pe_state_before.docstatus,
-        "rollback_payment_entry_status_before": pe_state_before.status,
-        "rollback_payment_entry_docstatus_after": pe_state_after.docstatus,
-        "rollback_payment_entry_status_after": pe_state_after.status,
+        "rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY,
+        "rollback_payment_entry_docstatus_before": state_before.docstatus,
+        "rollback_payment_entry_status_before": state_before.status,
+        "rollback_payment_entry_docstatus_after": state_after.docstatus,
+        "rollback_payment_entry_status_after": state_after.status,
 
-        "rollback_invoice_names": ", ".join(EXPECTED_INVOICES),
-        "rollback_invoice_count": EXPECTED_INVOICE_COUNT,
-        "rollback_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "rollback_voucher_gl_rows_before": gl_rows_before,
-        "rollback_voucher_gl_rows_after": gl_rows_after,
-        "rollback_reversal_gl_rows": reversal_gl_rows,
-        "rollback_voucher_gl_net_after": gl_net_after,
-        "restored_invoice_amount": restored_amount,
+        "rollback_source_doctype": ROLLBACK_SOURCE_DOCTYPE,
+        "rollback_reference_doctype": ROLLBACK_REFERENCE_DOCTYPE,
+        "rollback_party_type": ROLLBACK_PARTY_TYPE,
+        "rollback_customer": unique_value(rows, "customer"),
+        "rollback_company": unique_value(rows, "company"),
+        "rollback_currency": unique_value(rows, "currency"),
+        "rollback_invoice_names": ", ".join(reference_names(rows)),
+        "rollback_invoice_count": len(rows),
+        "rollback_total_amount": rollback_total(rows),
+        "rollback_restored_invoice_amount": restored_amount,
+
+        "rollback_gl_rows_before": gl_rows_before,
+        "rollback_gl_rows_after": gl_rows_after,
+        "rollback_reversal_gl_rows": reversal_rows,
+        "rollback_gl_net": gl_net_after,
 
         "payment_entry_count_before": guard_before["payment_entry_count"],
         "payment_entry_count_after": guard_after["payment_entry_count"],
@@ -647,7 +662,7 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
         "issues": post_issues,
         "required_acknowledgement": ROLLBACK_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 12U cancels exactly one governed smoke Payment Entry and creates four reversal GL rows.",
+        "note": "Phase 13G rolls back the next governed limited-operation smoke. Exactly one submitted Payment Entry is cancelled and four reversal GL rows are expected.",
     }
 
     if int(dry_run or 0):
@@ -682,7 +697,7 @@ def run_next_governed_limited_operation_smoke_rollback(dry_run=1, acknowledgemen
         "created": True,
         "rollback": doc.name,
         "rollback_id": doc.rollback_id,
-        "rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY,
+        "rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY,
         "guardrails_after": guardrails(),
     }
 
@@ -692,7 +707,7 @@ def cancel_next_governed_limited_operation_smoke_rollback_audit(rollback, reason
     assert_action("cancel_next_governed_limited_operation_smoke_rollback_audit")
 
     if not frappe.db.exists(ROLLBACK_DOCTYPE, rollback):
-        frappe.throw(_("Next governed limited-operation rollback audit not found: {0}").format(rollback))
+        frappe.throw(_("Next governed limited-operation smoke rollback audit not found: {0}").format(rollback))
 
     doc = frappe.get_doc(ROLLBACK_DOCTYPE, rollback)
 
@@ -700,7 +715,7 @@ def cancel_next_governed_limited_operation_smoke_rollback_audit(rollback, reason
         return {"rollback": rollback, "status": "Cancelled", "note": "Already cancelled."}
 
     if int(doc.rollback_completed or 0):
-        frappe.throw(_("Cannot cancel a completed Phase 12U rollback record."))
+        frappe.throw(_("Cannot cancel a completed Phase 13G rollback record."))
 
     frappe.db.set_value(
         ROLLBACK_DOCTYPE,
@@ -710,7 +725,7 @@ def cancel_next_governed_limited_operation_smoke_rollback_audit(rollback, reason
             "rollback_status": "Cancelled",
             "cancelled_on": now_datetime(),
             "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 12U no-ack rollback audit cancelled.",
+            "summary_json": reason or "Phase 13G no-ack rollback audit cancelled.",
         },
         update_modified=False,
     )
@@ -738,7 +753,7 @@ def quick_next_governed_limited_operation_smoke_rollback_summary(limit=20):
     return {
         "rollback_records": frappe.get_all(
             ROLLBACK_DOCTYPE,
-            filters={"rollback_payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY},
+            filters={"rollback_payment_entry": ROLLBACK_PAYMENT_ENTRY},
             fields=[
                 "name",
                 "rollback_id",
@@ -753,11 +768,11 @@ def quick_next_governed_limited_operation_smoke_rollback_summary(limit=20):
                 "rollback_invoice_names",
                 "rollback_invoice_count",
                 "rollback_total_amount",
-                "rollback_voucher_gl_rows_before",
-                "rollback_voucher_gl_rows_after",
+                "rollback_restored_invoice_amount",
+                "rollback_gl_rows_before",
+                "rollback_gl_rows_after",
                 "rollback_reversal_gl_rows",
-                "rollback_voucher_gl_net_after",
-                "restored_invoice_amount",
+                "rollback_gl_net",
                 "payment_entry_count_before",
                 "payment_entry_count_after",
                 "payment_entry_gl_count_before",
@@ -791,9 +806,8 @@ def quick_next_governed_limited_operation_smoke_rollback_summary(limit=20):
                 "company",
                 "currency",
                 "rollback_amount",
-                "current_outstanding_amount",
-                "invoice_docstatus",
-                "outstanding_restored",
+                "outstanding_before",
+                "outstanding_after",
                 "rollback_payment_entry",
                 "detail",
             ],
@@ -802,27 +816,27 @@ def quick_next_governed_limited_operation_smoke_rollback_summary(limit=20):
         ),
         "required_acknowledgement": ROLLBACK_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 12U next governed limited-operation smoke rollback summary.",
+        "note": "Phase 13G next governed limited-operation smoke rollback summary.",
     }
 
 
 def execute_rollback_report(filters=None):
     columns = [
         {"fieldname": "rollback", "label": _("Rollback"), "fieldtype": "Link", "options": ROLLBACK_DOCTYPE, "width": 220},
-        {"fieldname": "rollback_id", "label": _("Rollback ID"), "fieldtype": "Data", "width": 470},
+        {"fieldname": "rollback_id", "label": _("Rollback ID"), "fieldtype": "Data", "width": 560},
         {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 140},
-        {"fieldname": "rollback_status", "label": _("Rollback Status"), "fieldtype": "Data", "width": 380},
-        {"fieldname": "rollback_completed", "label": _("Completed"), "fieldtype": "Check", "width": 95},
-        {"fieldname": "rollback_payment_entry", "label": _("Rollback PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "rollback_payment_entry_docstatus_after", "label": _("PE Docstatus After"), "fieldtype": "Int", "width": 135},
-        {"fieldname": "rollback_payment_entry_status_after", "label": _("PE Status After"), "fieldtype": "Data", "width": 125},
-        {"fieldname": "rollback_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
+        {"fieldname": "rollback_status", "label": _("Rollback Status"), "fieldtype": "Data", "width": 410},
+        {"fieldname": "rollback_completed", "label": _("Completed"), "fieldtype": "Check", "width": 100},
+        {"fieldname": "rollback_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "rollback_payment_entry_docstatus_after", "label": _("PE Docstatus After"), "fieldtype": "Int", "width": 140},
+        {"fieldname": "rollback_payment_entry_status_after", "label": _("PE Status After"), "fieldtype": "Data", "width": 130},
+        {"fieldname": "rollback_invoice_names", "label": _("Invoices"), "fieldtype": "Small Text", "width": 420},
         {"fieldname": "rollback_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
-        {"fieldname": "rollback_voucher_gl_rows_before", "label": _("GL Before"), "fieldtype": "Int", "width": 95},
-        {"fieldname": "rollback_voucher_gl_rows_after", "label": _("GL After"), "fieldtype": "Int", "width": 95},
-        {"fieldname": "rollback_reversal_gl_rows", "label": _("Reversal GL"), "fieldtype": "Int", "width": 105},
-        {"fieldname": "restored_invoice_amount", "label": _("Restored"), "fieldtype": "Currency", "width": 105},
-        {"fieldname": ROLLBACK_READY_FIELD, "label": _("Freeze Ready"), "fieldtype": "Check", "width": 115},
+        {"fieldname": "rollback_restored_invoice_amount", "label": _("Restored"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": "rollback_gl_rows_after", "label": _("Voucher GL Rows"), "fieldtype": "Int", "width": 130},
+        {"fieldname": "rollback_reversal_gl_rows", "label": _("Reversal Rows"), "fieldtype": "Int", "width": 120},
+        {"fieldname": "rollback_gl_net", "label": _("GL Net"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": ROLLBACK_READY_FIELD, "label": _("Freeze Ready"), "fieldtype": "Check", "width": 120},
         {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 115},
@@ -842,12 +856,12 @@ def execute_rollback_report(filters=None):
             rollback_payment_entry,
             rollback_payment_entry_docstatus_after,
             rollback_payment_entry_status_after,
-            rollback_invoice_count,
+            rollback_invoice_names,
             rollback_total_amount,
-            rollback_voucher_gl_rows_before,
-            rollback_voucher_gl_rows_after,
+            rollback_restored_invoice_amount,
+            rollback_gl_rows_after,
             rollback_reversal_gl_rows,
-            restored_invoice_amount,
+            rollback_gl_net,
             `{ROLLBACK_READY_FIELD}` AS `{ROLLBACK_READY_FIELD}`,
             payment_entry_count_before,
             payment_entry_count_after,
@@ -859,7 +873,7 @@ def execute_rollback_report(filters=None):
         WHERE rollback_payment_entry=%(payment_entry)s
         ORDER BY creation DESC
         """,
-        {"payment_entry": EXPECTED_SMOKE_PAYMENT_ENTRY},
+        {"payment_entry": ROLLBACK_PAYMENT_ENTRY},
         as_dict=True,
     )
 
@@ -893,11 +907,9 @@ def execute_item_report(filters=None):
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
         {"fieldname": "rollback_amount", "label": _("Rollback Amount"), "fieldtype": "Currency", "width": 130},
-        {"fieldname": "current_outstanding_amount", "label": _("Current Outstanding"), "fieldtype": "Currency", "width": 140},
-        {"fieldname": "invoice_docstatus", "label": _("Invoice Docstatus"), "fieldtype": "Int", "width": 120},
-        {"fieldname": "outstanding_restored", "label": _("Outstanding Restored"), "fieldtype": "Check", "width": 145},
-        {"fieldname": "rollback_payment_entry", "label": _("Rollback PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
+        {"fieldname": "outstanding_before", "label": _("Outstanding Before"), "fieldtype": "Currency", "width": 145},
+        {"fieldname": "outstanding_after", "label": _("Outstanding After"), "fieldtype": "Currency", "width": 140},
+        {"fieldname": "rollback_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
     ]
 
@@ -912,11 +924,9 @@ def execute_item_report(filters=None):
             reference_doctype,
             reference_name,
             rollback_amount,
-            current_outstanding_amount,
-            invoice_docstatus,
-            outstanding_restored,
+            outstanding_before,
+            outstanding_after,
             rollback_payment_entry,
-            check_label,
             detail
         FROM `tab{ROLLBACK_ITEM_DOCTYPE}`
         ORDER BY creation DESC
@@ -943,7 +953,6 @@ def execute_item_report(filters=None):
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Items"), "datatype": "Int"},
         {"value": len([row for row in data if row.category == "Rollback Reference"]), "indicator": "Green", "label": _("Rollback References"), "datatype": "Int"},
-        {"value": len([row for row in data if int(row.outstanding_restored or 0) == 1]), "indicator": "Green", "label": _("Outstanding Restored"), "datatype": "Int"},
     ]
 
     return columns, data, None, chart, summary

@@ -2036,11 +2036,15 @@ fixtures.extend([
 doctype_js.update({
     "NDIS Next Governed Limited Op Smoke": "public/js/ndis_next_governed_limited_op_smoke.js",
     "NDIS Next Governed Limited Op Smoke Item": "public/js/ndis_next_governed_limited_op_smoke_item.js",
+    "NDIS Next Governed Limited Op Smoke Rollback": "public/js/ndis_next_governed_limited_op_smoke_rollback.js",
+    "NDIS Next Governed Limited Op Smoke Rollback Item": "public/js/ndis_next_governed_limited_op_smoke_rollback_item.js",
 })
 
 doctype_list_js.update({
     "NDIS Next Governed Limited Op Smoke": "public/js/ndis_next_governed_limited_op_smoke_list.js",
     "NDIS Next Governed Limited Op Smoke Item": "public/js/ndis_next_governed_limited_op_smoke_item_list.js",
+    "NDIS Next Governed Limited Op Smoke Rollback": "public/js/ndis_next_governed_limited_op_smoke_rollback_list.js",
+    "NDIS Next Governed Limited Op Smoke Rollback Item": "public/js/ndis_next_governed_limited_op_smoke_rollback_item_list.js",
 })
 
 fixtures.extend([
@@ -2048,7 +2052,9 @@ fixtures.extend([
         "dt": "DocType",
         "filters": [["name", "in", [
             "NDIS Next Governed Limited Op Smoke",
-            "NDIS Next Governed Limited Op Smoke Item"
+            "NDIS Next Governed Limited Op Smoke Item",
+            "NDIS Next Governed Limited Op Smoke Rollback",
+            "NDIS Next Governed Limited Op Smoke Rollback Item"
         ]]]
     },
     {
@@ -2056,7 +2062,10 @@ fixtures.extend([
         "filters": [["name", "in", [
             "NDIS Next Governed Limited Op Smoke Report",
             "NDIS Next Governed Limited Op Smoke Item Report",
-            "NDIS Next Governed Limited Op Smoke Guardrail Report"
+            "NDIS Next Governed Limited Op Smoke Guardrail Report",
+            "NDIS Next Governed Limited Op Smoke Rollback Report",
+            "NDIS Next Governed Limited Op Smoke Rollback Item Report",
+            "NDIS Next Governed Limited Op Smoke Rollback Guardrail Report"
         ]]]
     }
 ])
