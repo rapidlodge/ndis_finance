@@ -7,7 +7,7 @@ from frappe.utils import flt, now_datetime, today
 from ndis_finance.services.permissions import assert_action
 
 
-SMOKE_ACK = "I_CONFIRM_PHASE12T_RUN_NEXT_GOVERNED_LIMITED_OPERATION_SMOKE_CREATE_ONE_PAYMENT_ENTRY"
+SMOKE_ACK = "I_CONFIRM_PHASE13F_RUN_NEXT_GOVERNED_LIMITED_OPERATION_SMOKE_CREATE_ONE_PAYMENT_ENTRY"
 
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
 EXECUTION_GATE_DOCTYPE = "NDIS Next Governed Limited Op Execution Gate"
@@ -15,26 +15,26 @@ EXECUTION_GATE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Execution Gate Item
 SMOKE_DOCTYPE = "NDIS Next Governed Limited Op Smoke"
 SMOKE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Smoke Item"
 
-EXECUTION_READY_FIELD = "ready_for_next_governed_limited_op_smoke"
-ROLLBACK_READY_FIELD = "ready_for_next_governed_limited_op_smoke_rollback"
+EXECUTION_GATE_READY_FIELD = "ready_for_next_governed_limited_op_smoke"
+SMOKE_READY_FIELD = "ready_for_next_governed_limited_op_smoke_rollback"
 
-SOURCE_MONITORED_PAYMENT_ENTRY = "ACC-PAY-2026-00012"
+PREVIOUS_MONITORED_PAYMENT_ENTRY = "ACC-PAY-2026-00013"
+EXPECTED_NEW_PAYMENT_ENTRY = "ACC-PAY-2026-00014"
 EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
 
-EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE = 11
-EXPECTED_PAYMENT_ENTRY_COUNT_AFTER = 12
-EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE = 70
-EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER = 74
-
+EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE = 12
+EXPECTED_PAYMENT_ENTRY_COUNT_AFTER = 13
+EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE = 78
+EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER = 82
 EXPECTED_TOTAL_AMOUNT = 3.00
 EXPECTED_INVOICE_COUNT = 3
-EXPECTED_NEW_PAYMENT_ENTRY_COUNT = 1
-EXPECTED_NEW_PAYMENT_ENTRY_GL_ROWS = 4
-EXPECTED_NEW_PAYMENT_ENTRY_GL_NET = 0.00
+EXPECTED_SMOKE_GL_ROWS = 4
+EXPECTED_SMOKE_GL_NET = 0.00
 
 SMOKE_SOURCE_DOCTYPE = "Sales Invoice"
 SMOKE_REFERENCE_DOCTYPE = "Sales Invoice"
 SMOKE_PARTY_TYPE = "Customer"
+SMOKE_PAYMENT_TYPE = "Receive"
 
 
 def make_smoke_id():
@@ -60,6 +60,13 @@ def has_column(doctype, fieldname):
         return bool(frappe.db.has_column(doctype, fieldname))
     except Exception:
         return False
+
+
+def row_get(row, fieldname, default=None):
+    try:
+        return row.get(fieldname, default)
+    except Exception:
+        return getattr(row, fieldname, default)
 
 
 def get_flag(doctype, name, fieldname, default=0):
@@ -91,26 +98,65 @@ def guardrails():
     }
 
 
+def payment_entry_state(payment_entry):
+    if not payment_entry or not frappe.db.exists("Payment Entry", payment_entry):
+        return frappe._dict({"docstatus": 0, "status": None})
+    pe = frappe.get_doc("Payment Entry", payment_entry)
+    return frappe._dict({"docstatus": int(pe.docstatus or 0), "status": pe.status})
+
+
+def payment_entry_gl_rows(payment_entry):
+    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
+
+
+def payment_entry_gl_net(payment_entry):
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
+        FROM `tabGL Entry`
+        WHERE voucher_type='Payment Entry'
+        AND voucher_no=%s
+        """,
+        payment_entry,
+    )[0][0]
+    return flt(value or 0, 2)
+
+
+def outstanding_total(invoice_names):
+    if not invoice_names:
+        return 0
+    value = frappe.db.sql(
+        """
+        SELECT ROUND(COALESCE(SUM(outstanding_amount), 0), 2)
+        FROM `tabSales Invoice`
+        WHERE name IN %(names)s
+        """,
+        {"names": tuple(invoice_names)},
+    )[0][0]
+    return flt(value or 0, 2)
+
+
 def latest_execution_gate():
     filters = {
         "status": "Execution Gate Approved",
         "execution_gate_status": "Next Governed Limited Operation Execution Gate Approved",
         "execution_gate_approved": 1,
-        "phase12r_preview_verified": 1,
+        "phase13d_preview_verified": 1,
         "preview_approved_verified": 1,
         "preview_source_verified": 1,
         "preview_reference_verified": 1,
         "preview_party_type_verified": 1,
-        "preview_reference_set_locked_verified": 1,
         "preview_reference_set_verified": 1,
         "preview_shape_verified": 1,
         "preview_side_effects_blocked_verified": 1,
         "invoice_submission_verified": 1,
         "invoice_outstanding_verified": 1,
-        "execution_source_locked": 1,
-        "execution_shape_locked": 1,
-        "execution_reference_set_locked": 1,
-        "execution_reference_set_verified": 1,
+        "execution_gate_source_locked": 1,
+        "execution_gate_shape_locked": 1,
+        "execution_gate_reference_set_locked": 1,
+        "execution_gate_reference_set_verified": 1,
+        "execution_gate_smoke_allowed": 1,
+        "execution_gate_live_posting_blocked": 1,
         "policy_state_preserved_verified": 1,
         "no_new_accounting_movement_verified": 1,
         "execution_source_doctype": SMOKE_SOURCE_DOCTYPE,
@@ -123,7 +169,11 @@ def latest_execution_gate():
         "execution_live_posting_allowed": 0,
         "execution_journal_entry_side_effect_allowed": 0,
         "execution_purchase_invoice_side_effect_allowed": 0,
-        "monitored_payment_entry": SOURCE_MONITORED_PAYMENT_ENTRY,
+        "execution_payment_type": SMOKE_PAYMENT_TYPE,
+        "execution_posting_allowed": 0,
+        "execution_submit_allowed": 0,
+        "execution_cancel_allowed": 0,
+        "monitored_payment_entry": PREVIOUS_MONITORED_PAYMENT_ENTRY,
         "monitored_payment_entry_docstatus": 2,
         "monitored_payment_entry_status": "Cancelled",
         "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE,
@@ -140,8 +190,8 @@ def latest_execution_gate():
         "warning_count": 0,
     }
 
-    if has_column(EXECUTION_GATE_DOCTYPE, EXECUTION_READY_FIELD):
-        filters[EXECUTION_READY_FIELD] = 1
+    if has_column(EXECUTION_GATE_DOCTYPE, EXECUTION_GATE_READY_FIELD):
+        filters[EXECUTION_GATE_READY_FIELD] = 1
 
     rows = frappe.get_all(
         EXECUTION_GATE_DOCTYPE,
@@ -160,16 +210,9 @@ def latest_execution_gate():
             "execution_total_amount",
             "execution_payment_entry_count",
             "execution_gl_entry_count",
-            "execution_live_posting_allowed",
-            "execution_journal_entry_side_effect_allowed",
-            "execution_purchase_invoice_side_effect_allowed",
-            "execution_reference_set_locked",
-            "execution_reference_set_verified",
-            "invoice_submission_verified",
-            "invoice_outstanding_verified",
+            "execution_payment_type",
+            "execution_party",
             "monitored_payment_entry",
-            "monitored_payment_entry_docstatus",
-            "monitored_payment_entry_status",
             "preview",
             "candidate_validation",
             "candidate_selection",
@@ -181,9 +224,9 @@ def latest_execution_gate():
             "freeze",
             "rollback",
             "smoke",
-            "target_policy_doctype",
             "target_policy",
             "target_policy_name",
+            EXECUTION_GATE_READY_FIELD,
         ],
         order_by="checked_on desc, creation desc",
         limit=1,
@@ -235,12 +278,12 @@ def execution_gate_rows(execution_gate):
         si = frappe.db.get_value(
             "Sales Invoice",
             row.reference_name,
-            ["docstatus", "customer", "company", "currency", "outstanding_amount", "debit_to"],
+            ["docstatus", "customer", "company", "currency", "outstanding_amount", "grand_total", "rounded_total", "due_date"],
             as_dict=True,
         ) if frappe.db.exists("Sales Invoice", row.reference_name) else None
 
-        outstanding = flt((si.outstanding_amount if si else row.current_outstanding_amount) or 0, 2)
         amount = flt(row.execution_amount or 0, 2)
+        outstanding = flt((si.outstanding_amount if si else row.current_outstanding_amount) or 0, 2)
 
         result.append(
             frappe._dict(
@@ -249,14 +292,17 @@ def execution_gate_rows(execution_gate):
                     "reference_doctype": row.reference_doctype,
                     "reference_name": row.reference_name,
                     "smoke_amount": amount,
+                    "allocated_amount": amount,
                     "current_outstanding_amount": outstanding,
                     "customer": si.customer if si else row.customer,
                     "company": si.company if si else row.company,
                     "currency": si.currency if si else row.currency,
-                    "invoice_docstatus": int((si.docstatus if si else row.invoice_docstatus) or 0),
+                    "invoice_docstatus": int(si.docstatus or 0) if si else int(row.invoice_docstatus or 0),
                     "outstanding_sufficient": int(outstanding >= amount and amount > 0),
-                    "debit_to": si.debit_to if si else None,
-                    "monitored_payment_entry": row.monitored_payment_entry,
+                    "outstanding_before": outstanding,
+                    "grand_total": flt((si.grand_total if si else amount) or amount, 2),
+                    "due_date": si.due_date if si else None,
+                    "monitored_payment_entry": PREVIOUS_MONITORED_PAYMENT_ENTRY,
                 }
             )
         )
@@ -290,94 +336,24 @@ def invoices_outstanding_sufficient(rows):
     return int(len(rows) == EXPECTED_INVOICE_COUNT and all(int(row.outstanding_sufficient or 0) == 1 for row in rows))
 
 
-def payment_entry_gl_rows(payment_entry):
-    return count_dt("GL Entry", {"voucher_type": "Payment Entry", "voucher_no": payment_entry})
-
-
-def payment_entry_gl_net(payment_entry):
-    value = frappe.db.sql(
-        """
-        SELECT ROUND(COALESCE(SUM(debit-credit), 0), 2)
-        FROM `tabGL Entry`
-        WHERE voucher_type='Payment Entry'
-        AND voucher_no=%s
-        """,
-        payment_entry,
-    )[0][0]
-    return flt(value or 0, 2)
-
-
-def smoke_posting_date():
-    if frappe.db.exists("Payment Entry", SOURCE_MONITORED_PAYMENT_ENTRY):
-        return frappe.db.get_value("Payment Entry", SOURCE_MONITORED_PAYMENT_ENTRY, "posting_date") or today()
-    return today()
-
-
-def get_receipt_account(company):
-    company_doc = frappe.get_doc("Company", company)
-
-    for fieldname in ("default_bank_account", "default_cash_account"):
-        if company_doc.meta.has_field(fieldname):
-            account = company_doc.get(fieldname)
-            if account:
-                return account
-
-    accounts = frappe.get_all(
-        "Account",
-        filters={
-            "company": company,
-            "is_group": 0,
-            "account_type": ["in", ["Bank", "Cash"]],
-        },
-        fields=["name"],
-        order_by="account_type desc, name asc",
-        limit=1,
-    )
-    return accounts[0].name if accounts else None
-
-
-def get_bank_account_for_account(account, company):
-    if not account:
-        return None
-    rows = frappe.get_all(
-        "Bank Account",
-        filters={"account": account, "company": company},
-        fields=["name"],
-        order_by="is_default desc, name asc",
-        limit=1,
-    )
-    return rows[0].name if rows else None
-
-
 def validate_source(execution_gate, rows, guard, config, policy_enabled, policy_live):
     issues = []
 
     if not execution_gate:
-        issues.append("No approved Phase 12S next governed limited-operation execution gate found.")
+        issues.append("No approved Phase 13E execution gate found for smoke.")
         return issues
 
     existing = existing_completed_smoke(execution_gate.name)
     if existing:
-        issues.append(f"Completed Phase 12T smoke already exists for this execution gate: {existing.smoke_id} / {existing.smoke_payment_entry}")
+        issues.append(f"Completed Phase 13F smoke already exists for this execution gate: {existing.smoke_id} / {existing.smoke_payment_entry}")
 
-    if execution_gate.monitored_payment_entry != SOURCE_MONITORED_PAYMENT_ENTRY:
-        issues.append(f"Source monitored Payment Entry must be {SOURCE_MONITORED_PAYMENT_ENTRY}.")
+    previous_state = payment_entry_state(PREVIOUS_MONITORED_PAYMENT_ENTRY)
 
-    if not frappe.db.exists("Payment Entry", SOURCE_MONITORED_PAYMENT_ENTRY):
-        issues.append(f"Source monitored Payment Entry does not exist: {SOURCE_MONITORED_PAYMENT_ENTRY}")
-    else:
-        source_pe = frappe.get_doc("Payment Entry", SOURCE_MONITORED_PAYMENT_ENTRY)
-        if int(source_pe.docstatus or 0) != 2 or source_pe.status != "Cancelled":
-            issues.append(f"Source monitored Payment Entry must remain Cancelled. Found {source_pe.docstatus} / {source_pe.status}.")
+    if previous_state.docstatus != 2 or previous_state.status != "Cancelled":
+        issues.append(f"Previous monitored Payment Entry must remain cancelled: {PREVIOUS_MONITORED_PAYMENT_ENTRY}")
 
-    if execution_gate.execution_source_doctype != SMOKE_SOURCE_DOCTYPE:
-        issues.append("Execution source DocType changed.")
-
-    if execution_gate.execution_reference_doctype != SMOKE_REFERENCE_DOCTYPE:
-        issues.append("Execution reference DocType changed.")
-
-    if execution_gate.execution_party_type != SMOKE_PARTY_TYPE:
-        issues.append("Execution party type changed.")
+    if frappe.db.exists("Payment Entry", EXPECTED_NEW_PAYMENT_ENTRY):
+        issues.append(f"Expected smoke Payment Entry already exists: {EXPECTED_NEW_PAYMENT_ENTRY}")
 
     if reference_names(rows) != EXPECTED_INVOICES:
         issues.append(f"Smoke invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
@@ -398,20 +374,16 @@ def validate_source(execution_gate, rows, guard, config, policy_enabled, policy_
         issues.append("Smoke Sales Invoices must share the same currency.")
 
     if not invoices_submitted(rows):
-        issues.append("All smoke Sales Invoices must be submitted.")
+        issues.append("All smoke Sales Invoices must remain submitted.")
 
     if not invoices_outstanding_sufficient(rows):
         issues.append("All smoke Sales Invoices must have sufficient outstanding amount.")
 
-    company = unique_value(rows, "company")
-    if company and not get_receipt_account(company):
-        issues.append(f"No Bank/Cash receipt account found for company {company}.")
-
     if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE:
-        issues.append("Payment Entry count must be 11 before smoke.")
+        issues.append("Payment Entry count must be 12 before smoke.")
 
     if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE:
-        issues.append("Payment Entry GL count must be 70 before smoke.")
+        issues.append("Payment Entry GL count must be 78 before smoke.")
 
     if guard["submitted_journal_entry_count_today"] != 0:
         issues.append("Submitted Journal Entry today must remain 0 before smoke.")
@@ -420,10 +392,10 @@ def validate_source(execution_gate, rows, guard, config, policy_enabled, policy_
         issues.append("Purchase Invoice today must remain 0 before smoke.")
 
     if guard["production_batch_enabled_policy_count"] != 1:
-        issues.append("Exactly one controlled production batch policy must remain enabled.")
+        issues.append("Exactly one controlled production batch policy must remain enabled before smoke.")
 
     if guard["live_posting_allowed_policy_count"] != 0:
-        issues.append("Controlled production live allowed policy count must remain 0.")
+        issues.append("Controlled production live allowed policy count must remain 0 before smoke.")
 
     if policy_enabled != 1:
         issues.append("Target policy production_batch_enabled must remain 1.")
@@ -432,94 +404,89 @@ def validate_source(execution_gate, rows, guard, config, policy_enabled, policy_
         issues.append("Target policy live_posting_allowed must remain 0.")
 
     if config["sandbox_enabled"] != 1:
-        issues.append("Sandbox config must be enabled.")
+        issues.append("Sandbox config must be enabled for governed smoke.")
 
     if config["production_mode"] != 0:
-        issues.append("Production mode config must remain 0.")
+        issues.append("Production mode config must remain 0 for governed smoke.")
 
     if config["live_pe_enabled"] != 0:
-        issues.append("Live Payment Entry posting config must remain 0.")
+        issues.append("Live Payment Entry posting config must remain 0 for governed smoke.")
 
     return issues
 
 
-def create_smoke_payment_entry(rows, smoke_id):
+def create_smoke_payment_entry(rows):
+    template = frappe.get_doc("Payment Entry", PREVIOUS_MONITORED_PAYMENT_ENTRY)
+
+    total = smoke_total(rows)
     customer = unique_value(rows, "customer")
     company = unique_value(rows, "company")
-    currency = unique_value(rows, "currency")
-    total = smoke_total(rows)
-
-    if not customer or not company or not currency:
-        frappe.throw(_("Smoke invoices must share one customer, company, and currency."))
-
-    paid_from = rows[0].debit_to
-    paid_to = get_receipt_account(company)
-
-    if not paid_from:
-        frappe.throw(_("Unable to resolve receivable account from Sales Invoice debit_to."))
-    if not paid_to:
-        frappe.throw(_("Unable to resolve default Bank/Cash account for company {0}.").format(company))
 
     pe = frappe.new_doc("Payment Entry")
-    pe.payment_type = "Receive"
+    pe.payment_type = SMOKE_PAYMENT_TYPE
     pe.company = company
-    posting_date = smoke_posting_date()
-    pe.posting_date = posting_date
-    pe.party_type = "Customer"
+    pe.party_type = SMOKE_PARTY_TYPE
     pe.party = customer
-    pe.paid_from = paid_from
-    pe.paid_to = paid_to
-    pe.party_account = paid_from
-    bank_account = get_bank_account_for_account(paid_to, company)
-    if bank_account:
-        pe.bank_account = bank_account
+    pe.posting_date = template.posting_date
+
+    for fieldname in [
+        "mode_of_payment",
+        "bank_account",
+        "paid_from",
+        "paid_to",
+        "paid_from_account_currency",
+        "paid_to_account_currency",
+        "source_exchange_rate",
+        "target_exchange_rate",
+        "paid_from_account_type",
+        "paid_to_account_type",
+        "cost_center",
+        "project",
+    ]:
+        if pe.meta.has_field(fieldname) and getattr(template, fieldname, None):
+            setattr(pe, fieldname, getattr(template, fieldname))
+
     pe.paid_amount = total
     pe.received_amount = total
-    pe.reference_no = smoke_id
-    pe.reference_date = posting_date
-    pe.remarks = f"Phase 12T next governed limited-operation smoke: {smoke_id}"
-
-    if pe.meta.has_field("source_exchange_rate"):
-        pe.source_exchange_rate = 1
-    if pe.meta.has_field("target_exchange_rate"):
-        pe.target_exchange_rate = 1
-    if pe.meta.has_field("paid_from_account_currency"):
-        pe.paid_from_account_currency = currency
-    if pe.meta.has_field("paid_to_account_currency"):
-        pe.paid_to_account_currency = currency
+    pe.reference_no = f"PHASE13F-{now_datetime().strftime('%Y%m%d%H%M%S')}"
+    pe.reference_date = template.reference_date or template.posting_date
 
     for row in rows:
-        si_values = frappe.db.get_value(
-            "Sales Invoice",
-            row.reference_name,
-            ["grand_total", "outstanding_amount"],
-            as_dict=True,
-        )
         pe.append(
             "references",
             {
                 "reference_doctype": "Sales Invoice",
                 "reference_name": row.reference_name,
-                "total_amount": flt(si_values.grand_total or 0, 2),
-                "outstanding_amount": flt(si_values.outstanding_amount or 0, 2),
-                "allocated_amount": flt(row.smoke_amount or 0, 2),
+                "total_amount": row.grand_total,
+                "outstanding_amount": row.outstanding_before,
+                "allocated_amount": row.allocated_amount,
+                "due_date": row.due_date,
             },
         )
 
+    if hasattr(pe, "setup_party_account_field"):
+        pe.setup_party_account_field()
     if hasattr(pe, "set_missing_values"):
         pe.set_missing_values()
+    if hasattr(pe, "set_exchange_rate"):
+        pe.set_exchange_rate()
     if hasattr(pe, "set_amounts"):
         pe.set_amounts()
 
-    pe.flags.ignore_permissions = True
     pe.insert(ignore_permissions=True)
     pe.submit()
-    frappe.db.commit()
 
-    return pe.name
+    if pe.name != EXPECTED_NEW_PAYMENT_ENTRY:
+        frappe.throw(
+            _("Smoke Payment Entry name mismatch. Expected {0}, created {1}. Transaction will roll back.").format(
+                EXPECTED_NEW_PAYMENT_ENTRY, pe.name
+            )
+        )
+
+    return pe
 
 
-def build_items(rows, issues, ack_ok, payment_entry=None, completed=0):
+def build_items(rows, issues, ack_ok, completed=0, payment_entry=None):
     items = []
 
     if not issues:
@@ -529,8 +496,8 @@ def build_items(rows, issues, ack_ok, payment_entry=None, completed=0):
             "category": "Smoke Source",
             "check_key": "smoke_source_valid",
             "check_label": "Smoke source valid",
-            "detail": "The Phase 12S execution gate is stable and the next governed limited-operation smoke can run.",
-            "smoke_payment_entry": payment_entry,
+            "detail": "Phase 13E execution gate is stable and smoke can create exactly one governed Payment Entry.",
+            "smoke_payment_entry": payment_entry or EXPECTED_NEW_PAYMENT_ENTRY,
         })
     else:
         for issue in issues:
@@ -541,18 +508,18 @@ def build_items(rows, issues, ack_ok, payment_entry=None, completed=0):
                 "check_key": "smoke_source_valid",
                 "check_label": "Smoke source valid",
                 "detail": issue,
-                "smoke_payment_entry": payment_entry,
+                "smoke_payment_entry": payment_entry or EXPECTED_NEW_PAYMENT_ENTRY,
             })
 
     for row in rows:
-        item_status = "Pass" if int(row.invoice_docstatus or 0) == 1 and int(row.outstanding_sufficient or 0) == 1 else "Blocker"
+        outstanding_after = frappe.db.get_value("Sales Invoice", row.reference_name, "outstanding_amount") if completed else row.outstanding_before
         items.append({
-            "status": item_status,
+            "status": "Pass",
             "severity": "High",
             "category": "Smoke Reference",
             "check_key": "smoke_sales_invoice_reference",
             "check_label": f"Smoke Sales Invoice {row.idx}",
-            "detail": f"{row.reference_name} smoke amount={row.smoke_amount}, docstatus={row.invoice_docstatus}, outstanding={row.current_outstanding_amount}, sufficient={row.outstanding_sufficient}.",
+            "detail": f"{row.reference_name} smoke amount={row.smoke_amount}, before={row.outstanding_before}, after={flt(outstanding_after or 0, 2)}.",
             "line_no": row.idx,
             "reference_doctype": row.reference_doctype,
             "reference_name": row.reference_name,
@@ -560,28 +527,11 @@ def build_items(rows, issues, ack_ok, payment_entry=None, completed=0):
             "company": row.company,
             "currency": row.currency,
             "smoke_amount": row.smoke_amount,
-            "current_outstanding_amount": row.current_outstanding_amount,
+            "allocated_amount": row.allocated_amount,
             "invoice_docstatus": row.invoice_docstatus,
-            "outstanding_sufficient": row.outstanding_sufficient,
-            "smoke_payment_entry": payment_entry,
-        })
-
-    checks = [
-        ("execution_gate_approved", "Execution gate approved", 1),
-        ("smoke_shape", "Smoke shape", f"{EXPECTED_INVOICE_COUNT} / {EXPECTED_TOTAL_AMOUNT} / 1 / 4"),
-        ("smoke_payment_entry", "Smoke Payment Entry", payment_entry or "not-created-yet"),
-        ("rollback_ready", "Ready for next governed limited-operation smoke rollback", completed),
-    ]
-
-    for key, label, value in checks:
-        items.append({
-            "status": "Pass",
-            "severity": "High",
-            "category": "Smoke Evidence",
-            "check_key": key,
-            "check_label": label,
-            "detail": f"value={value}",
-            "smoke_payment_entry": payment_entry,
+            "outstanding_before": row.outstanding_before,
+            "outstanding_after": flt(outstanding_after or 0, 2),
+            "smoke_payment_entry": payment_entry or EXPECTED_NEW_PAYMENT_ENTRY,
         })
 
     items.append({
@@ -591,7 +541,7 @@ def build_items(rows, issues, ack_ok, payment_entry=None, completed=0):
         "check_key": "ack_ok",
         "check_label": "Acknowledgement supplied",
         "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {SMOKE_ACK}",
-        "smoke_payment_entry": payment_entry,
+        "smoke_payment_entry": payment_entry or EXPECTED_NEW_PAYMENT_ENTRY,
     })
 
     return items
@@ -609,10 +559,9 @@ def summarise_items(items):
 
 def create_items(doc, items):
     for item in items:
-        if item.get("category") != "Smoke Reference":
-            continue
         row = frappe.new_doc(SMOKE_ITEM_DOCTYPE)
         row.smoke = doc.name
+        row.flags.ignore_links = True
         for fieldname, value in item.items():
             if row.meta.has_field(fieldname):
                 setattr(row, fieldname, value)
@@ -641,16 +590,21 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
 
     source_issues = validate_source(execution_gate, rows, guard_before, config, policy_enabled_before, policy_live_before)
 
-    smoke_payment_entry = None
-    smoke_id = make_smoke_id()
+    payment_entry_name = None
 
     if not int(dry_run or 0) and ack_ok and not source_issues:
-        smoke_payment_entry = create_smoke_payment_entry(rows, smoke_id)
+        pe = create_smoke_payment_entry(rows)
+        payment_entry_name = pe.name
 
     guard_after = guardrails()
 
     policy_enabled_after = get_flag(POLICY_DOCTYPE, execution_gate.target_policy, "production_batch_enabled") if execution_gate else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, execution_gate.target_policy, "live_posting_allowed") if execution_gate else 0
+
+    pe_state = payment_entry_state(payment_entry_name or EXPECTED_NEW_PAYMENT_ENTRY)
+    previous_state = payment_entry_state(PREVIOUS_MONITORED_PAYMENT_ENTRY)
+    smoke_gl_rows = payment_entry_gl_rows(payment_entry_name or EXPECTED_NEW_PAYMENT_ENTRY)
+    smoke_gl_net = payment_entry_gl_net(payment_entry_name or EXPECTED_NEW_PAYMENT_ENTRY)
 
     actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
     actual_pe_cancelled = 0
@@ -663,36 +617,32 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         or guard_before["live_posting_allowed_policy_count"] != guard_after["live_posting_allowed_policy_count"]
     )
 
-    smoke_pe_docstatus = 0
-    smoke_pe_status = None
-    smoke_pe_gl_rows = 0
-    smoke_pe_gl_net = 0
-
-    if smoke_payment_entry and frappe.db.exists("Payment Entry", smoke_payment_entry):
-        pe = frappe.get_doc("Payment Entry", smoke_payment_entry)
-        smoke_pe_docstatus = int(pe.docstatus or 0)
-        smoke_pe_status = pe.status
-        smoke_pe_gl_rows = payment_entry_gl_rows(smoke_payment_entry)
-        smoke_pe_gl_net = payment_entry_gl_net(smoke_payment_entry)
-
-    source_pe_docstatus = 0
-    source_pe_status = None
-    if frappe.db.exists("Payment Entry", SOURCE_MONITORED_PAYMENT_ENTRY):
-        source_pe = frappe.get_doc("Payment Entry", SOURCE_MONITORED_PAYMENT_ENTRY)
-        source_pe_docstatus = int(source_pe.docstatus or 0)
-        source_pe_status = source_pe.status
-
     post_issues = list(source_issues)
 
-    expected_pe_created = 0 if int(dry_run or 0) or not ack_ok else 1
-    expected_gl_created = 0 if int(dry_run or 0) or not ack_ok else 4
+    if not int(dry_run or 0) and ack_ok and not source_issues:
+        if payment_entry_name != EXPECTED_NEW_PAYMENT_ENTRY:
+            post_issues.append(f"Expected Payment Entry {EXPECTED_NEW_PAYMENT_ENTRY}, created {payment_entry_name}.")
+        if pe_state.docstatus != 1:
+            post_issues.append("Smoke Payment Entry must be submitted.")
+        if smoke_gl_rows != EXPECTED_SMOKE_GL_ROWS:
+            post_issues.append(f"Smoke GL rows must be {EXPECTED_SMOKE_GL_ROWS}. Found {smoke_gl_rows}.")
+        if smoke_gl_net != EXPECTED_SMOKE_GL_NET:
+            post_issues.append(f"Smoke GL net must be {EXPECTED_SMOKE_GL_NET}. Found {smoke_gl_net}.")
+        if actual_pe_created != 1:
+            post_issues.append(f"Smoke must create exactly 1 Payment Entry. Created {actual_pe_created}.")
+        if actual_gl_created != 4:
+            post_issues.append(f"Smoke must create exactly 4 Payment Entry GL rows. Created {actual_gl_created}.")
+        if guard_after["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT_AFTER:
+            post_issues.append("Payment Entry count must be 13 after smoke.")
+        if guard_after["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER:
+            post_issues.append("Payment Entry GL count must be 82 after smoke.")
 
-    if actual_pe_created != expected_pe_created:
-        post_issues.append(f"Smoke Payment Entry created count mismatch. Expected {expected_pe_created}. Found {actual_pe_created}.")
     if actual_pe_cancelled != 0:
         post_issues.append(f"Smoke must cancel 0 Payment Entries. Cancelled {actual_pe_cancelled}.")
-    if actual_gl_created != expected_gl_created:
-        post_issues.append(f"Smoke GL created count mismatch. Expected {expected_gl_created}. Found {actual_gl_created}.")
+    if guard_after["submitted_journal_entry_count_today"] != 0:
+        post_issues.append("Submitted Journal Entry today must remain 0 after smoke.")
+    if guard_after["purchase_invoice_count_today"] != 0:
+        post_issues.append("Purchase Invoice today must remain 0 after smoke.")
     if policy_mutation_count != 0:
         post_issues.append("Policy state changed during smoke. This is not allowed.")
 
@@ -700,45 +650,24 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         not int(dry_run or 0)
         and ack_ok
         and execution_gate
-        and smoke_payment_entry
+        and payment_entry_name == EXPECTED_NEW_PAYMENT_ENTRY
         and not post_issues
-        and smoke_pe_docstatus == 1
-        and smoke_pe_gl_rows == EXPECTED_NEW_PAYMENT_ENTRY_GL_ROWS
-        and smoke_pe_gl_net == EXPECTED_NEW_PAYMENT_ENTRY_GL_NET
-        and reference_names(rows) == EXPECTED_INVOICES
-        and smoke_total(rows) == EXPECTED_TOTAL_AMOUNT
-        and invoices_submitted(rows) == 1
-        and invoices_outstanding_sufficient(rows) == 1
+        and pe_state.docstatus == 1
+        and smoke_gl_rows == EXPECTED_SMOKE_GL_ROWS
+        and smoke_gl_net == EXPECTED_SMOKE_GL_NET
+        and actual_pe_created == 1
+        and actual_pe_cancelled == 0
+        and actual_gl_created == 4
         and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT_BEFORE
         and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT_AFTER
         and guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT_BEFORE
         and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT_AFTER
-        and actual_pe_created == 1
-        and actual_pe_cancelled == 0
-        and actual_gl_created == 4
         and guard_after["submitted_journal_entry_count_today"] == 0
         and guard_after["purchase_invoice_count_today"] == 0
         and policy_mutation_count == 0
     )
 
-    execution_source_ok = int(execution_gate and execution_gate.execution_source_doctype == SMOKE_SOURCE_DOCTYPE)
-    execution_reference_ok = int(execution_gate and execution_gate.execution_reference_doctype == SMOKE_REFERENCE_DOCTYPE)
-    execution_party_ok = int(execution_gate and execution_gate.execution_party_type == SMOKE_PARTY_TYPE)
-    execution_shape_ok = int(
-        execution_gate
-        and int(execution_gate.execution_invoice_count or 0) == EXPECTED_INVOICE_COUNT
-        and flt(execution_gate.execution_total_amount or 0, 2) == EXPECTED_TOTAL_AMOUNT
-        and int(execution_gate.execution_payment_entry_count or 0) == 1
-        and int(execution_gate.execution_gl_entry_count or 0) == 0
-    )
-    execution_side_effects_ok = int(
-        execution_gate
-        and int(execution_gate.execution_live_posting_allowed or 0) == 0
-        and int(execution_gate.execution_journal_entry_side_effect_allowed or 0) == 0
-        and int(execution_gate.execution_purchase_invoice_side_effect_allowed or 0) == 0
-    )
-
-    items = build_items(rows, post_issues, ack_ok, payment_entry=smoke_payment_entry, completed=completed)
+    items = build_items(rows, post_issues, ack_ok, completed=completed, payment_entry=payment_entry_name)
     item_summary = summarise_items(items)
 
     result = {
@@ -747,22 +676,18 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         "smoke_status": "Next Governed Limited Operation Smoke Completed" if completed else "Needs Review",
         "smoke_completed": completed,
 
-        "phase12s_execution_gate_verified": 1 if execution_gate else 0,
+        "phase13e_execution_gate_verified": 1 if execution_gate else 0,
         "execution_gate_approved_verified": 1 if execution_gate else 0,
-        "execution_source_verified": execution_source_ok,
-        "execution_reference_verified": execution_reference_ok,
-        "execution_party_type_verified": execution_party_ok,
-        "execution_reference_set_locked_verified": int(execution_gate and int(execution_gate.execution_reference_set_locked or 0) == 1),
-        "execution_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
-        "execution_shape_verified": execution_shape_ok,
-        "execution_side_effects_blocked_verified": execution_side_effects_ok,
+        "execution_gate_source_verified": int(execution_gate and execution_gate.execution_source_doctype == SMOKE_SOURCE_DOCTYPE),
+        "execution_gate_reference_verified": int(execution_gate and execution_gate.execution_reference_doctype == SMOKE_REFERENCE_DOCTYPE),
+        "execution_gate_party_type_verified": int(execution_gate and execution_gate.execution_party_type == SMOKE_PARTY_TYPE),
+        "execution_gate_reference_set_verified": int(reference_names(rows) == EXPECTED_INVOICES),
+        "execution_gate_shape_verified": int(len(rows) == EXPECTED_INVOICE_COUNT and smoke_total(rows) == EXPECTED_TOTAL_AMOUNT),
+        "execution_gate_smoke_allowed_verified": int(execution_gate and row_get(execution_gate, EXECUTION_GATE_READY_FIELD, 0) == 1) if execution_gate and has_column(EXECUTION_GATE_DOCTYPE, EXECUTION_GATE_READY_FIELD) else 1,
         "invoice_submission_verified": invoices_submitted(rows),
         "invoice_outstanding_verified": invoices_outstanding_sufficient(rows),
-        "smoke_payment_entry_created_verified": int(actual_pe_created == 1 and bool(smoke_payment_entry)),
-        "smoke_payment_entry_submitted_verified": int(smoke_pe_docstatus == 1),
-        "smoke_gl_rows_verified": int(smoke_pe_gl_rows == EXPECTED_NEW_PAYMENT_ENTRY_GL_ROWS and actual_gl_created == 4),
         "policy_state_preserved_verified": int(policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0),
-        "no_unplanned_accounting_movement_verified": int(actual_pe_created == expected_pe_created and actual_pe_cancelled == 0 and actual_gl_created == expected_gl_created),
+        "accounting_movement_verified": int(actual_pe_created == 1 and actual_pe_cancelled == 0 and actual_gl_created == 4),
 
         "smoke_source_doctype": SMOKE_SOURCE_DOCTYPE,
         "smoke_reference_doctype": SMOKE_REFERENCE_DOCTYPE,
@@ -773,18 +698,17 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         "smoke_invoice_names": ", ".join(reference_names(rows)),
         "smoke_invoice_count": len(rows),
         "smoke_total_amount": smoke_total(rows),
-        "smoke_payment_entry_count": EXPECTED_NEW_PAYMENT_ENTRY_COUNT if completed else 0,
-        "smoke_gl_entry_count": smoke_pe_gl_rows,
+        "smoke_payment_entry": payment_entry_name or EXPECTED_NEW_PAYMENT_ENTRY,
+        "smoke_payment_entry_docstatus": pe_state.docstatus,
+        "smoke_payment_entry_status": pe_state.status,
+        "smoke_payment_type": SMOKE_PAYMENT_TYPE,
+        "smoke_party": unique_value(rows, "customer"),
+        "smoke_gl_rows": smoke_gl_rows,
+        "smoke_gl_net": smoke_gl_net,
 
-        "smoke_payment_entry": smoke_payment_entry,
-        "smoke_payment_entry_docstatus": smoke_pe_docstatus,
-        "smoke_payment_entry_status": smoke_pe_status,
-        "smoke_payment_entry_gl_rows": smoke_pe_gl_rows,
-        "smoke_payment_entry_gl_net": smoke_pe_gl_net,
-
-        "source_monitored_payment_entry": SOURCE_MONITORED_PAYMENT_ENTRY,
-        "source_monitored_payment_entry_docstatus": source_pe_docstatus,
-        "source_monitored_payment_entry_status": source_pe_status,
+        "previous_monitored_payment_entry": PREVIOUS_MONITORED_PAYMENT_ENTRY,
+        "previous_monitored_payment_entry_docstatus": previous_state.docstatus,
+        "previous_monitored_payment_entry_status": previous_state.status,
 
         "payment_entry_count_before": guard_before["payment_entry_count"],
         "payment_entry_count_after": guard_after["payment_entry_count"],
@@ -793,6 +717,7 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         "actual_payment_entry_created_count": actual_pe_created,
         "actual_payment_entry_cancelled_count": actual_pe_cancelled,
         "actual_gl_created_count": actual_gl_created,
+
         "submitted_journal_entry_count_today": guard_after["submitted_journal_entry_count_today"],
         "purchase_invoice_count_today": guard_after["purchase_invoice_count_today"],
 
@@ -805,7 +730,7 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         "target_policy_live_after": policy_live_after,
         "actual_policy_mutation_count": policy_mutation_count,
 
-        ROLLBACK_READY_FIELD: completed,
+        SMOKE_READY_FIELD: completed,
 
         "execution_gate": execution_gate.name if execution_gate else None,
         "preview": execution_gate.preview if execution_gate else None,
@@ -825,14 +750,15 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         "issues": post_issues,
         "required_acknowledgement": SMOKE_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 12T creates exactly one governed smoke Payment Entry and four Payment Entry GL rows.",
+        "note": "Phase 13F performs the next governed limited-operation smoke. Exactly one Payment Entry and four GL rows are expected.",
     }
 
     if int(dry_run or 0):
         return result
 
     doc = frappe.new_doc(SMOKE_DOCTYPE)
-    doc.smoke_id = smoke_id
+    doc.smoke_id = make_smoke_id()
+    doc.flags.ignore_links = True
 
     for fieldname, value in result.items():
         if doc.meta.has_field(fieldname):
@@ -860,7 +786,7 @@ def run_next_governed_limited_operation_smoke(dry_run=1, acknowledgement=None, n
         "created": True,
         "smoke": doc.name,
         "smoke_id": doc.smoke_id,
-        "smoke_payment_entry": smoke_payment_entry,
+        "smoke_payment_entry": payment_entry_name or EXPECTED_NEW_PAYMENT_ENTRY,
         "guardrails_after": guardrails(),
     }
 
@@ -878,7 +804,7 @@ def cancel_next_governed_limited_operation_smoke_audit(smoke, reason=None):
         return {"smoke": smoke, "status": "Cancelled", "note": "Already cancelled."}
 
     if int(doc.smoke_completed or 0):
-        frappe.throw(_("Cannot cancel a completed Phase 12T smoke record. Use the rollback phase instead."))
+        frappe.throw(_("Cannot cancel a completed Phase 13F smoke record."))
 
     frappe.db.set_value(
         SMOKE_DOCTYPE,
@@ -888,7 +814,7 @@ def cancel_next_governed_limited_operation_smoke_audit(smoke, reason=None):
             "smoke_status": "Cancelled",
             "cancelled_on": now_datetime(),
             "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 12T no-ack smoke audit cancelled.",
+            "summary_json": reason or "Phase 13F no-ack smoke audit cancelled.",
         },
         update_modified=False,
     )
@@ -916,20 +842,21 @@ def quick_next_governed_limited_operation_smoke_summary(limit=20):
     return {
         "smoke_records": frappe.get_all(
             SMOKE_DOCTYPE,
+            filters={"smoke_payment_entry": EXPECTED_NEW_PAYMENT_ENTRY},
             fields=[
                 "name",
                 "smoke_id",
                 "status",
                 "smoke_status",
                 "smoke_completed",
-                "smoke_invoice_names",
-                "smoke_invoice_count",
-                "smoke_total_amount",
                 "smoke_payment_entry",
                 "smoke_payment_entry_docstatus",
                 "smoke_payment_entry_status",
-                "smoke_payment_entry_gl_rows",
-                "smoke_payment_entry_gl_net",
+                "smoke_invoice_names",
+                "smoke_invoice_count",
+                "smoke_total_amount",
+                "smoke_gl_rows",
+                "smoke_gl_net",
                 "payment_entry_count_before",
                 "payment_entry_count_after",
                 "payment_entry_gl_count_before",
@@ -939,7 +866,7 @@ def quick_next_governed_limited_operation_smoke_summary(limit=20):
                 "actual_gl_created_count",
                 "submitted_journal_entry_count_today",
                 "purchase_invoice_count_today",
-                ROLLBACK_READY_FIELD,
+                SMOKE_READY_FIELD,
                 "checked_on",
                 "checked_by",
             ],
@@ -963,9 +890,10 @@ def quick_next_governed_limited_operation_smoke_summary(limit=20):
                 "company",
                 "currency",
                 "smoke_amount",
-                "current_outstanding_amount",
+                "allocated_amount",
                 "invoice_docstatus",
-                "outstanding_sufficient",
+                "outstanding_before",
+                "outstanding_after",
                 "smoke_payment_entry",
                 "detail",
             ],
@@ -974,25 +902,25 @@ def quick_next_governed_limited_operation_smoke_summary(limit=20):
         ),
         "required_acknowledgement": SMOKE_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 12T next governed limited-operation smoke summary.",
+        "note": "Phase 13F next governed limited-operation smoke summary.",
     }
 
 
 def execute_smoke_report(filters=None):
     columns = [
         {"fieldname": "smoke", "label": _("Smoke"), "fieldtype": "Link", "options": SMOKE_DOCTYPE, "width": 220},
-        {"fieldname": "smoke_id", "label": _("Smoke ID"), "fieldtype": "Data", "width": 460},
+        {"fieldname": "smoke_id", "label": _("Smoke ID"), "fieldtype": "Data", "width": 520},
         {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 140},
-        {"fieldname": "smoke_status", "label": _("Smoke Status"), "fieldtype": "Data", "width": 360},
-        {"fieldname": "smoke_completed", "label": _("Completed"), "fieldtype": "Check", "width": 95},
-        {"fieldname": "smoke_invoice_names", "label": _("Invoices"), "fieldtype": "Small Text", "width": 420},
-        {"fieldname": "smoke_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
-        {"fieldname": "smoke_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
-        {"fieldname": "smoke_payment_entry", "label": _("Smoke PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "smoke_payment_entry_docstatus", "label": _("PE Docstatus"), "fieldtype": "Int", "width": 110},
+        {"fieldname": "smoke_status", "label": _("Smoke Status"), "fieldtype": "Data", "width": 390},
+        {"fieldname": "smoke_completed", "label": _("Completed"), "fieldtype": "Check", "width": 100},
+        {"fieldname": "smoke_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "smoke_payment_entry_docstatus", "label": _("PE Docstatus"), "fieldtype": "Int", "width": 115},
         {"fieldname": "smoke_payment_entry_status", "label": _("PE Status"), "fieldtype": "Data", "width": 120},
-        {"fieldname": "smoke_payment_entry_gl_rows", "label": _("PE GL Rows"), "fieldtype": "Int", "width": 110},
-        {"fieldname": ROLLBACK_READY_FIELD, "label": _("Rollback Ready"), "fieldtype": "Check", "width": 120},
+        {"fieldname": "smoke_invoice_names", "label": _("Invoices"), "fieldtype": "Small Text", "width": 420},
+        {"fieldname": "smoke_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": "smoke_gl_rows", "label": _("GL Rows"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "smoke_gl_net", "label": _("GL Net"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": SMOKE_READY_FIELD, "label": _("Rollback Ready"), "fieldtype": "Check", "width": 130},
         {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 115},
@@ -1009,14 +937,14 @@ def execute_smoke_report(filters=None):
             status,
             smoke_status,
             smoke_completed,
-            smoke_invoice_names,
-            smoke_invoice_count,
-            smoke_total_amount,
             smoke_payment_entry,
             smoke_payment_entry_docstatus,
             smoke_payment_entry_status,
-            smoke_payment_entry_gl_rows,
-            `{ROLLBACK_READY_FIELD}` AS `{ROLLBACK_READY_FIELD}`,
+            smoke_invoice_names,
+            smoke_total_amount,
+            smoke_gl_rows,
+            smoke_gl_net,
+            `{SMOKE_READY_FIELD}` AS `{SMOKE_READY_FIELD}`,
             payment_entry_count_before,
             payment_entry_count_after,
             payment_entry_gl_count_before,
@@ -1024,8 +952,10 @@ def execute_smoke_report(filters=None):
             actual_gl_created_count,
             checked_on
         FROM `tab{SMOKE_DOCTYPE}`
+        WHERE smoke_payment_entry=%(payment_entry)s
         ORDER BY creation DESC
         """,
+        {"payment_entry": EXPECTED_NEW_PAYMENT_ENTRY},
         as_dict=True,
     )
 
@@ -1033,8 +963,8 @@ def execute_smoke_report(filters=None):
         "data": {
             "labels": [row.smoke_id for row in data[:20]],
             "datasets": [
-                {"name": "Smoke Completed", "values": [int(row.smoke_completed or 0) for row in data[:20]]},
-                {"name": "Rollback Ready", "values": [int(row.get(ROLLBACK_READY_FIELD) or 0) for row in data[:20]]},
+                {"name": "Completed", "values": [int(row.smoke_completed or 0) for row in data[:20]]},
+                {"name": "Rollback Ready", "values": [int(row.get(SMOKE_READY_FIELD) or 0) for row in data[:20]]},
             ],
         },
         "type": "bar",
@@ -1058,12 +988,11 @@ def execute_item_report(filters=None):
         {"fieldname": "line_no", "label": _("Line"), "fieldtype": "Int", "width": 60},
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
-        {"fieldname": "smoke_amount", "label": _("Smoke Amount"), "fieldtype": "Currency", "width": 130},
-        {"fieldname": "current_outstanding_amount", "label": _("Outstanding"), "fieldtype": "Currency", "width": 120},
-        {"fieldname": "invoice_docstatus", "label": _("Invoice Docstatus"), "fieldtype": "Int", "width": 120},
-        {"fieldname": "outstanding_sufficient", "label": _("Outstanding OK"), "fieldtype": "Check", "width": 120},
-        {"fieldname": "smoke_payment_entry", "label": _("Smoke PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
+        {"fieldname": "smoke_amount", "label": _("Smoke Amount"), "fieldtype": "Currency", "width": 120},
+        {"fieldname": "allocated_amount", "label": _("Allocated"), "fieldtype": "Currency", "width": 120},
+        {"fieldname": "outstanding_before", "label": _("Outstanding Before"), "fieldtype": "Currency", "width": 145},
+        {"fieldname": "outstanding_after", "label": _("Outstanding After"), "fieldtype": "Currency", "width": 140},
+        {"fieldname": "smoke_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
     ]
 
@@ -1078,11 +1007,10 @@ def execute_item_report(filters=None):
             reference_doctype,
             reference_name,
             smoke_amount,
-            current_outstanding_amount,
-            invoice_docstatus,
-            outstanding_sufficient,
+            allocated_amount,
+            outstanding_before,
+            outstanding_after,
             smoke_payment_entry,
-            check_label,
             detail
         FROM `tab{SMOKE_ITEM_DOCTYPE}`
         ORDER BY creation DESC

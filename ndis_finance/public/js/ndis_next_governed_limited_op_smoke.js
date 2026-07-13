@@ -17,7 +17,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Smoke", {
         }, __("Open"));
 
         if (frm.doc.execution_gate) {
-            frm.add_custom_button(__("Open Phase 12S Execution Gate"), () => {
+            frm.add_custom_button(__("Open Phase 13E Execution Gate"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Execution Gate", frm.doc.execution_gate);
             }, __("Evidence"));
         }
@@ -28,9 +28,9 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Smoke", {
             }, __("Accounting"));
         }
 
-        if (frm.doc.source_monitored_payment_entry) {
-            frm.add_custom_button(__("Open Source Cancelled Payment Entry"), () => {
-                frappe.set_route("Form", "Payment Entry", frm.doc.source_monitored_payment_entry);
+        if (frm.doc.previous_monitored_payment_entry) {
+            frm.add_custom_button(__("Open Previous Monitored Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.previous_monitored_payment_entry);
             }, __("Accounting"));
         }
 
