@@ -8,7 +8,7 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Runtime Monitor", {
             });
         }, __("Open"));
 
-        frm.add_custom_button(__("Open Monitor Report"), () => {
+        frm.add_custom_button(__("Open Runtime Monitor Report"), () => {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Runtime Monitor Report");
         }, __("Open"));
 
@@ -17,14 +17,14 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Runtime Monitor", {
         }, __("Open"));
 
         if (frm.doc.baseline) {
-            frm.add_custom_button(__("Open Phase 12X Steady Baseline"), () => {
+            frm.add_custom_button(__("Open Phase 13J Baseline"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Steady Baseline", frm.doc.baseline);
             }, __("Evidence"));
         }
 
-        if (frm.doc.monitored_payment_entry) {
+        if (frm.doc.monitor_payment_entry || frm.doc.monitored_payment_entry) {
             frm.add_custom_button(__("Open Monitored Payment Entry"), () => {
-                frappe.set_route("Form", "Payment Entry", frm.doc.monitored_payment_entry);
+                frappe.set_route("Form", "Payment Entry", frm.doc.monitor_payment_entry || frm.doc.monitored_payment_entry);
             }, __("Accounting"));
         }
 

@@ -1,5 +1,6 @@
 frappe.listview_settings["NDIS Next Governed Limited Op Runtime Monitor"] = {
     get_indicator(doc) {
+        if (doc.status === "Runtime Monitor Active") return [__("Runtime Monitor Active"), "green", "status,=,Runtime Monitor Active"];
         if (doc.status === "Monitor Active") return [__("Monitor Active"), "green", "status,=,Monitor Active"];
         if (doc.status === "Needs Review") return [__("Needs Review"), "orange", "status,=,Needs Review"];
         if (doc.status === "Blocked") return [__("Blocked"), "red", "status,=,Blocked"];

@@ -14,9 +14,9 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Runtime Monitor Item", {
             }, __("Reference"));
         }
 
-        if (frm.doc.monitored_payment_entry) {
+        if (frm.doc.monitor_payment_entry || frm.doc.monitored_payment_entry) {
             frm.add_custom_button(__("Open Monitored Payment Entry"), () => {
-                frappe.set_route("Form", "Payment Entry", frm.doc.monitored_payment_entry);
+                frappe.set_route("Form", "Payment Entry", frm.doc.monitor_payment_entry || frm.doc.monitored_payment_entry);
             }, __("Accounting"));
         }
     }
