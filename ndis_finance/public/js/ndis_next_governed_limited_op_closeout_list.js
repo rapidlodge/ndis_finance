@@ -1,5 +1,6 @@
 frappe.listview_settings["NDIS Next Governed Limited Op Closeout"] = {
     get_indicator(doc) {
+        if (doc.status === "Closed") return [__("Closed"), "green", "status,=,Closed"];
         if (doc.status === "Closeout Approved") return [__("Closeout Approved"), "green", "status,=,Closeout Approved"];
         if (doc.status === "Needs Review") return [__("Needs Review"), "orange", "status,=,Needs Review"];
         if (doc.status === "Blocked") return [__("Blocked"), "red", "status,=,Blocked"];

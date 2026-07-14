@@ -7,7 +7,7 @@ from frappe.utils import flt, now_datetime, today
 from ndis_finance.services.permissions import assert_action
 
 
-CLOSEOUT_ACK = "I_CONFIRM_PHASE12W_APPROVE_NEXT_GOVERNED_LIMITED_OPERATION_CLOSEOUT_NO_POSTING"
+CLOSEOUT_ACK = "I_CONFIRM_PHASE13I_CLOSE_NEXT_GOVERNED_LIMITED_OPERATION_CYCLE_NO_POSTING"
 
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
 FREEZE_DOCTYPE = "NDIS Next Governed Limited Op Rollback Freeze"
@@ -18,16 +18,20 @@ CLOSEOUT_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Closeout Item"
 FREEZE_READY_FIELD = "ready_for_next_governed_limited_op_closeout"
 CLOSEOUT_READY_FIELD = "ready_for_next_governed_limited_op_steady_baseline"
 
-EXPECTED_CLOSED_PAYMENT_ENTRY = "ACC-PAY-2026-00013"
+CLOSEOUT_PAYMENT_ENTRY = "ACC-PAY-2026-00014"
 EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
 
-EXPECTED_PAYMENT_ENTRY_COUNT = 12
-EXPECTED_PAYMENT_ENTRY_GL_COUNT = 78
+EXPECTED_PAYMENT_ENTRY_COUNT = 13
+EXPECTED_PAYMENT_ENTRY_GL_COUNT = 86
 EXPECTED_TOTAL_AMOUNT = 3.00
 EXPECTED_INVOICE_COUNT = 3
-EXPECTED_VOUCHER_GL_ROWS = 8
-EXPECTED_VOUCHER_GL_NET = 0.00
+EXPECTED_GL_ROWS = 8
 EXPECTED_REVERSAL_GL_ROWS = 4
+EXPECTED_GL_NET = 0.00
+
+CLOSEOUT_SOURCE_DOCTYPE = "Sales Invoice"
+CLOSEOUT_REFERENCE_DOCTYPE = "Sales Invoice"
+CLOSEOUT_PARTY_TYPE = "Customer"
 
 
 def make_closeout_id():
@@ -108,10 +112,6 @@ def payment_entry_gl_net(payment_entry):
     return flt(value or 0, 2)
 
 
-def payment_entry_reversal_gl_rows(payment_entry):
-    return max(0, int(payment_entry_gl_rows(payment_entry) or 0) - 4)
-
-
 def outstanding_total(invoice_names):
     if not invoice_names:
         return 0
@@ -128,30 +128,31 @@ def outstanding_total(invoice_names):
 
 def latest_freeze():
     filters = {
-        "status": "Frozen",
+        "status": "Freeze Completed",
         "freeze_status": "Next Governed Limited Operation Rollback Evidence Frozen",
         "freeze_completed": 1,
-        "phase12u_rollback_verified": 1,
+        "phase13g_rollback_verified": 1,
         "rollback_completed_verified": 1,
         "rollback_payment_entry_verified": 1,
-        "rollback_payment_entry_cancelled_still_verified": 1,
+        "rollback_payment_entry_cancelled_verified": 1,
         "rollback_gl_rows_verified": 1,
         "rollback_reversal_gl_rows_verified": 1,
         "rollback_gl_net_zero_verified": 1,
-        "invoice_outstanding_restored_verified": 1,
-        "payment_entry_count_stable_verified": 1,
-        "payment_entry_gl_count_stable_verified": 1,
+        "rollback_restored_invoice_amount_verified": 1,
         "policy_state_preserved_verified": 1,
         "no_new_accounting_movement_verified": 1,
-        "frozen_rollback_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-        "frozen_rollback_payment_entry_docstatus": 2,
-        "frozen_rollback_payment_entry_status": "Cancelled",
-        "frozen_invoice_count": EXPECTED_INVOICE_COUNT,
-        "frozen_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "frozen_voucher_gl_rows": EXPECTED_VOUCHER_GL_ROWS,
-        "frozen_voucher_gl_net": EXPECTED_VOUCHER_GL_NET,
-        "frozen_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
-        "frozen_restored_invoice_amount": EXPECTED_TOTAL_AMOUNT,
+        "freeze_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
+        "freeze_payment_entry_docstatus": 2,
+        "freeze_payment_entry_status": "Cancelled",
+        "freeze_source_doctype": CLOSEOUT_SOURCE_DOCTYPE,
+        "freeze_reference_doctype": CLOSEOUT_REFERENCE_DOCTYPE,
+        "freeze_party_type": CLOSEOUT_PARTY_TYPE,
+        "freeze_invoice_count": EXPECTED_INVOICE_COUNT,
+        "freeze_total_amount": EXPECTED_TOTAL_AMOUNT,
+        "freeze_restored_invoice_amount": EXPECTED_TOTAL_AMOUNT,
+        "freeze_gl_rows": EXPECTED_GL_ROWS,
+        "freeze_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
+        "freeze_gl_net": EXPECTED_GL_NET,
         "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT,
         "payment_entry_gl_count_after": EXPECTED_PAYMENT_ENTRY_GL_COUNT,
         "actual_payment_entry_created_count": 0,
@@ -165,7 +166,6 @@ def latest_freeze():
         "blocker_count": 0,
         "warning_count": 0,
     }
-
     if has_column(FREEZE_DOCTYPE, FREEZE_READY_FIELD):
         filters[FREEZE_READY_FIELD] = 1
 
@@ -175,14 +175,22 @@ def latest_freeze():
         fields=[
             "name",
             "freeze_id",
-            "frozen_rollback_payment_entry",
-            "frozen_invoice_names",
-            "frozen_invoice_count",
-            "frozen_total_amount",
-            "frozen_voucher_gl_rows",
-            "frozen_voucher_gl_net",
-            "frozen_reversal_gl_rows",
-            "frozen_restored_invoice_amount",
+            "freeze_source_doctype",
+            "freeze_reference_doctype",
+            "freeze_party_type",
+            "freeze_customer",
+            "freeze_company",
+            "freeze_currency",
+            "freeze_invoice_names",
+            "freeze_invoice_count",
+            "freeze_total_amount",
+            "freeze_restored_invoice_amount",
+            "freeze_payment_entry",
+            "freeze_payment_entry_docstatus",
+            "freeze_payment_entry_status",
+            "freeze_gl_rows",
+            "freeze_reversal_gl_rows",
+            "freeze_gl_net",
             "rollback",
             "smoke",
             "execution_gate",
@@ -203,16 +211,11 @@ def latest_freeze():
     return rows[0] if rows else None
 
 
-def existing_approved_closeout(freeze):
+def existing_completed_closeout(freeze):
     rows = frappe.get_all(
         CLOSEOUT_DOCTYPE,
-        filters={
-            "freeze": freeze,
-            "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-            "status": "Closeout Approved",
-            "closeout_approved": 1,
-        },
-        fields=["name", "closeout_id", "closed_payment_entry"],
+        filters={"freeze": freeze, "status": "Closed", "closeout_completed": 1},
+        fields=["name", "closeout_id", "closeout_payment_entry"],
         limit=1,
     )
     return rows[0] if rows else None
@@ -221,12 +224,7 @@ def existing_approved_closeout(freeze):
 def freeze_rows(freeze):
     rows = frappe.get_all(
         FREEZE_ITEM_DOCTYPE,
-        filters={
-            "freeze": freeze,
-            "category": "Frozen Reference",
-            "status": "Pass",
-            "reference_doctype": "Sales Invoice",
-        },
+        filters={"freeze": freeze, "category": "Freeze Reference", "status": "Pass", "reference_doctype": "Sales Invoice"},
         fields=[
             "line_no",
             "reference_doctype",
@@ -234,45 +232,40 @@ def freeze_rows(freeze):
             "customer",
             "company",
             "currency",
-            "frozen_amount",
-            "current_outstanding_amount",
-            "invoice_docstatus",
-            "outstanding_restored",
-            "frozen_rollback_payment_entry",
+            "freeze_amount",
+            "outstanding_amount",
+            "freeze_payment_entry",
         ],
         order_by="line_no asc, creation asc",
     )
-
     result = []
     for idx, row in enumerate(rows, start=1):
-        si = frappe.db.get_value(
-            "Sales Invoice",
-            row.reference_name,
-            ["docstatus", "customer", "company", "currency", "outstanding_amount"],
-            as_dict=True,
-        ) if frappe.db.exists("Sales Invoice", row.reference_name) else None
-
-        amount = flt(row.frozen_amount or 0, 2)
-        outstanding = flt((si.outstanding_amount if si else row.current_outstanding_amount) or 0, 2)
-
+        si = (
+            frappe.db.get_value(
+                "Sales Invoice",
+                row.reference_name,
+                ["docstatus", "customer", "company", "currency", "outstanding_amount"],
+                as_dict=True,
+            )
+            if frappe.db.exists("Sales Invoice", row.reference_name)
+            else None
+        )
         result.append(
             frappe._dict(
                 {
                     "idx": int(row.line_no or idx),
                     "reference_doctype": row.reference_doctype,
                     "reference_name": row.reference_name,
-                    "closed_amount": amount,
-                    "current_outstanding_amount": outstanding,
+                    "closeout_amount": flt(row.freeze_amount or 0, 2),
+                    "outstanding_amount": flt((si.outstanding_amount if si else row.outstanding_amount) or 0, 2),
                     "customer": si.customer if si else row.customer,
                     "company": si.company if si else row.company,
                     "currency": si.currency if si else row.currency,
-                    "invoice_docstatus": int(si.docstatus or 0) if si else int(row.invoice_docstatus or 0),
-                    "outstanding_restored": int(outstanding >= amount and amount > 0),
-                    "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
+                    "invoice_docstatus": int(si.docstatus or 0) if si else 0,
+                    "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
                 }
             )
         )
-
     return result
 
 
@@ -280,8 +273,8 @@ def reference_names(rows):
     return [row.reference_name for row in rows]
 
 
-def closed_total(rows):
-    return flt(sum(flt(row.closed_amount or 0, 2) for row in rows), 2)
+def closeout_total(rows):
+    return flt(sum(flt(row.closeout_amount or 0, 2) for row in rows), 2)
 
 
 def unique_value(rows, fieldname):
@@ -289,180 +282,116 @@ def unique_value(rows, fieldname):
     return values[0] if len(values) == 1 else None
 
 
-def same_value_verified(rows, fieldname):
-    values = set([getattr(row, fieldname, None) for row in rows if getattr(row, fieldname, None)])
-    return int(len(rows) == EXPECTED_INVOICE_COUNT and len(values) == 1)
-
-
 def validate_source(freeze, rows, guard, config, policy_enabled, policy_live):
     issues = []
-
     if not freeze:
-        issues.append("No completed Phase 12V rollback freeze found for closeout.")
+        issues.append("No completed Phase 13H rollback freeze found for closeout.")
         return issues
 
-    existing = existing_approved_closeout(freeze.name)
+    existing = existing_completed_closeout(freeze.name)
     if existing:
-        issues.append(f"Approved Phase 12W closeout already exists for this freeze: {existing.closeout_id} / {existing.closed_payment_entry}")
+        issues.append(f"Completed Phase 13I closeout already exists for this freeze: {existing.closeout_id} / {existing.closeout_payment_entry}")
 
-    pe_state = payment_entry_state(EXPECTED_CLOSED_PAYMENT_ENTRY)
-
-    if freeze.frozen_rollback_payment_entry != EXPECTED_CLOSED_PAYMENT_ENTRY:
-        issues.append(f"Frozen Payment Entry must be {EXPECTED_CLOSED_PAYMENT_ENTRY}.")
-
-    if pe_state.docstatus != 2:
-        issues.append(f"Closed Payment Entry must remain cancelled. docstatus={pe_state.docstatus}")
-
-    if pe_state.status != "Cancelled":
-        issues.append(f"Closed Payment Entry status must remain Cancelled. status={pe_state.status}")
-
+    state = payment_entry_state(CLOSEOUT_PAYMENT_ENTRY)
+    if not frappe.db.exists("Payment Entry", CLOSEOUT_PAYMENT_ENTRY):
+        issues.append(f"Closeout Payment Entry does not exist: {CLOSEOUT_PAYMENT_ENTRY}")
+    if state.docstatus != 2 or state.status != "Cancelled":
+        issues.append(f"Closeout Payment Entry must remain Cancelled / 2. Found {state.status} / {state.docstatus}")
     if reference_names(rows) != EXPECTED_INVOICES:
-        issues.append(f"Closed invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
-
+        issues.append(f"Closeout invoice set changed. Expected {EXPECTED_INVOICES}. Found {reference_names(rows)}.")
     if len(rows) != EXPECTED_INVOICE_COUNT:
-        issues.append(f"Closed invoice count must be {EXPECTED_INVOICE_COUNT}. Found {len(rows)}.")
-
-    if closed_total(rows) != EXPECTED_TOTAL_AMOUNT:
-        issues.append(f"Closed total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {closed_total(rows)}.")
-
-    if not same_value_verified(rows, "customer"):
-        issues.append("Closed Sales Invoices must share the same customer.")
-
-    if not same_value_verified(rows, "company"):
-        issues.append("Closed Sales Invoices must share the same company.")
-
-    if not same_value_verified(rows, "currency"):
-        issues.append("Closed Sales Invoices must share the same currency.")
-
-    if not all(int(row.invoice_docstatus or 0) == 1 for row in rows):
-        issues.append("All closed Sales Invoices must remain submitted.")
-
-    if not all(int(row.outstanding_restored or 0) == 1 for row in rows):
-        issues.append("All closed Sales Invoices must remain restored.")
-
-    if payment_entry_gl_rows(EXPECTED_CLOSED_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_ROWS:
-        issues.append(f"Closed Payment Entry voucher GL rows must remain {EXPECTED_VOUCHER_GL_ROWS}.")
-
-    if payment_entry_reversal_gl_rows(EXPECTED_CLOSED_PAYMENT_ENTRY) != EXPECTED_REVERSAL_GL_ROWS:
-        issues.append(f"Closed Payment Entry reversal GL rows must remain {EXPECTED_REVERSAL_GL_ROWS}.")
-
-    if payment_entry_gl_net(EXPECTED_CLOSED_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_NET:
-        issues.append("Closed Payment Entry GL net must remain 0.00.")
-
+        issues.append(f"Closeout invoice count must be {EXPECTED_INVOICE_COUNT}. Found {len(rows)}.")
+    if closeout_total(rows) != EXPECTED_TOTAL_AMOUNT:
+        issues.append(f"Closeout total amount must be {EXPECTED_TOTAL_AMOUNT}. Found {closeout_total(rows)}.")
     if outstanding_total(EXPECTED_INVOICES) != EXPECTED_TOTAL_AMOUNT:
-        issues.append(f"Restored invoice outstanding must remain {EXPECTED_TOTAL_AMOUNT}.")
-
+        issues.append(f"Restored invoice outstanding must be {EXPECTED_TOTAL_AMOUNT} before closeout.")
+    if payment_entry_gl_rows(CLOSEOUT_PAYMENT_ENTRY) != EXPECTED_GL_ROWS:
+        issues.append(f"Closeout Payment Entry must have {EXPECTED_GL_ROWS} GL rows.")
+    if payment_entry_gl_net(CLOSEOUT_PAYMENT_ENTRY) != EXPECTED_GL_NET:
+        issues.append("Closeout Payment Entry GL net must be 0.00.")
     if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT:
-        issues.append("Payment Entry count must remain 12 before closeout.")
-
+        issues.append("Payment Entry count must remain 13 before closeout.")
     if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT:
-        issues.append("Payment Entry GL count must remain 78 before closeout.")
-
+        issues.append("Payment Entry GL count must remain 86 before closeout.")
     if guard["submitted_journal_entry_count_today"] != 0:
         issues.append("Submitted Journal Entry today must remain 0 before closeout.")
-
     if guard["purchase_invoice_count_today"] != 0:
         issues.append("Purchase Invoice today must remain 0 before closeout.")
-
     if guard["production_batch_enabled_policy_count"] != 1:
-        issues.append("Exactly one controlled production batch policy must remain enabled.")
-
+        issues.append("Exactly one controlled production batch policy must remain enabled before closeout.")
     if guard["live_posting_allowed_policy_count"] != 0:
-        issues.append("Controlled production live allowed policy count must remain 0.")
-
+        issues.append("Controlled production live allowed policy count must remain 0 before closeout.")
     if policy_enabled != 1:
         issues.append("Target policy production_batch_enabled must remain 1.")
-
     if policy_live != 0:
         issues.append("Target policy live_posting_allowed must remain 0.")
-
     if config["sandbox_enabled"] != 1:
-        issues.append("Sandbox config must be enabled.")
-
+        issues.append("Sandbox config must be enabled for closeout.")
     if config["production_mode"] != 0:
-        issues.append("Production mode config must remain 0.")
-
+        issues.append("Production mode config must remain 0 for closeout.")
     if config["live_pe_enabled"] != 0:
-        issues.append("Live Payment Entry posting config must remain 0.")
-
+        issues.append("Live Payment Entry posting config must remain 0 for closeout.")
     return issues
 
 
-def build_items(rows, issues, ack_ok, completed=0):
+def build_items(rows, issues, ack_ok):
     items = []
-
     if not issues:
-        items.append({
-            "status": "Pass",
-            "severity": "Critical",
-            "category": "Closeout Source",
-            "check_key": "closeout_source_valid",
-            "check_label": "Closeout source valid",
-            "detail": f"Phase 12V rollback freeze evidence for {EXPECTED_CLOSED_PAYMENT_ENTRY} is stable and can be closed out.",
-            "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-        })
-    else:
-        for issue in issues:
-            items.append({
-                "status": "Blocker",
+        items.append(
+            {
+                "status": "Pass",
                 "severity": "Critical",
                 "category": "Closeout Source",
                 "check_key": "closeout_source_valid",
                 "check_label": "Closeout source valid",
-                "detail": issue,
-                "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-            })
-
+                "detail": f"Rollback freeze evidence for {CLOSEOUT_PAYMENT_ENTRY} is stable and ready to close.",
+                "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
+            }
+        )
+    else:
+        for issue in issues:
+            items.append(
+                {
+                    "status": "Blocker",
+                    "severity": "Critical",
+                    "category": "Closeout Source",
+                    "check_key": "closeout_source_valid",
+                    "check_label": "Closeout source valid",
+                    "detail": issue,
+                    "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
+                }
+            )
     for row in rows:
-        items.append({
-            "status": "Pass" if int(row.outstanding_restored or 0) == 1 else "Blocker",
-            "severity": "High",
-            "category": "Closed Reference",
-            "check_key": "closed_sales_invoice_reference",
-            "check_label": f"Closed Sales Invoice {row.idx}",
-            "detail": f"{row.reference_name} closed amount={row.closed_amount}, current outstanding={row.current_outstanding_amount}, restored={row.outstanding_restored}.",
-            "line_no": row.idx,
-            "reference_doctype": row.reference_doctype,
-            "reference_name": row.reference_name,
-            "customer": row.customer,
-            "company": row.company,
-            "currency": row.currency,
-            "closed_amount": row.closed_amount,
-            "current_outstanding_amount": row.current_outstanding_amount,
-            "invoice_docstatus": row.invoice_docstatus,
-            "outstanding_restored": row.outstanding_restored,
-            "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-        })
-
-    checks = [
-        ("closed_payment_entry_cancelled", "Closed Payment Entry remains cancelled", completed),
-        ("voucher_gl_rows", "Voucher GL rows remain 8", EXPECTED_VOUCHER_GL_ROWS),
-        ("reversal_gl_rows", "Reversal GL rows remain 4", EXPECTED_REVERSAL_GL_ROWS),
-        ("restored_invoice_amount", "Restored invoice amount remains 3.00", EXPECTED_TOTAL_AMOUNT),
-        ("steady_baseline_ready", "Ready for next governed steady baseline", completed),
-    ]
-
-    for key, label, value in checks:
-        items.append({
-            "status": "Pass",
-            "severity": "High",
-            "category": "Closeout Evidence",
-            "check_key": key,
-            "check_label": label,
-            "detail": f"value={value}",
-            "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-        })
-
-    items.append({
-        "status": "Pass" if ack_ok else "Warning",
-        "severity": "Low" if ack_ok else "Medium",
-        "category": "Acknowledgement",
-        "check_key": "ack_ok",
-        "check_label": "Acknowledgement supplied",
-        "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {CLOSEOUT_ACK}",
-        "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-    })
-
+        items.append(
+            {
+                "status": "Pass",
+                "severity": "High",
+                "category": "Closeout Reference",
+                "check_key": "closeout_sales_invoice_reference",
+                "check_label": f"Closeout Sales Invoice {row.idx}",
+                "detail": f"{row.reference_name} closeout amount={row.closeout_amount}, outstanding={row.outstanding_amount}.",
+                "line_no": row.idx,
+                "reference_doctype": row.reference_doctype,
+                "reference_name": row.reference_name,
+                "customer": row.customer,
+                "company": row.company,
+                "currency": row.currency,
+                "closeout_amount": row.closeout_amount,
+                "outstanding_amount": row.outstanding_amount,
+                "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
+            }
+        )
+    items.append(
+        {
+            "status": "Pass" if ack_ok else "Warning",
+            "severity": "Low" if ack_ok else "Medium",
+            "category": "Acknowledgement",
+            "check_key": "ack_ok",
+            "check_label": "Acknowledgement supplied",
+            "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {CLOSEOUT_ACK}",
+            "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
+        }
+    )
     return items
 
 
@@ -493,36 +422,27 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
 
     freeze = latest_freeze()
     rows = freeze_rows(freeze.name) if freeze else []
-
     guard_before = guardrails()
     ack_ok = acknowledgement == CLOSEOUT_ACK
-
     config = {
         "sandbox_enabled": int(frappe.conf.get("ndis_finance_sandbox_posting_enabled") or 0),
         "production_mode": int(frappe.conf.get("ndis_finance_production_mode") or 0),
         "live_pe_enabled": int(frappe.conf.get("ndis_finance_live_payment_entry_posting_enabled") or 0),
     }
-
     policy_enabled_before = get_flag(POLICY_DOCTYPE, freeze.target_policy, "production_batch_enabled") if freeze else 0
     policy_live_before = get_flag(POLICY_DOCTYPE, freeze.target_policy, "live_posting_allowed") if freeze else 0
-
     source_issues = validate_source(freeze, rows, guard_before, config, policy_enabled_before, policy_live_before)
-
     guard_after = guardrails()
-
     policy_enabled_after = get_flag(POLICY_DOCTYPE, freeze.target_policy, "production_batch_enabled") if freeze else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, freeze.target_policy, "live_posting_allowed") if freeze else 0
 
-    pe_state = payment_entry_state(EXPECTED_CLOSED_PAYMENT_ENTRY)
-    voucher_rows = payment_entry_gl_rows(EXPECTED_CLOSED_PAYMENT_ENTRY)
-    voucher_net = payment_entry_gl_net(EXPECTED_CLOSED_PAYMENT_ENTRY)
-    reversal_rows = payment_entry_reversal_gl_rows(EXPECTED_CLOSED_PAYMENT_ENTRY)
+    state = payment_entry_state(CLOSEOUT_PAYMENT_ENTRY)
+    closeout_gl_rows = payment_entry_gl_rows(CLOSEOUT_PAYMENT_ENTRY)
+    closeout_gl_net = payment_entry_gl_net(CLOSEOUT_PAYMENT_ENTRY)
     restored_amount = outstanding_total(EXPECTED_INVOICES)
-
     actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
     actual_pe_cancelled = 0
     actual_gl_created = guard_after["payment_entry_gl_count"] - guard_before["payment_entry_gl_count"]
-
     policy_mutation_count = int(
         policy_enabled_before != policy_enabled_after
         or policy_live_before != policy_live_after
@@ -531,13 +451,16 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
     )
 
     post_issues = list(source_issues)
-
     if actual_pe_created != 0:
         post_issues.append(f"Closeout must create 0 Payment Entries. Created {actual_pe_created}.")
     if actual_pe_cancelled != 0:
         post_issues.append(f"Closeout must cancel 0 Payment Entries. Cancelled {actual_pe_cancelled}.")
     if actual_gl_created != 0:
         post_issues.append(f"Closeout must create 0 GL rows. Created {actual_gl_created}.")
+    if guard_after["submitted_journal_entry_count_today"] != 0:
+        post_issues.append("Submitted Journal Entry today must remain 0 after closeout.")
+    if guard_after["purchase_invoice_count_today"] != 0:
+        post_issues.append("Purchase Invoice today must remain 0 after closeout.")
     if policy_mutation_count != 0:
         post_issues.append("Policy state changed during closeout. This is not allowed.")
 
@@ -546,13 +469,10 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
         and ack_ok
         and freeze
         and not post_issues
-        and pe_state.docstatus == 2
-        and pe_state.status == "Cancelled"
-        and reference_names(rows) == EXPECTED_INVOICES
-        and closed_total(rows) == EXPECTED_TOTAL_AMOUNT
-        and voucher_rows == EXPECTED_VOUCHER_GL_ROWS
-        and voucher_net == EXPECTED_VOUCHER_GL_NET
-        and reversal_rows == EXPECTED_REVERSAL_GL_ROWS
+        and state.docstatus == 2
+        and state.status == "Cancelled"
+        and closeout_gl_rows == EXPECTED_GL_ROWS
+        and closeout_gl_net == EXPECTED_GL_NET
         and restored_amount == EXPECTED_TOTAL_AMOUNT
         and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
         and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
@@ -566,39 +486,39 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
         and policy_mutation_count == 0
     )
 
-    items = build_items(rows, post_issues, ack_ok, completed=completed)
+    items = build_items(rows, post_issues, ack_ok)
     item_summary = summarise_items(items)
-
     result = {
         "dry_run": bool(int(dry_run or 0)),
-        "status": "Closeout Approved" if completed else "Needs Review",
-        "closeout_status": "Next Governed Limited Operation Closed" if completed else "Needs Review",
-        "closeout_approved": completed,
-
-        "phase12v_freeze_verified": 1 if freeze else 0,
+        "status": "Closed" if completed else "Needs Review",
+        "closeout_status": "Next Governed Limited Operation Cycle Closed" if completed else "Needs Review",
+        "closeout_completed": completed,
+        "phase13h_freeze_verified": 1 if freeze else 0,
         "freeze_completed_verified": 1 if freeze else 0,
-        "frozen_payment_entry_verified": int(freeze and freeze.frozen_rollback_payment_entry == EXPECTED_CLOSED_PAYMENT_ENTRY),
-        "frozen_payment_entry_cancelled_still_verified": int(pe_state.docstatus == 2 and pe_state.status == "Cancelled"),
-        "frozen_gl_rows_verified": int(voucher_rows == EXPECTED_VOUCHER_GL_ROWS),
-        "frozen_reversal_gl_rows_verified": int(reversal_rows == EXPECTED_REVERSAL_GL_ROWS),
-        "frozen_gl_net_zero_verified": int(voucher_net == EXPECTED_VOUCHER_GL_NET),
-        "invoice_outstanding_restored_verified": int(restored_amount == EXPECTED_TOTAL_AMOUNT),
-        "payment_entry_count_stable_verified": int(guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT),
-        "payment_entry_gl_count_stable_verified": int(guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT),
+        "freeze_payment_entry_verified": int(freeze and freeze.freeze_payment_entry == CLOSEOUT_PAYMENT_ENTRY),
+        "freeze_payment_entry_cancelled_verified": int(state.docstatus == 2 and state.status == "Cancelled"),
+        "freeze_gl_rows_verified": int(closeout_gl_rows == EXPECTED_GL_ROWS),
+        "freeze_reversal_gl_rows_verified": int(freeze and int(freeze.freeze_reversal_gl_rows or 0) == EXPECTED_REVERSAL_GL_ROWS),
+        "freeze_gl_net_zero_verified": int(closeout_gl_net == EXPECTED_GL_NET),
+        "freeze_restored_invoice_amount_verified": int(restored_amount == EXPECTED_TOTAL_AMOUNT),
         "policy_state_preserved_verified": int(policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0),
         "no_new_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 0 and actual_gl_created == 0),
-
-        "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-        "closed_payment_entry_docstatus": pe_state.docstatus,
-        "closed_payment_entry_status": pe_state.status,
-        "closed_invoice_names": ", ".join(EXPECTED_INVOICES),
-        "closed_invoice_count": EXPECTED_INVOICE_COUNT,
-        "closed_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "closed_voucher_gl_rows": voucher_rows,
-        "closed_voucher_gl_net": voucher_net,
-        "closed_reversal_gl_rows": reversal_rows,
-        "closed_restored_invoice_amount": restored_amount,
-
+        "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY,
+        "closeout_payment_entry_docstatus": state.docstatus,
+        "closeout_payment_entry_status": state.status,
+        "closeout_source_doctype": CLOSEOUT_SOURCE_DOCTYPE,
+        "closeout_reference_doctype": CLOSEOUT_REFERENCE_DOCTYPE,
+        "closeout_party_type": CLOSEOUT_PARTY_TYPE,
+        "closeout_customer": unique_value(rows, "customer"),
+        "closeout_company": unique_value(rows, "company"),
+        "closeout_currency": unique_value(rows, "currency"),
+        "closeout_invoice_names": ", ".join(reference_names(rows)),
+        "closeout_invoice_count": len(rows),
+        "closeout_total_amount": closeout_total(rows),
+        "closeout_restored_invoice_amount": restored_amount,
+        "closeout_gl_rows": closeout_gl_rows,
+        "closeout_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
+        "closeout_gl_net": closeout_gl_net,
         "payment_entry_count_before": guard_before["payment_entry_count"],
         "payment_entry_count_after": guard_after["payment_entry_count"],
         "payment_entry_gl_count_before": guard_before["payment_entry_gl_count"],
@@ -606,10 +526,8 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
         "actual_payment_entry_created_count": actual_pe_created,
         "actual_payment_entry_cancelled_count": actual_pe_cancelled,
         "actual_gl_created_count": actual_gl_created,
-
         "submitted_journal_entry_count_today": guard_after["submitted_journal_entry_count_today"],
         "purchase_invoice_count_today": guard_after["purchase_invoice_count_today"],
-
         "target_policy_doctype": POLICY_DOCTYPE,
         "target_policy": freeze.target_policy if freeze else None,
         "target_policy_name": freeze.target_policy_name if freeze else None,
@@ -618,9 +536,7 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
         "target_policy_live_before": policy_live_before,
         "target_policy_live_after": policy_live_after,
         "actual_policy_mutation_count": policy_mutation_count,
-
         CLOSEOUT_READY_FIELD: completed,
-
         "freeze": freeze.name if freeze else None,
         "rollback": freeze.rollback if freeze else None,
         "smoke": freeze.smoke if freeze else None,
@@ -633,25 +549,21 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
         "monitor": freeze.monitor if freeze else None,
         "baseline": freeze.baseline if freeze else None,
         "previous_closeout": freeze.closeout if freeze else None,
-
         **item_summary,
         "items": items,
         "issues": post_issues,
         "required_acknowledgement": CLOSEOUT_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 12W approves closeout of the Phase 12T/12U/12V governed limited-operation cycle only. No accounting movement occurs.",
+        "note": "Phase 13I closes the next governed limited-operation cycle. No accounting movement occurs.",
     }
-
     if int(dry_run or 0):
         return result
 
     doc = frappe.new_doc(CLOSEOUT_DOCTYPE)
     doc.closeout_id = make_closeout_id()
-
     for fieldname, value in result.items():
         if doc.meta.has_field(fieldname):
             setattr(doc, fieldname, value)
-
     doc.site_name = frappe.local.site
     doc.sandbox_config_enabled = config["sandbox_enabled"]
     doc.production_mode_detected = config["production_mode"]
@@ -665,64 +577,30 @@ def run_next_governed_limited_operation_closeout(dry_run=1, acknowledgement=None
     doc.closeout_json = safe_json(result)
     doc.notes = notes
     doc.insert(ignore_permissions=True)
-
     create_items(doc, items)
     frappe.db.commit()
-
-    return {
-        **result,
-        "created": True,
-        "closeout": doc.name,
-        "closeout_id": doc.closeout_id,
-        "closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY,
-        "guardrails_after": guardrails(),
-    }
+    return {**result, "created": True, "closeout": doc.name, "closeout_id": doc.closeout_id, "closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY, "guardrails_after": guardrails()}
 
 
 @frappe.whitelist()
 def cancel_next_governed_limited_operation_closeout_audit(closeout, reason=None):
     assert_action("cancel_next_governed_limited_operation_closeout_audit")
-
     if not frappe.db.exists(CLOSEOUT_DOCTYPE, closeout):
         frappe.throw(_("Next governed limited-operation closeout audit not found: {0}").format(closeout))
-
     doc = frappe.get_doc(CLOSEOUT_DOCTYPE, closeout)
-
     if doc.status == "Cancelled":
         return {"closeout": closeout, "status": "Cancelled", "note": "Already cancelled."}
-
-    if int(doc.closeout_approved or 0):
-        frappe.throw(_("Cannot cancel an approved Phase 12W closeout record."))
-
+    if int(doc.closeout_completed or 0):
+        frappe.throw(_("Cannot cancel a completed Phase 13I closeout record."))
     frappe.db.set_value(
         CLOSEOUT_DOCTYPE,
         closeout,
-        {
-            "status": "Cancelled",
-            "closeout_status": "Cancelled",
-            "cancelled_on": now_datetime(),
-            "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 12W no-ack closeout audit cancelled.",
-        },
+        {"status": "Cancelled", "closeout_status": "Cancelled", "cancelled_on": now_datetime(), "cancelled_by": frappe.session.user, "summary_json": reason or "Phase 13I no-ack closeout audit cancelled."},
         update_modified=False,
     )
-
-    frappe.db.sql(
-        f"""
-        UPDATE `tab{CLOSEOUT_ITEM_DOCTYPE}`
-        SET status='Cancelled'
-        WHERE closeout=%(closeout)s
-        """,
-        {"closeout": closeout},
-    )
-
+    frappe.db.sql(f"UPDATE `tab{CLOSEOUT_ITEM_DOCTYPE}` SET status='Cancelled' WHERE closeout=%(closeout)s", {"closeout": closeout})
     frappe.db.commit()
-
-    return {
-        "closeout": closeout,
-        "status": "Cancelled",
-        "note": "No-ack closeout audit cancelled only. No accounting movement occurred.",
-    }
+    return {"closeout": closeout, "status": "Cancelled", "note": "No-ack closeout audit cancelled only. No accounting movement occurred."}
 
 
 @frappe.whitelist()
@@ -730,23 +608,23 @@ def quick_next_governed_limited_operation_closeout_summary(limit=20):
     return {
         "closeout_records": frappe.get_all(
             CLOSEOUT_DOCTYPE,
-            filters={"closed_payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY},
+            filters={"closeout_payment_entry": CLOSEOUT_PAYMENT_ENTRY},
             fields=[
                 "name",
                 "closeout_id",
                 "status",
                 "closeout_status",
-                "closeout_approved",
-                "closed_payment_entry",
-                "closed_payment_entry_docstatus",
-                "closed_payment_entry_status",
-                "closed_invoice_names",
-                "closed_invoice_count",
-                "closed_total_amount",
-                "closed_voucher_gl_rows",
-                "closed_voucher_gl_net",
-                "closed_reversal_gl_rows",
-                "closed_restored_invoice_amount",
+                "closeout_completed",
+                "closeout_payment_entry",
+                "closeout_payment_entry_docstatus",
+                "closeout_payment_entry_status",
+                "closeout_invoice_names",
+                "closeout_invoice_count",
+                "closeout_total_amount",
+                "closeout_restored_invoice_amount",
+                "closeout_gl_rows",
+                "closeout_reversal_gl_rows",
+                "closeout_gl_net",
                 "payment_entry_count_before",
                 "payment_entry_count_after",
                 "payment_entry_gl_count_before",
@@ -779,11 +657,9 @@ def quick_next_governed_limited_operation_closeout_summary(limit=20):
                 "customer",
                 "company",
                 "currency",
-                "closed_amount",
-                "current_outstanding_amount",
-                "invoice_docstatus",
-                "outstanding_restored",
-                "closed_payment_entry",
+                "closeout_amount",
+                "outstanding_amount",
+                "closeout_payment_entry",
                 "detail",
             ],
             order_by="creation desc",
@@ -791,26 +667,27 @@ def quick_next_governed_limited_operation_closeout_summary(limit=20):
         ),
         "required_acknowledgement": CLOSEOUT_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 12W next governed limited-operation closeout summary.",
+        "note": "Phase 13I next governed limited-operation closeout summary.",
     }
 
 
 def execute_closeout_report(filters=None):
     columns = [
         {"fieldname": "closeout", "label": _("Closeout"), "fieldtype": "Link", "options": CLOSEOUT_DOCTYPE, "width": 220},
-        {"fieldname": "closeout_id", "label": _("Closeout ID"), "fieldtype": "Data", "width": 470},
-        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 160},
-        {"fieldname": "closeout_status", "label": _("Closeout Status"), "fieldtype": "Data", "width": 360},
-        {"fieldname": "closeout_approved", "label": _("Approved"), "fieldtype": "Check", "width": 90},
-        {"fieldname": "closed_payment_entry", "label": _("Closed PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "closed_payment_entry_docstatus", "label": _("PE Docstatus"), "fieldtype": "Int", "width": 110},
-        {"fieldname": "closed_payment_entry_status", "label": _("PE Status"), "fieldtype": "Data", "width": 120},
-        {"fieldname": "closed_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
-        {"fieldname": "closed_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
-        {"fieldname": "closed_voucher_gl_rows", "label": _("Voucher GL"), "fieldtype": "Int", "width": 95},
-        {"fieldname": "closed_reversal_gl_rows", "label": _("Reversal GL"), "fieldtype": "Int", "width": 105},
-        {"fieldname": "closed_restored_invoice_amount", "label": _("Restored"), "fieldtype": "Currency", "width": 105},
-        {"fieldname": CLOSEOUT_READY_FIELD, "label": _("Baseline Ready"), "fieldtype": "Check", "width": 125},
+        {"fieldname": "closeout_id", "label": _("Closeout ID"), "fieldtype": "Data", "width": 540},
+        {"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 120},
+        {"fieldname": "closeout_status", "label": _("Closeout Status"), "fieldtype": "Data", "width": 400},
+        {"fieldname": "closeout_completed", "label": _("Completed"), "fieldtype": "Check", "width": 100},
+        {"fieldname": "closeout_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
+        {"fieldname": "closeout_payment_entry_docstatus", "label": _("PE Docstatus"), "fieldtype": "Int", "width": 115},
+        {"fieldname": "closeout_payment_entry_status", "label": _("PE Status"), "fieldtype": "Data", "width": 120},
+        {"fieldname": "closeout_invoice_names", "label": _("Invoices"), "fieldtype": "Small Text", "width": 420},
+        {"fieldname": "closeout_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": "closeout_restored_invoice_amount", "label": _("Restored"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": "closeout_gl_rows", "label": _("GL Rows"), "fieldtype": "Int", "width": 90},
+        {"fieldname": "closeout_reversal_gl_rows", "label": _("Reversal Rows"), "fieldtype": "Int", "width": 120},
+        {"fieldname": "closeout_gl_net", "label": _("GL Net"), "fieldtype": "Currency", "width": 100},
+        {"fieldname": CLOSEOUT_READY_FIELD, "label": _("Baseline Ready"), "fieldtype": "Check", "width": 130},
         {"fieldname": "payment_entry_count_before", "label": _("PE Before"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_count_after", "label": _("PE After"), "fieldtype": "Int", "width": 90},
         {"fieldname": "payment_entry_gl_count_before", "label": _("PE GL Before"), "fieldtype": "Int", "width": 115},
@@ -818,7 +695,6 @@ def execute_closeout_report(filters=None):
         {"fieldname": "actual_gl_created_count", "label": _("Actual GL Created"), "fieldtype": "Int", "width": 135},
         {"fieldname": "checked_on", "label": _("Checked On"), "fieldtype": "Datetime", "width": 170},
     ]
-
     data = frappe.db.sql(
         f"""
         SELECT
@@ -826,15 +702,16 @@ def execute_closeout_report(filters=None):
             closeout_id,
             status,
             closeout_status,
-            closeout_approved,
-            closed_payment_entry,
-            closed_payment_entry_docstatus,
-            closed_payment_entry_status,
-            closed_invoice_count,
-            closed_total_amount,
-            closed_voucher_gl_rows,
-            closed_reversal_gl_rows,
-            closed_restored_invoice_amount,
+            closeout_completed,
+            closeout_payment_entry,
+            closeout_payment_entry_docstatus,
+            closeout_payment_entry_status,
+            closeout_invoice_names,
+            closeout_total_amount,
+            closeout_restored_invoice_amount,
+            closeout_gl_rows,
+            closeout_reversal_gl_rows,
+            closeout_gl_net,
             `{CLOSEOUT_READY_FIELD}` AS `{CLOSEOUT_READY_FIELD}`,
             payment_entry_count_before,
             payment_entry_count_after,
@@ -843,30 +720,27 @@ def execute_closeout_report(filters=None):
             actual_gl_created_count,
             checked_on
         FROM `tab{CLOSEOUT_DOCTYPE}`
-        WHERE closed_payment_entry=%(payment_entry)s
+        WHERE closeout_payment_entry=%(payment_entry)s
         ORDER BY creation DESC
         """,
-        {"payment_entry": EXPECTED_CLOSED_PAYMENT_ENTRY},
+        {"payment_entry": CLOSEOUT_PAYMENT_ENTRY},
         as_dict=True,
     )
-
     chart = {
         "data": {
             "labels": [row.closeout_id for row in data[:20]],
             "datasets": [
-                {"name": "Closeout Approved", "values": [int(row.closeout_approved or 0) for row in data[:20]]},
+                {"name": "Closeout Completed", "values": [int(row.closeout_completed or 0) for row in data[:20]]},
                 {"name": "Baseline Ready", "values": [int(row.get(CLOSEOUT_READY_FIELD) or 0) for row in data[:20]]},
             ],
         },
         "type": "bar",
     }
-
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Closeout Records"), "datatype": "Int"},
-        {"value": sum(int(row.closeout_approved or 0) for row in data), "indicator": "Green", "label": _("Approved"), "datatype": "Int"},
+        {"value": sum(int(row.closeout_completed or 0) for row in data), "indicator": "Green", "label": _("Closed"), "datatype": "Int"},
         {"value": sum(int(row.actual_gl_created_count or 0) for row in data), "indicator": "Red", "label": _("Actual GL Created"), "datatype": "Int"},
     ]
-
     return columns, data, None, chart, summary
 
 
@@ -879,15 +753,11 @@ def execute_item_report(filters=None):
         {"fieldname": "line_no", "label": _("Line"), "fieldtype": "Int", "width": 60},
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
-        {"fieldname": "closed_amount", "label": _("Closed Amount"), "fieldtype": "Currency", "width": 130},
-        {"fieldname": "current_outstanding_amount", "label": _("Current Outstanding"), "fieldtype": "Currency", "width": 145},
-        {"fieldname": "invoice_docstatus", "label": _("Invoice Docstatus"), "fieldtype": "Int", "width": 120},
-        {"fieldname": "outstanding_restored", "label": _("Outstanding Restored"), "fieldtype": "Check", "width": 145},
-        {"fieldname": "closed_payment_entry", "label": _("Closed PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
-        {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
+        {"fieldname": "closeout_amount", "label": _("Closeout Amount"), "fieldtype": "Currency", "width": 130},
+        {"fieldname": "outstanding_amount", "label": _("Outstanding"), "fieldtype": "Currency", "width": 120},
+        {"fieldname": "closeout_payment_entry", "label": _("Payment Entry"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
     ]
-
     data = frappe.db.sql(
         f"""
         SELECT
@@ -898,41 +768,36 @@ def execute_item_report(filters=None):
             line_no,
             reference_doctype,
             reference_name,
-            closed_amount,
-            current_outstanding_amount,
-            invoice_docstatus,
-            outstanding_restored,
-            closed_payment_entry,
-            check_label,
+            closeout_amount,
+            outstanding_amount,
+            closeout_payment_entry,
             detail
         FROM `tab{CLOSEOUT_ITEM_DOCTYPE}`
         ORDER BY creation DESC
         """,
         as_dict=True,
     )
-
     chart = {
         "data": {
             "labels": ["Pass", "Warning", "Blocker", "Info"],
-            "datasets": [{
-                "name": "Items",
-                "values": [
-                    len([row for row in data if row.status == "Pass"]),
-                    len([row for row in data if row.status == "Warning"]),
-                    len([row for row in data if row.status == "Blocker"]),
-                    len([row for row in data if row.status == "Info"]),
-                ],
-            }],
+            "datasets": [
+                {
+                    "name": "Items",
+                    "values": [
+                        len([row for row in data if row.status == "Pass"]),
+                        len([row for row in data if row.status == "Warning"]),
+                        len([row for row in data if row.status == "Blocker"]),
+                        len([row for row in data if row.status == "Info"]),
+                    ],
+                }
+            ],
         },
         "type": "bar",
     }
-
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Items"), "datatype": "Int"},
-        {"value": len([row for row in data if row.category == "Closed Reference"]), "indicator": "Green", "label": _("Closed References"), "datatype": "Int"},
-        {"value": len([row for row in data if int(row.outstanding_restored or 0) == 1]), "indicator": "Green", "label": _("Outstanding Restored"), "datatype": "Int"},
+        {"value": len([row for row in data if row.category == "Closeout Reference"]), "indicator": "Green", "label": _("Closeout References"), "datatype": "Int"},
     ]
-
     return columns, data, None, chart, summary
 
 
