@@ -7,7 +7,7 @@ from frappe.utils import flt, now_datetime, today
 from ndis_finance.services.permissions import assert_action
 
 
-BASELINE_ACK = "I_CONFIRM_PHASE12X_APPROVE_NEXT_GOVERNED_LIMITED_OPERATION_STEADY_BASELINE_NO_POSTING"
+BASELINE_ACK = "I_CONFIRM_PHASE13J_ACTIVATE_NEXT_GOVERNED_LIMITED_OPERATION_STEADY_BASELINE_NO_POSTING"
 
 POLICY_DOCTYPE = "NDIS Controlled Production Batch Posting Policy"
 CLOSEOUT_DOCTYPE = "NDIS Next Governed Limited Op Closeout"
@@ -18,16 +18,20 @@ BASELINE_ITEM_DOCTYPE = "NDIS Next Governed Limited Op Steady Baseline Item"
 CLOSEOUT_READY_FIELD = "ready_for_next_governed_limited_op_steady_baseline"
 BASELINE_READY_FIELD = "ready_for_next_governed_limited_op_runtime_monitor"
 
-EXPECTED_BASELINE_PAYMENT_ENTRY = "ACC-PAY-2026-00013"
+BASELINE_PAYMENT_ENTRY = "ACC-PAY-2026-00014"
 EXPECTED_INVOICES = ["ACC-SINV-2026-00005", "ACC-SINV-2026-00006", "ACC-SINV-2026-00008"]
 
-EXPECTED_PAYMENT_ENTRY_COUNT = 12
-EXPECTED_PAYMENT_ENTRY_GL_COUNT = 78
+EXPECTED_PAYMENT_ENTRY_COUNT = 13
+EXPECTED_PAYMENT_ENTRY_GL_COUNT = 86
 EXPECTED_TOTAL_AMOUNT = 3.00
 EXPECTED_INVOICE_COUNT = 3
-EXPECTED_VOUCHER_GL_ROWS = 8
-EXPECTED_VOUCHER_GL_NET = 0.00
+EXPECTED_GL_ROWS = 8
+EXPECTED_GL_NET = 0.00
 EXPECTED_REVERSAL_GL_ROWS = 4
+
+BASELINE_SOURCE_DOCTYPE = "Sales Invoice"
+BASELINE_REFERENCE_DOCTYPE = "Sales Invoice"
+BASELINE_PARTY_TYPE = "Customer"
 
 
 def make_baseline_id():
@@ -108,8 +112,15 @@ def payment_entry_gl_net(payment_entry):
     return flt(value or 0, 2)
 
 
-def payment_entry_reversal_gl_rows(payment_entry):
-    return max(0, int(payment_entry_gl_rows(payment_entry) or 0) - 4)
+def direct_cancelled_gl_rows(payment_entry):
+    return count_dt(
+        "GL Entry",
+        {
+            "voucher_type": "Payment Entry",
+            "voucher_no": payment_entry,
+            "is_cancelled": 1,
+        },
+    )
 
 
 def outstanding_total(invoice_names):
@@ -128,30 +139,31 @@ def outstanding_total(invoice_names):
 
 def latest_closeout():
     filters = {
-        "status": "Closeout Approved",
-        "closeout_status": "Next Governed Limited Operation Closed",
-        "closeout_approved": 1,
-        "phase12v_freeze_verified": 1,
+        "status": "Closed",
+        "closeout_status": "Next Governed Limited Operation Cycle Closed",
+        "closeout_completed": 1,
+        "phase13h_freeze_verified": 1,
         "freeze_completed_verified": 1,
-        "frozen_payment_entry_verified": 1,
-        "frozen_payment_entry_cancelled_still_verified": 1,
-        "frozen_gl_rows_verified": 1,
-        "frozen_reversal_gl_rows_verified": 1,
-        "frozen_gl_net_zero_verified": 1,
-        "invoice_outstanding_restored_verified": 1,
-        "payment_entry_count_stable_verified": 1,
-        "payment_entry_gl_count_stable_verified": 1,
+        "freeze_payment_entry_verified": 1,
+        "freeze_payment_entry_cancelled_verified": 1,
+        "freeze_gl_rows_verified": 1,
+        "freeze_reversal_gl_rows_verified": 1,
+        "freeze_gl_net_zero_verified": 1,
+        "freeze_restored_invoice_amount_verified": 1,
         "policy_state_preserved_verified": 1,
         "no_new_accounting_movement_verified": 1,
-        "closed_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
-        "closed_payment_entry_docstatus": 2,
-        "closed_payment_entry_status": "Cancelled",
-        "closed_invoice_count": EXPECTED_INVOICE_COUNT,
-        "closed_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "closed_voucher_gl_rows": EXPECTED_VOUCHER_GL_ROWS,
-        "closed_voucher_gl_net": EXPECTED_VOUCHER_GL_NET,
-        "closed_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
-        "closed_restored_invoice_amount": EXPECTED_TOTAL_AMOUNT,
+        "closeout_payment_entry": BASELINE_PAYMENT_ENTRY,
+        "closeout_payment_entry_docstatus": 2,
+        "closeout_payment_entry_status": "Cancelled",
+        "closeout_source_doctype": BASELINE_SOURCE_DOCTYPE,
+        "closeout_reference_doctype": BASELINE_REFERENCE_DOCTYPE,
+        "closeout_party_type": BASELINE_PARTY_TYPE,
+        "closeout_invoice_count": EXPECTED_INVOICE_COUNT,
+        "closeout_total_amount": EXPECTED_TOTAL_AMOUNT,
+        "closeout_restored_invoice_amount": EXPECTED_TOTAL_AMOUNT,
+        "closeout_gl_rows": EXPECTED_GL_ROWS,
+        "closeout_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
+        "closeout_gl_net": EXPECTED_GL_NET,
         "payment_entry_count_after": EXPECTED_PAYMENT_ENTRY_COUNT,
         "payment_entry_gl_count_after": EXPECTED_PAYMENT_ENTRY_GL_COUNT,
         "actual_payment_entry_created_count": 0,
@@ -175,14 +187,22 @@ def latest_closeout():
         fields=[
             "name",
             "closeout_id",
-            "closed_payment_entry",
-            "closed_invoice_names",
-            "closed_invoice_count",
-            "closed_total_amount",
-            "closed_voucher_gl_rows",
-            "closed_voucher_gl_net",
-            "closed_reversal_gl_rows",
-            "closed_restored_invoice_amount",
+            "closeout_source_doctype",
+            "closeout_reference_doctype",
+            "closeout_party_type",
+            "closeout_customer",
+            "closeout_company",
+            "closeout_currency",
+            "closeout_invoice_names",
+            "closeout_invoice_count",
+            "closeout_total_amount",
+            "closeout_restored_invoice_amount",
+            "closeout_payment_entry",
+            "closeout_payment_entry_docstatus",
+            "closeout_payment_entry_status",
+            "closeout_gl_rows",
+            "closeout_reversal_gl_rows",
+            "closeout_gl_net",
             "freeze",
             "rollback",
             "smoke",
@@ -208,7 +228,7 @@ def existing_active_baseline(closeout):
         BASELINE_DOCTYPE,
         filters={
             "closeout": closeout,
-            "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+            "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
             "status": "Baseline Active",
             "baseline_active": 1,
         },
@@ -223,7 +243,7 @@ def closeout_rows(closeout):
         CLOSEOUT_ITEM_DOCTYPE,
         filters={
             "closeout": closeout,
-            "category": "Closed Reference",
+            "category": "Closeout Reference",
             "status": "Pass",
             "reference_doctype": "Sales Invoice",
         },
@@ -234,11 +254,9 @@ def closeout_rows(closeout):
             "customer",
             "company",
             "currency",
-            "closed_amount",
-            "current_outstanding_amount",
-            "invoice_docstatus",
-            "outstanding_restored",
-            "closed_payment_entry",
+            "closeout_amount",
+            "outstanding_amount",
+            "closeout_payment_entry",
         ],
         order_by="line_no asc, creation asc",
     )
@@ -252,8 +270,8 @@ def closeout_rows(closeout):
             as_dict=True,
         ) if frappe.db.exists("Sales Invoice", row.reference_name) else None
 
-        amount = flt(row.closed_amount or 0, 2)
-        outstanding = flt((si.outstanding_amount if si else row.current_outstanding_amount) or 0, 2)
+        amount = flt(row.closeout_amount or 0, 2)
+        outstanding = flt((si.outstanding_amount if si else row.outstanding_amount) or 0, 2)
 
         result.append(
             frappe._dict(
@@ -262,13 +280,12 @@ def closeout_rows(closeout):
                     "reference_doctype": row.reference_doctype,
                     "reference_name": row.reference_name,
                     "baseline_amount": amount,
-                    "current_outstanding_amount": outstanding,
+                    "outstanding_amount": outstanding,
                     "customer": si.customer if si else row.customer,
                     "company": si.company if si else row.company,
                     "currency": si.currency if si else row.currency,
-                    "invoice_docstatus": int(si.docstatus or 0) if si else int(row.invoice_docstatus or 0),
-                    "outstanding_restored": int(outstanding >= amount and amount > 0),
-                    "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+                    "invoice_docstatus": int(si.docstatus or 0) if si else 0,
+                    "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
                 }
             )
         )
@@ -298,17 +315,17 @@ def validate_source(closeout, rows, guard, config, policy_enabled, policy_live):
     issues = []
 
     if not closeout:
-        issues.append("No approved Phase 12W closeout found for steady baseline.")
+        issues.append("No completed Phase 13I closeout found for steady baseline.")
         return issues
 
     existing = existing_active_baseline(closeout.name)
     if existing:
-        issues.append(f"Active Phase 12X steady baseline already exists for this closeout: {existing.baseline_id} / {existing.baseline_payment_entry}")
+        issues.append(f"Active Phase 13J steady baseline already exists for this closeout: {existing.baseline_id} / {existing.baseline_payment_entry}")
 
-    pe_state = payment_entry_state(EXPECTED_BASELINE_PAYMENT_ENTRY)
+    pe_state = payment_entry_state(BASELINE_PAYMENT_ENTRY)
 
-    if closeout.closed_payment_entry != EXPECTED_BASELINE_PAYMENT_ENTRY:
-        issues.append(f"Closed Payment Entry must be {EXPECTED_BASELINE_PAYMENT_ENTRY}.")
+    if closeout.closeout_payment_entry != BASELINE_PAYMENT_ENTRY:
+        issues.append(f"Closeout Payment Entry must be {BASELINE_PAYMENT_ENTRY}.")
 
     if pe_state.docstatus != 2:
         issues.append(f"Baseline Payment Entry must remain cancelled. docstatus={pe_state.docstatus}")
@@ -337,26 +354,26 @@ def validate_source(closeout, rows, guard, config, policy_enabled, policy_live):
     if not all(int(row.invoice_docstatus or 0) == 1 for row in rows):
         issues.append("All baseline Sales Invoices must remain submitted.")
 
-    if not all(int(row.outstanding_restored or 0) == 1 for row in rows):
+    if not all(flt(row.outstanding_amount or 0, 2) >= flt(row.baseline_amount or 0, 2) for row in rows):
         issues.append("All baseline Sales Invoices must remain restored.")
 
-    if payment_entry_gl_rows(EXPECTED_BASELINE_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_ROWS:
-        issues.append(f"Baseline Payment Entry voucher GL rows must remain {EXPECTED_VOUCHER_GL_ROWS}.")
+    if payment_entry_gl_rows(BASELINE_PAYMENT_ENTRY) != EXPECTED_GL_ROWS:
+        issues.append(f"Baseline Payment Entry voucher GL rows must remain {EXPECTED_GL_ROWS}.")
 
-    if payment_entry_reversal_gl_rows(EXPECTED_BASELINE_PAYMENT_ENTRY) != EXPECTED_REVERSAL_GL_ROWS:
-        issues.append(f"Baseline Payment Entry reversal GL rows must remain {EXPECTED_REVERSAL_GL_ROWS}.")
+    if int(closeout.closeout_reversal_gl_rows or 0) != EXPECTED_REVERSAL_GL_ROWS:
+        issues.append("Governed closeout reversal rows must remain the four-row delta.")
 
-    if payment_entry_gl_net(EXPECTED_BASELINE_PAYMENT_ENTRY) != EXPECTED_VOUCHER_GL_NET:
+    if payment_entry_gl_net(BASELINE_PAYMENT_ENTRY) != EXPECTED_GL_NET:
         issues.append("Baseline Payment Entry GL net must remain 0.00.")
 
     if outstanding_total(EXPECTED_INVOICES) != EXPECTED_TOTAL_AMOUNT:
         issues.append(f"Restored invoice outstanding must remain {EXPECTED_TOTAL_AMOUNT}.")
 
     if guard["payment_entry_count"] != EXPECTED_PAYMENT_ENTRY_COUNT:
-        issues.append("Payment Entry count must remain 12 before steady baseline.")
+        issues.append("Payment Entry count must remain 13 before steady baseline.")
 
     if guard["payment_entry_gl_count"] != EXPECTED_PAYMENT_ENTRY_GL_COUNT:
-        issues.append("Payment Entry GL count must remain 78 before steady baseline.")
+        issues.append("Payment Entry GL count must remain 86 before steady baseline.")
 
     if guard["submitted_journal_entry_count_today"] != 0:
         issues.append("Submitted Journal Entry today must remain 0 before steady baseline.")
@@ -398,8 +415,8 @@ def build_items(rows, issues, ack_ok, completed=0):
             "category": "Baseline Source",
             "check_key": "baseline_source_valid",
             "check_label": "Steady baseline source valid",
-            "detail": f"Phase 12W closeout state for {EXPECTED_BASELINE_PAYMENT_ENTRY} is stable and can become the next steady baseline.",
-            "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+            "detail": f"Phase 13I closeout state for {BASELINE_PAYMENT_ENTRY} is stable and can become the next steady baseline.",
+            "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
         })
     else:
         for issue in issues:
@@ -410,17 +427,17 @@ def build_items(rows, issues, ack_ok, completed=0):
                 "check_key": "baseline_source_valid",
                 "check_label": "Steady baseline source valid",
                 "detail": issue,
-                "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+                "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
             })
 
     for row in rows:
         items.append({
-            "status": "Pass" if int(row.outstanding_restored or 0) == 1 else "Blocker",
+            "status": "Pass" if flt(row.outstanding_amount or 0, 2) >= flt(row.baseline_amount or 0, 2) else "Blocker",
             "severity": "High",
             "category": "Baseline Reference",
             "check_key": "baseline_sales_invoice_reference",
             "check_label": f"Baseline Sales Invoice {row.idx}",
-            "detail": f"{row.reference_name} baseline amount={row.baseline_amount}, current outstanding={row.current_outstanding_amount}, restored={row.outstanding_restored}.",
+            "detail": f"{row.reference_name} baseline amount={row.baseline_amount}, current outstanding={row.outstanding_amount}.",
             "line_no": row.idx,
             "reference_doctype": row.reference_doctype,
             "reference_name": row.reference_name,
@@ -428,15 +445,14 @@ def build_items(rows, issues, ack_ok, completed=0):
             "company": row.company,
             "currency": row.currency,
             "baseline_amount": row.baseline_amount,
-            "current_outstanding_amount": row.current_outstanding_amount,
+            "outstanding_amount": row.outstanding_amount,
             "invoice_docstatus": row.invoice_docstatus,
-            "outstanding_restored": row.outstanding_restored,
-            "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+            "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
         })
 
     checks = [
         ("baseline_payment_entry_cancelled", "Baseline Payment Entry remains cancelled", completed),
-        ("voucher_gl_rows", "Voucher GL rows remain 8", EXPECTED_VOUCHER_GL_ROWS),
+        ("voucher_gl_rows", "Voucher GL rows remain 8", EXPECTED_GL_ROWS),
         ("reversal_gl_rows", "Reversal GL rows remain 4", EXPECTED_REVERSAL_GL_ROWS),
         ("restored_invoice_amount", "Restored invoice amount remains 3.00", EXPECTED_TOTAL_AMOUNT),
         ("runtime_monitor_ready", "Ready for next governed runtime monitor", completed),
@@ -450,7 +466,7 @@ def build_items(rows, issues, ack_ok, completed=0):
             "check_key": key,
             "check_label": label,
             "detail": f"value={value}",
-            "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+            "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
         })
 
     items.append({
@@ -460,7 +476,7 @@ def build_items(rows, issues, ack_ok, completed=0):
         "check_key": "ack_ok",
         "check_label": "Acknowledgement supplied",
         "detail": "Exact acknowledgement supplied." if ack_ok else f"Required acknowledgement not supplied: {BASELINE_ACK}",
-        "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+        "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
     })
 
     return items
@@ -513,11 +529,11 @@ def run_next_governed_limited_operation_steady_baseline(dry_run=1, acknowledgeme
     policy_enabled_after = get_flag(POLICY_DOCTYPE, closeout.target_policy, "production_batch_enabled") if closeout else 0
     policy_live_after = get_flag(POLICY_DOCTYPE, closeout.target_policy, "live_posting_allowed") if closeout else 0
 
-    pe_state = payment_entry_state(EXPECTED_BASELINE_PAYMENT_ENTRY)
-    voucher_rows = payment_entry_gl_rows(EXPECTED_BASELINE_PAYMENT_ENTRY)
-    voucher_net = payment_entry_gl_net(EXPECTED_BASELINE_PAYMENT_ENTRY)
-    reversal_rows = payment_entry_reversal_gl_rows(EXPECTED_BASELINE_PAYMENT_ENTRY)
+    pe_state = payment_entry_state(BASELINE_PAYMENT_ENTRY)
+    baseline_gl_rows = payment_entry_gl_rows(BASELINE_PAYMENT_ENTRY)
+    baseline_gl_net = payment_entry_gl_net(BASELINE_PAYMENT_ENTRY)
     restored_amount = outstanding_total(EXPECTED_INVOICES)
+    direct_cancelled_rows = direct_cancelled_gl_rows(BASELINE_PAYMENT_ENTRY)
 
     actual_pe_created = guard_after["payment_entry_count"] - guard_before["payment_entry_count"]
     actual_pe_cancelled = 0
@@ -550,9 +566,9 @@ def run_next_governed_limited_operation_steady_baseline(dry_run=1, acknowledgeme
         and pe_state.status == "Cancelled"
         and reference_names(rows) == EXPECTED_INVOICES
         and baseline_total(rows) == EXPECTED_TOTAL_AMOUNT
-        and voucher_rows == EXPECTED_VOUCHER_GL_ROWS
-        and voucher_net == EXPECTED_VOUCHER_GL_NET
-        and reversal_rows == EXPECTED_REVERSAL_GL_ROWS
+        and baseline_gl_rows == EXPECTED_GL_ROWS
+        and baseline_gl_net == EXPECTED_GL_NET
+        and int(closeout.closeout_reversal_gl_rows or 0) == EXPECTED_REVERSAL_GL_ROWS
         and restored_amount == EXPECTED_TOTAL_AMOUNT
         and guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
         and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT
@@ -575,29 +591,34 @@ def run_next_governed_limited_operation_steady_baseline(dry_run=1, acknowledgeme
         "baseline_status": "Next Governed Limited Operation Steady-State Baseline Active" if completed else "Needs Review",
         "baseline_active": completed,
 
-        "phase12w_closeout_verified": 1 if closeout else 0,
-        "closeout_approved_verified": 1 if closeout else 0,
-        "closed_payment_entry_verified": int(closeout and closeout.closed_payment_entry == EXPECTED_BASELINE_PAYMENT_ENTRY),
-        "closed_payment_entry_cancelled_still_verified": int(pe_state.docstatus == 2 and pe_state.status == "Cancelled"),
-        "closed_gl_rows_verified": int(voucher_rows == EXPECTED_VOUCHER_GL_ROWS),
-        "closed_reversal_gl_rows_verified": int(reversal_rows == EXPECTED_REVERSAL_GL_ROWS),
-        "closed_gl_net_zero_verified": int(voucher_net == EXPECTED_VOUCHER_GL_NET),
-        "invoice_outstanding_restored_verified": int(restored_amount == EXPECTED_TOTAL_AMOUNT),
-        "payment_entry_count_stable_verified": int(guard_before["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT and guard_after["payment_entry_count"] == EXPECTED_PAYMENT_ENTRY_COUNT),
-        "payment_entry_gl_count_stable_verified": int(guard_before["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT and guard_after["payment_entry_gl_count"] == EXPECTED_PAYMENT_ENTRY_GL_COUNT),
+        "phase13i_closeout_verified": 1 if closeout else 0,
+        "closeout_completed_verified": 1 if closeout else 0,
+        "closeout_payment_entry_verified": int(closeout and closeout.closeout_payment_entry == BASELINE_PAYMENT_ENTRY),
+        "closeout_payment_entry_cancelled_verified": int(pe_state.docstatus == 2 and pe_state.status == "Cancelled"),
+        "closeout_gl_rows_verified": int(baseline_gl_rows == EXPECTED_GL_ROWS),
+        "closeout_reversal_gl_rows_verified": int(closeout and int(closeout.closeout_reversal_gl_rows or 0) == EXPECTED_REVERSAL_GL_ROWS),
+        "closeout_gl_net_zero_verified": int(baseline_gl_net == EXPECTED_GL_NET),
+        "closeout_restored_invoice_amount_verified": int(restored_amount == EXPECTED_TOTAL_AMOUNT),
         "policy_state_preserved_verified": int(policy_mutation_count == 0 and policy_enabled_before == 1 and policy_enabled_after == 1 and policy_live_before == 0 and policy_live_after == 0),
         "no_new_accounting_movement_verified": int(actual_pe_created == 0 and actual_pe_cancelled == 0 and actual_gl_created == 0),
 
-        "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+        "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
         "baseline_payment_entry_docstatus": pe_state.docstatus,
         "baseline_payment_entry_status": pe_state.status,
-        "baseline_invoice_names": ", ".join(EXPECTED_INVOICES),
-        "baseline_invoice_count": EXPECTED_INVOICE_COUNT,
-        "baseline_total_amount": EXPECTED_TOTAL_AMOUNT,
-        "baseline_voucher_gl_rows": voucher_rows,
-        "baseline_voucher_gl_net": voucher_net,
-        "baseline_reversal_gl_rows": reversal_rows,
+        "baseline_source_doctype": BASELINE_SOURCE_DOCTYPE,
+        "baseline_reference_doctype": BASELINE_REFERENCE_DOCTYPE,
+        "baseline_party_type": BASELINE_PARTY_TYPE,
+        "baseline_customer": unique_value(rows, "customer"),
+        "baseline_company": unique_value(rows, "company"),
+        "baseline_currency": unique_value(rows, "currency"),
+        "baseline_invoice_names": ", ".join(reference_names(rows)),
+        "baseline_invoice_count": len(rows),
+        "baseline_total_amount": baseline_total(rows),
         "baseline_restored_invoice_amount": restored_amount,
+        "baseline_gl_rows": baseline_gl_rows,
+        "baseline_reversal_gl_rows": EXPECTED_REVERSAL_GL_ROWS,
+        "baseline_gl_net": baseline_gl_net,
+        "direct_erpnext_cancelled_gl_rows": direct_cancelled_rows,
 
         "payment_entry_count_before": guard_before["payment_entry_count"],
         "payment_entry_count_after": guard_after["payment_entry_count"],
@@ -631,15 +652,15 @@ def run_next_governed_limited_operation_steady_baseline(dry_run=1, acknowledgeme
         "candidate_selection": closeout.candidate_selection if closeout else None,
         "design": closeout.design if closeout else None,
         "planning": closeout.planning if closeout else None,
+        "monitor": closeout.monitor if closeout else None,
         "previous_baseline": closeout.baseline if closeout else None,
-        "previous_monitor": closeout.monitor if closeout else None,
 
         **item_summary,
         "items": items,
         "issues": post_issues,
         "required_acknowledgement": BASELINE_ACK,
         "acknowledgement_ok": ack_ok,
-        "note": "Phase 12X activates the next governed limited-operation steady baseline only. No accounting movement occurs.",
+        "note": "Phase 13J activates the next governed limited-operation steady baseline. No accounting movement occurs.",
     }
 
     if int(dry_run or 0):
@@ -674,7 +695,7 @@ def run_next_governed_limited_operation_steady_baseline(dry_run=1, acknowledgeme
         "created": True,
         "baseline": doc.name,
         "baseline_id": doc.baseline_id,
-        "baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY,
+        "baseline_payment_entry": BASELINE_PAYMENT_ENTRY,
         "guardrails_after": guardrails(),
     }
 
@@ -692,7 +713,7 @@ def cancel_next_governed_limited_operation_steady_baseline_audit(baseline, reaso
         return {"baseline": baseline, "status": "Cancelled", "note": "Already cancelled."}
 
     if int(doc.baseline_active or 0):
-        frappe.throw(_("Cannot cancel an active Phase 12X steady baseline record."))
+        frappe.throw(_("Cannot cancel an active Phase 13J steady baseline record."))
 
     frappe.db.set_value(
         BASELINE_DOCTYPE,
@@ -702,7 +723,7 @@ def cancel_next_governed_limited_operation_steady_baseline_audit(baseline, reaso
             "baseline_status": "Cancelled",
             "cancelled_on": now_datetime(),
             "cancelled_by": frappe.session.user,
-            "summary_json": reason or "Phase 12X no-ack steady baseline audit cancelled.",
+            "summary_json": reason or "Phase 13J no-ack steady baseline audit cancelled.",
         },
         update_modified=False,
     )
@@ -730,7 +751,7 @@ def quick_next_governed_limited_operation_steady_baseline_summary(limit=20):
     return {
         "baseline_records": frappe.get_all(
             BASELINE_DOCTYPE,
-            filters={"baseline_payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY},
+            filters={"baseline_payment_entry": BASELINE_PAYMENT_ENTRY},
             fields=[
                 "name",
                 "baseline_id",
@@ -743,9 +764,9 @@ def quick_next_governed_limited_operation_steady_baseline_summary(limit=20):
                 "baseline_invoice_names",
                 "baseline_invoice_count",
                 "baseline_total_amount",
-                "baseline_voucher_gl_rows",
-                "baseline_voucher_gl_net",
+                "baseline_gl_rows",
                 "baseline_reversal_gl_rows",
+                "baseline_gl_net",
                 "baseline_restored_invoice_amount",
                 "payment_entry_count_before",
                 "payment_entry_count_after",
@@ -780,9 +801,7 @@ def quick_next_governed_limited_operation_steady_baseline_summary(limit=20):
                 "company",
                 "currency",
                 "baseline_amount",
-                "current_outstanding_amount",
-                "invoice_docstatus",
-                "outstanding_restored",
+                "outstanding_amount",
                 "baseline_payment_entry",
                 "detail",
             ],
@@ -791,11 +810,11 @@ def quick_next_governed_limited_operation_steady_baseline_summary(limit=20):
         ),
         "required_acknowledgement": BASELINE_ACK,
         "guardrails": guardrails(),
-        "note": "Phase 12X next governed limited-operation steady baseline summary.",
+        "note": "Phase 13J next governed limited-operation steady baseline summary.",
     }
 
 
-def execute_baseline_report(filters=None):
+def execute_steady_baseline_report(filters=None):
     columns = [
         {"fieldname": "baseline", "label": _("Baseline"), "fieldtype": "Link", "options": BASELINE_DOCTYPE, "width": 220},
         {"fieldname": "baseline_id", "label": _("Baseline ID"), "fieldtype": "Data", "width": 500},
@@ -807,7 +826,7 @@ def execute_baseline_report(filters=None):
         {"fieldname": "baseline_payment_entry_status", "label": _("PE Status"), "fieldtype": "Data", "width": 120},
         {"fieldname": "baseline_invoice_count", "label": _("Invoice Count"), "fieldtype": "Int", "width": 105},
         {"fieldname": "baseline_total_amount", "label": _("Amount"), "fieldtype": "Currency", "width": 100},
-        {"fieldname": "baseline_voucher_gl_rows", "label": _("Voucher GL"), "fieldtype": "Int", "width": 95},
+        {"fieldname": "baseline_gl_rows", "label": _("GL Rows"), "fieldtype": "Int", "width": 95},
         {"fieldname": "baseline_reversal_gl_rows", "label": _("Reversal GL"), "fieldtype": "Int", "width": 105},
         {"fieldname": "baseline_restored_invoice_amount", "label": _("Restored"), "fieldtype": "Currency", "width": 105},
         {"fieldname": BASELINE_READY_FIELD, "label": _("Monitor Ready"), "fieldtype": "Check", "width": 125},
@@ -832,7 +851,7 @@ def execute_baseline_report(filters=None):
             baseline_payment_entry_status,
             baseline_invoice_count,
             baseline_total_amount,
-            baseline_voucher_gl_rows,
+            baseline_gl_rows,
             baseline_reversal_gl_rows,
             baseline_restored_invoice_amount,
             `{BASELINE_READY_FIELD}` AS `{BASELINE_READY_FIELD}`,
@@ -846,7 +865,7 @@ def execute_baseline_report(filters=None):
         WHERE baseline_payment_entry=%(payment_entry)s
         ORDER BY creation DESC
         """,
-        {"payment_entry": EXPECTED_BASELINE_PAYMENT_ENTRY},
+        {"payment_entry": BASELINE_PAYMENT_ENTRY},
         as_dict=True,
     )
 
@@ -880,9 +899,7 @@ def execute_item_report(filters=None):
         {"fieldname": "reference_doctype", "label": _("Ref DocType"), "fieldtype": "Data", "width": 130},
         {"fieldname": "reference_name", "label": _("Reference"), "fieldtype": "Dynamic Link", "options": "reference_doctype", "width": 180},
         {"fieldname": "baseline_amount", "label": _("Baseline Amount"), "fieldtype": "Currency", "width": 130},
-        {"fieldname": "current_outstanding_amount", "label": _("Current Outstanding"), "fieldtype": "Currency", "width": 145},
-        {"fieldname": "invoice_docstatus", "label": _("Invoice Docstatus"), "fieldtype": "Int", "width": 120},
-        {"fieldname": "outstanding_restored", "label": _("Outstanding Restored"), "fieldtype": "Check", "width": 145},
+        {"fieldname": "outstanding_amount", "label": _("Outstanding"), "fieldtype": "Currency", "width": 120},
         {"fieldname": "baseline_payment_entry", "label": _("Baseline PE"), "fieldtype": "Link", "options": "Payment Entry", "width": 180},
         {"fieldname": "check_label", "label": _("Check"), "fieldtype": "Data", "width": 300},
         {"fieldname": "detail", "label": _("Detail"), "fieldtype": "Small Text", "width": 650},
@@ -899,9 +916,7 @@ def execute_item_report(filters=None):
             reference_doctype,
             reference_name,
             baseline_amount,
-            current_outstanding_amount,
-            invoice_docstatus,
-            outstanding_restored,
+            outstanding_amount,
             baseline_payment_entry,
             check_label,
             detail
@@ -930,14 +945,13 @@ def execute_item_report(filters=None):
     summary = [
         {"value": len(data), "indicator": "Blue", "label": _("Items"), "datatype": "Int"},
         {"value": len([row for row in data if row.category == "Baseline Reference"]), "indicator": "Green", "label": _("Baseline References"), "datatype": "Int"},
-        {"value": len([row for row in data if int(row.outstanding_restored or 0) == 1]), "indicator": "Green", "label": _("Outstanding Restored"), "datatype": "Int"},
     ]
 
     return columns, data, None, chart, summary
 
 
 def execute_guardrail_report(filters=None):
-    columns, data, message, chart, summary = execute_baseline_report(filters)
+    columns, data, message, chart, summary = execute_steady_baseline_report(filters)
     guard = guardrails()
     summary.append({"value": guard["payment_entry_count"], "indicator": "Blue", "label": _("Payment Entry Count"), "datatype": "Int"})
     summary.append({"value": guard["payment_entry_gl_count"], "indicator": "Blue", "label": _("Payment Entry GL Count"), "datatype": "Int"})

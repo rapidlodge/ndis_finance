@@ -267,7 +267,7 @@ ACTION_ROLE_MAP = {
         "NDIS Finance Manager",
     ],
 
-    # Phase 12X next governed limited-operation steady baseline controls
+    # Phase 13J next governed limited-operation steady baseline controls
     "run_next_governed_limited_operation_steady_baseline": [
         "System Manager",
         "NDIS CFO",
