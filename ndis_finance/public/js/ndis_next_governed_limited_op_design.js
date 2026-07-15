@@ -12,12 +12,20 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Design", {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Design Report");
         }, __("Open"));
 
+        frm.add_custom_button(__("Open Phase 13M Design Report"), () => {
+            frappe.set_route("query-report", "NDIS Next Governed Limited Op Design Phase13M Report");
+        }, __("Open"));
+
         frm.add_custom_button(__("Open Guardrail Report"), () => {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Design Guardrail Report");
         }, __("Open"));
 
+        frm.add_custom_button(__("Open Phase 13M Guardrail Report"), () => {
+            frappe.set_route("query-report", "NDIS Next Governed Limited Op Design Phase13M Guardrail Report");
+        }, __("Open"));
+
         if (frm.doc.planning) {
-            frm.add_custom_button(__("Open Phase 12Z Planning"), () => {
+            frm.add_custom_button(__("Open Phase 13L Planning"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Planning", frm.doc.planning);
             }, __("Evidence"));
         }
@@ -28,9 +36,9 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Design", {
             }, __("Evidence"));
         }
 
-        if (frm.doc.monitored_payment_entry) {
-            frm.add_custom_button(__("Open Monitored Payment Entry"), () => {
-                frappe.set_route("Form", "Payment Entry", frm.doc.monitored_payment_entry);
+        if (frm.doc.design_payment_entry || frm.doc.monitored_payment_entry) {
+            frm.add_custom_button(__("Open Designed Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.design_payment_entry || frm.doc.monitored_payment_entry);
             }, __("Accounting"));
         }
 

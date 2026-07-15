@@ -1839,6 +1839,24 @@ fixtures.extend([
     }
 ])
 
+# Phase 13M - Next governed limited-operation design reports
+
+try:
+    fixtures
+except NameError:
+    fixtures = []
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Design Phase13M Report",
+            "NDIS Next Governed Limited Op Design Phase13M Item Report",
+            "NDIS Next Governed Limited Op Design Phase13M Guardrail Report"
+        ]]]
+    }
+])
+
 # Phase 12Q - Next governed limited-operation candidate validation
 
 doctype_js.update({
