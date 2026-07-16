@@ -2294,3 +2294,16 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 13Q - Next governed limited-operation execution gate reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Execution Gate Phase13Q Report",
+            "NDIS Next Governed Limited Op Execution Gate Phase13Q Item Report",
+            "NDIS Next Governed Limited Op Execution Gate Phase13Q Guardrail Report"
+        ]]]
+    }
+])

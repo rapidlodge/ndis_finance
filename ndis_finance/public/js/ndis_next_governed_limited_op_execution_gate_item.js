@@ -19,5 +19,11 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Execution Gate Item", {
                 frappe.set_route("Form", "Payment Entry", frm.doc.monitored_payment_entry);
             }, __("Accounting"));
         }
+
+        if (frm.doc.execution_gate_payment_entry) {
+            frm.add_custom_button(__("Open Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.execution_gate_payment_entry);
+            }, __("Accounting"));
+        }
     }
 });
