@@ -1,0 +1,40 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2026-07-16 12:58:51.386818",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2026-07-16 13:12:36.610785",
+ "modified_by": "Administrator",
+ "module": "NDIS Finance",
+ "name": "NDIS Next Governed Limited Op Candidate Validation Phase13O Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "NDIS Next Governed Limited Op Candidate Validation",
+ "report_name": "NDIS Next Governed Limited Op Candidate Validation Phase13O Report",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "NDIS CFO"
+  },
+  {
+   "role": "NDIS Finance Manager"
+  },
+  {
+   "role": "NDIS Finance Officer"
+  },
+  {
+   "role": "NDIS Finance Read Only"
+  }
+ ],
+ "timeout": 0
+}
