@@ -2307,3 +2307,16 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 13R - Next governed limited-operation smoke reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Smoke Phase13R Report",
+            "NDIS Next Governed Limited Op Smoke Phase13R Item Report",
+            "NDIS Next Governed Limited Op Smoke Phase13R Guardrail Report"
+        ]]]
+    }
+])

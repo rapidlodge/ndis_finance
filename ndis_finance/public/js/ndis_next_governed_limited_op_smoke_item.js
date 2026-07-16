@@ -19,5 +19,11 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Smoke Item", {
                 frappe.set_route("Form", "Payment Entry", frm.doc.smoke_payment_entry);
             }, __("Accounting"));
         }
+
+        if (frm.doc.gated_payment_entry) {
+            frm.add_custom_button(__("Open Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.gated_payment_entry);
+            }, __("Accounting"));
+        }
     }
 });
