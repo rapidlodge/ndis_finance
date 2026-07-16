@@ -16,10 +16,24 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Preview", {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Preview Guardrail Report");
         }, __("Open"));
 
+        frm.add_custom_button(__("Open Phase 13P Preview Report"), () => {
+            frappe.set_route("query-report", "NDIS Next Governed Limited Op Preview Phase13P Report");
+        }, __("Open"));
+
+        frm.add_custom_button(__("Open Phase 13P Guardrail Report"), () => {
+            frappe.set_route("query-report", "NDIS Next Governed Limited Op Preview Phase13P Guardrail Report");
+        }, __("Open"));
+
         if (frm.doc.candidate_validation) {
-            frm.add_custom_button(__("Open Phase 13C Candidate Validation"), () => {
+            frm.add_custom_button(__("Open Phase 13O Candidate Validation"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Candidate Validation", frm.doc.candidate_validation);
             }, __("Evidence"));
+        }
+
+        if (frm.doc.preview_payment_entry) {
+            frm.add_custom_button(__("Open Previewed Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.preview_payment_entry);
+            }, __("Accounting"));
         }
 
         if (frm.doc.monitored_payment_entry) {

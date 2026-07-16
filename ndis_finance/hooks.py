@@ -1943,6 +1943,19 @@ fixtures.extend([
     }
 ])
 
+# Phase 13P - Next governed limited-operation preview reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Preview Phase13P Report",
+            "NDIS Next Governed Limited Op Preview Phase13P Item Report",
+            "NDIS Next Governed Limited Op Preview Phase13P Guardrail Report"
+        ]]]
+    }
+])
+
 # Phase 12M - Governed limited-operation runtime monitor
 
 doctype_js.update({
