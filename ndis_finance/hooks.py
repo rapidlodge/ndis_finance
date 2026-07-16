@@ -2140,7 +2140,10 @@ fixtures.extend([
             "NDIS Next Governed Limited Op Smoke Guardrail Report",
             "NDIS Next Governed Limited Op Smoke Rollback Report",
             "NDIS Next Governed Limited Op Smoke Rollback Item Report",
-            "NDIS Next Governed Limited Op Smoke Rollback Guardrail Report"
+            "NDIS Next Governed Limited Op Smoke Rollback Guardrail Report",
+            "NDIS Next Governed Limited Op Smoke Rollback Phase13S Report",
+            "NDIS Next Governed Limited Op Smoke Rollback Phase13S Item Report",
+            "NDIS Next Governed Limited Op Smoke Rollback Phase13S Guardrail Report"
         ]]]
     }
 ])
