@@ -14,6 +14,12 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout Item", {
             }, __("Reference"));
         }
 
+        if (frm.doc.gated_payment_entry) {
+            frm.add_custom_button(__("Open Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.gated_payment_entry);
+            }, __("Accounting"));
+        }
+
         if (frm.doc.closeout_payment_entry) {
             frm.add_custom_button(__("Open Closeout Payment Entry"), () => {
                 frappe.set_route("Form", "Payment Entry", frm.doc.closeout_payment_entry);

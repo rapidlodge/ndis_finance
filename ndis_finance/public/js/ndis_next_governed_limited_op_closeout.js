@@ -16,10 +16,26 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout", {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Closeout Guardrail Report");
         }, __("Open"));
 
+        if (frm.doc.closeout_payment_entry === "ACC-PAY-2026-00015") {
+            frm.add_custom_button(__("Open Phase 13U Closeout Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Closeout Phase13U Report");
+            }, __("Open"));
+
+            frm.add_custom_button(__("Open Phase 13U Guardrail Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Closeout Phase13U Guardrail Report");
+            }, __("Open"));
+        }
+
         if (frm.doc.freeze) {
-            frm.add_custom_button(__("Open Phase 13H Freeze"), () => {
+            frm.add_custom_button(__("Open Phase 13T Rollback Freeze"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Rollback Freeze", frm.doc.freeze);
             }, __("Evidence"));
+        }
+
+        if (frm.doc.gated_payment_entry) {
+            frm.add_custom_button(__("Open Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.gated_payment_entry);
+            }, __("Accounting"));
         }
 
         if (frm.doc.closeout_payment_entry) {

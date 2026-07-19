@@ -2336,3 +2336,16 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 13U - Next governed limited-operation closeout reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Closeout Phase13U Report",
+            "NDIS Next Governed Limited Op Closeout Phase13U Item Report",
+            "NDIS Next Governed Limited Op Closeout Phase13U Guardrail Report"
+        ]]]
+    }
+])
