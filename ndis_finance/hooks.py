@@ -2323,3 +2323,16 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 13T - Next governed limited-operation rollback freeze reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Rollback Freeze Phase13T Report",
+            "NDIS Next Governed Limited Op Rollback Freeze Phase13T Item Report",
+            "NDIS Next Governed Limited Op Rollback Freeze Phase13T Guardrail Report"
+        ]]]
+    }
+])
