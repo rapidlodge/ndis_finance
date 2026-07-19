@@ -2362,3 +2362,16 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 13W - Next governed limited-operation runtime monitor reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Runtime Monitor Phase13W Report",
+            "NDIS Next Governed Limited Op Runtime Monitor Phase13W Item Report",
+            "NDIS Next Governed Limited Op Runtime Monitor Phase13W Guardrail Report"
+        ]]]
+    }
+])
