@@ -24,10 +24,29 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Preview", {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Preview Phase13P Guardrail Report");
         }, __("Open"));
 
+        if (frm.doc.preview_payment_entry === "ACC-PAY-2026-00015") {
+            frm.add_custom_button(__("Open Phase 14B Preview Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Preview Phase14B Report");
+            }, __("Open"));
+
+            frm.add_custom_button(__("Open Phase 14B Guardrail Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Preview Phase14B Guardrail Report");
+            }, __("Open"));
+        }
+
         if (frm.doc.candidate_validation) {
-            frm.add_custom_button(__("Open Phase 13O Candidate Validation"), () => {
+            const label = frm.doc.preview_payment_entry === "ACC-PAY-2026-00015"
+                ? __("Open Phase 14A Candidate Validation")
+                : __("Open Phase 13O Candidate Validation");
+            frm.add_custom_button(label, () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Candidate Validation", frm.doc.candidate_validation);
             }, __("Evidence"));
+        }
+
+        if (frm.doc.gated_payment_entry) {
+            frm.add_custom_button(__("Open Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.gated_payment_entry);
+            }, __("Accounting"));
         }
 
         if (frm.doc.preview_payment_entry) {
