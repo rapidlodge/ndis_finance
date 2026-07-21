@@ -9,17 +9,26 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Runtime Monitor", {
         }, __("Open"));
 
         const is_phase13w = frm.doc.monitor_payment_entry === "ACC-PAY-2026-00015";
+        const is_phase14i = frm.doc.monitor_payment_entry === "ACC-PAY-2026-00016";
+        const monitor_report = is_phase14i
+            ? "NDIS Next Governed Limited Op Runtime Monitor Phase14I Report"
+            : (is_phase13w ? "NDIS Next Governed Limited Op Runtime Monitor Phase13W Report" : "NDIS Next Governed Limited Op Runtime Monitor Report");
+        const guardrail_report = is_phase14i
+            ? "NDIS Next Governed Limited Op Runtime Monitor Phase14I Guardrail Report"
+            : (is_phase13w ? "NDIS Next Governed Limited Op Runtime Monitor Phase13W Guardrail Report" : "NDIS Next Governed Limited Op Runtime Monitor Guardrail Report");
+        const phase_label = is_phase14i ? "Phase 14I" : (is_phase13w ? "Phase 13W" : "");
+        const baseline_label = is_phase14i ? "Open Phase 14H Steady Baseline" : (is_phase13w ? "Open Phase 13V Steady Baseline" : "Open Phase 13J Baseline");
 
-        frm.add_custom_button(__(is_phase13w ? "Open Phase 13W Runtime Monitor Report" : "Open Runtime Monitor Report"), () => {
-            frappe.set_route("query-report", is_phase13w ? "NDIS Next Governed Limited Op Runtime Monitor Phase13W Report" : "NDIS Next Governed Limited Op Runtime Monitor Report");
+        frm.add_custom_button(__(phase_label ? `Open ${phase_label} Runtime Monitor Report` : "Open Runtime Monitor Report"), () => {
+            frappe.set_route("query-report", monitor_report);
         }, __("Open"));
 
-        frm.add_custom_button(__(is_phase13w ? "Open Phase 13W Guardrail Report" : "Open Guardrail Report"), () => {
-            frappe.set_route("query-report", is_phase13w ? "NDIS Next Governed Limited Op Runtime Monitor Phase13W Guardrail Report" : "NDIS Next Governed Limited Op Runtime Monitor Guardrail Report");
+        frm.add_custom_button(__(phase_label ? `Open ${phase_label} Guardrail Report` : "Open Guardrail Report"), () => {
+            frappe.set_route("query-report", guardrail_report);
         }, __("Open"));
 
         if (frm.doc.baseline) {
-            frm.add_custom_button(__(is_phase13w ? "Open Phase 13V Steady Baseline" : "Open Phase 13J Baseline"), () => {
+            frm.add_custom_button(__(baseline_label), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Steady Baseline", frm.doc.baseline);
             }, __("Evidence"));
         }
@@ -27,6 +36,12 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Runtime Monitor", {
         if (frm.doc.gated_payment_entry) {
             frm.add_custom_button(__("Open Gated Payment Entry"), () => {
                 frappe.set_route("Form", "Payment Entry", frm.doc.gated_payment_entry);
+            }, __("Accounting"));
+        }
+
+        if (frm.doc.previous_gated_payment_entry) {
+            frm.add_custom_button(__("Open Previous Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.previous_gated_payment_entry);
             }, __("Accounting"));
         }
 

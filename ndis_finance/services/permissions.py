@@ -311,6 +311,17 @@ ACTION_ROLE_MAP = {
         "NDIS Finance Manager",
     ],
 
+    # Phase 14I next governed limited-operation runtime monitor controls
+    "run_next_governed_limited_operation_runtime_monitor_phase14i": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_governed_limited_operation_runtime_monitor_phase14i_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 14H next governed limited-operation steady baseline controls
     "run_next_governed_limited_operation_steady_baseline_phase14h": [
         "System Manager",
