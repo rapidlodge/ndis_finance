@@ -26,10 +26,26 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Rollback Freeze", {
             }, __("Open"));
         }
 
+        if (frm.doc.freeze_payment_entry === "ACC-PAY-2026-00016") {
+            frm.add_custom_button(__("Open Phase 14F Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Rollback Freeze Phase14F Report");
+            }, __("Open"));
+
+            frm.add_custom_button(__("Open Phase 14F Guardrails"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Rollback Freeze Phase14F Guardrail Report");
+            }, __("Open"));
+        }
+
         if (frm.doc.rollback) {
             frm.add_custom_button(__("Open Smoke Rollback"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Smoke Rollback", frm.doc.rollback);
             }, __("Evidence"));
+
+            if (frm.doc.freeze_payment_entry === "ACC-PAY-2026-00016") {
+                frm.add_custom_button(__("Open Phase 14E Smoke Rollback"), () => {
+                    frappe.set_route("Form", "NDIS Next Governed Limited Op Smoke Rollback", frm.doc.rollback);
+                }, __("Evidence"));
+            }
         }
 
         if (frm.doc.gated_payment_entry) {
@@ -41,6 +57,12 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Rollback Freeze", {
         if (frm.doc.freeze_payment_entry) {
             frm.add_custom_button(__("Open Frozen Payment Entry"), () => {
                 frappe.set_route("Form", "Payment Entry", frm.doc.freeze_payment_entry);
+            }, __("Accounting"));
+        }
+
+        if (frm.doc.previous_gated_payment_entry) {
+            frm.add_custom_button(__("Open Previous Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.previous_gated_payment_entry);
             }, __("Accounting"));
         }
 
