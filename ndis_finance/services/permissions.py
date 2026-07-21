@@ -311,6 +311,17 @@ ACTION_ROLE_MAP = {
         "NDIS Finance Manager",
     ],
 
+    # Phase 14D next governed limited-operation smoke controls
+    "run_next_governed_limited_operation_smoke_phase14d": [
+        "System Manager",
+        "NDIS CFO",
+    ],
+    "cancel_next_governed_limited_operation_smoke_phase14d_audit": [
+        "System Manager",
+        "NDIS CFO",
+        "NDIS Finance Manager",
+    ],
+
     # Phase 14C next governed limited-operation execution gate controls
     "run_next_governed_limited_operation_execution_gate_phase14c": [
         "System Manager",

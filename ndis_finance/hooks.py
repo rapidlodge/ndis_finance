@@ -2415,6 +2415,19 @@ fixtures.extend([
     }
 ])
 
+# Phase 14D - Next governed limited-operation smoke reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Smoke Phase14D Report",
+            "NDIS Next Governed Limited Op Smoke Phase14D Item Report",
+            "NDIS Next Governed Limited Op Smoke Phase14D Guardrail Report"
+        ]]]
+    }
+])
+
 # Phase 14C - Next governed limited-operation execution gate reports
 
 fixtures.extend([
