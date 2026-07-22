@@ -2441,6 +2441,19 @@ fixtures.extend([
     }
 ])
 
+# Phase 14N - Next governed limited-operation preview reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Preview Phase14N Report",
+            "NDIS Next Governed Limited Op Preview Phase14N Item Report",
+            "NDIS Next Governed Limited Op Preview Phase14N Guardrail Report"
+        ]]]
+    }
+])
+
 # Phase 13X - Next governed limited-operation planning reports
 
 fixtures.extend([
