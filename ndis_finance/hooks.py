@@ -2415,6 +2415,19 @@ fixtures.extend([
     }
 ])
 
+# Phase 14L - Next governed limited-operation candidate selection reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Candidate Selection Phase14L Report",
+            "NDIS Next Governed Limited Op Candidate Selection Phase14L Item Report",
+            "NDIS Next Governed Limited Op Candidate Selection Phase14L Guardrail Report"
+        ]]]
+    }
+])
+
 # Phase 13X - Next governed limited-operation planning reports
 
 fixtures.extend([
