@@ -16,7 +16,15 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Smoke", {
             frappe.set_route("query-report", "NDIS Next Governed Limited Op Smoke Guardrail Report");
         }, __("Open"));
 
-        if (frm.doc.smoke_payment_entry === "ACC-PAY-2026-00016") {
+        if (frm.doc.smoke_payment_entry === "ACC-PAY-2026-00017") {
+            frm.add_custom_button(__("Open Phase 14P Smoke Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Smoke Phase14P Report");
+            }, __("Open"));
+
+            frm.add_custom_button(__("Open Phase 14P Guardrail Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Smoke Phase14P Guardrail Report");
+            }, __("Open"));
+        } else if (frm.doc.smoke_payment_entry === "ACC-PAY-2026-00016") {
             frm.add_custom_button(__("Open Phase 14D Smoke Report"), () => {
                 frappe.set_route("query-report", "NDIS Next Governed Limited Op Smoke Phase14D Report");
             }, __("Open"));
@@ -35,7 +43,9 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Smoke", {
         }
 
         if (frm.doc.execution_gate) {
-            const execution_gate_label = frm.doc.smoke_payment_entry === "ACC-PAY-2026-00016"
+            const execution_gate_label = frm.doc.smoke_payment_entry === "ACC-PAY-2026-00017"
+                ? __("Open Phase 14O Execution Gate")
+                : frm.doc.smoke_payment_entry === "ACC-PAY-2026-00016"
                 ? __("Open Phase 14C Execution Gate")
                 : __("Open Phase 13Q Execution Gate");
             frm.add_custom_button(execution_gate_label, () => {
@@ -64,6 +74,12 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Smoke", {
         if (frm.doc.previous_gated_payment_entry) {
             frm.add_custom_button(__("Open Previous Gated Payment Entry"), () => {
                 frappe.set_route("Form", "Payment Entry", frm.doc.previous_gated_payment_entry);
+            }, __("Accounting"));
+        }
+
+        if (frm.doc.historical_gated_payment_entry) {
+            frm.add_custom_button(__("Open Historical Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.historical_gated_payment_entry);
             }, __("Accounting"));
         }
 
