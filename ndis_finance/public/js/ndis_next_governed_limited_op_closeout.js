@@ -36,6 +36,16 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout", {
             }, __("Open"));
         }
 
+        if (frm.doc.closeout_payment_entry === "ACC-PAY-2026-00017") {
+            frm.add_custom_button(__("Open Phase 14S Closeout Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Closeout Phase14S Report");
+            }, __("Open"));
+
+            frm.add_custom_button(__("Open Phase 14S Guardrail Report"), () => {
+                frappe.set_route("query-report", "NDIS Next Governed Limited Op Closeout Phase14S Guardrail Report");
+            }, __("Open"));
+        }
+
         if (frm.doc.freeze) {
             frm.add_custom_button(__("Open Phase 13T Rollback Freeze"), () => {
                 frappe.set_route("Form", "NDIS Next Governed Limited Op Rollback Freeze", frm.doc.freeze);
@@ -43,6 +53,12 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout", {
 
             if (frm.doc.closeout_payment_entry === "ACC-PAY-2026-00016") {
                 frm.add_custom_button(__("Open Phase 14F Rollback Freeze"), () => {
+                    frappe.set_route("Form", "NDIS Next Governed Limited Op Rollback Freeze", frm.doc.freeze);
+                }, __("Evidence"));
+            }
+
+            if (frm.doc.closeout_payment_entry === "ACC-PAY-2026-00017") {
+                frm.add_custom_button(__("Open Phase 14R Rollback Freeze"), () => {
                     frappe.set_route("Form", "NDIS Next Governed Limited Op Rollback Freeze", frm.doc.freeze);
                 }, __("Evidence"));
             }
@@ -63,6 +79,12 @@ frappe.ui.form.on("NDIS Next Governed Limited Op Closeout", {
         if (frm.doc.previous_gated_payment_entry) {
             frm.add_custom_button(__("Open Previous Gated Payment Entry"), () => {
                 frappe.set_route("Form", "Payment Entry", frm.doc.previous_gated_payment_entry);
+            }, __("Accounting"));
+        }
+
+        if (frm.doc.historical_gated_payment_entry) {
+            frm.add_custom_button(__("Open Historical Gated Payment Entry"), () => {
+                frappe.set_route("Form", "Payment Entry", frm.doc.historical_gated_payment_entry);
             }, __("Accounting"));
         }
 
