@@ -2661,3 +2661,16 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 14T - Next governed limited-operation steady baseline reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Steady Baseline Phase14T Report",
+            "NDIS Next Governed Limited Op Steady Baseline Phase14T Item Report",
+            "NDIS Next Governed Limited Op Steady Baseline Phase14T Guardrail Report"
+        ]]]
+    }
+])
