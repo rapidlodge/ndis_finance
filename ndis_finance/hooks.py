@@ -2674,3 +2674,17 @@ fixtures.extend([
         ]]]
     }
 ])
+
+# Phase 14U - Final governed limited-operation runtime monitor reports
+
+fixtures.extend([
+    {
+        "dt": "Report",
+        "filters": [["name", "in", [
+            "NDIS Next Governed Limited Op Runtime Monitor Phase14U Report",
+            "NDIS Next Governed Limited Op Runtime Monitor Phase14U Item Report",
+            "NDIS Next Governed Limited Op Runtime Monitor Phase14U Guardrail Report",
+            "NDIS Final Governed Payment Posting Implementation Report"
+        ]]]
+    }
+])
