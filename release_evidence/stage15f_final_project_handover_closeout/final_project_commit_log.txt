@@ -1,0 +1,30 @@
+e18cbcf (HEAD -> version-16) docs: add governed payment posting pre-activation verification
+2c1ca4d docs: add governed payment posting release approval pack
+b116330 docs: add governed payment posting deployment preparation pack
+8bccbfa docs: add governed payment posting production readiness review
+2f739fd docs: add governed payment posting release review evidence
+7c07bad feat: activate final governed limited-operation runtime monitor
+38a0f60 feat: activate next governed limited-operation steady baseline
+ba43f1e feat: close next governed limited-operation cycle
+ed3dcaf feat: freeze next governed limited-operation rollback evidence
+13e7ce2 feat: rollback next governed limited-operation smoke
+0501a86 feat: run next governed limited-operation smoke
+1699244 feat: approve next governed limited-operation execution gate
+d8ff079 feat: approve next governed limited-operation preview
+dde46a0 feat: approve next governed limited-operation candidate validation
+2cdf1e8 feat: approve next governed limited-operation candidate selection
+61f8db7 feat: approve next governed limited-operation design
+b506385 feat: approve next governed limited-operation planning
+e35dd61 feat: activate next governed limited-operation runtime monitor
+08f6d02 feat: activate next governed limited-operation steady baseline
+726453e feat: close next governed limited-operation cycle
+d89247e feat: freeze next governed limited-operation rollback evidence
+4a4f834 feat: rollback next governed limited-operation smoke
+7c19948 feat: run next governed limited-operation smoke
+fa104fb feat: approve next governed limited-operation execution gate
+9ca60c6 feat: approve next governed limited-operation preview
+c70057a feat: approve next governed limited-operation candidate validation
+3b85fde feat: approve next governed limited-operation candidate selection
+a4f193e feat: approve next governed limited-operation design
+2c33e2d feat: approve next governed limited-operation planning
+450a20f feat: activate next governed limited-operation runtime monitor

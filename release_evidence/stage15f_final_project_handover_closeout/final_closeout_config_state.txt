@@ -1,0 +1,3 @@
+| ndis_finance_live_payment_entry_posting_enabled | 0                                            |
+| ndis_finance_production_mode                    | 0                                            |
+| ndis_finance_sandbox_posting_enabled            | 1                                            |
